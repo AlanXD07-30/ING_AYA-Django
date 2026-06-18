@@ -1,0 +1,460 @@
+// ============================================================
+// detalle.js  —  Carga dinámica de un inmueble
+// ============================================================
+
+(() => {
+    "use strict";
+  
+    // ============================================================
+    // TOGGLE MODO OSCURO / CLARO
+    // ============================================================
+    const html      = document.documentElement;
+    const toggleBtn = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+  
+    const savedTheme = localStorage.getItem("ingaya-theme") || "dark";
+    applyTheme(savedTheme);
+  
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", function () {
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        applyTheme(next);
+        localStorage.setItem("ingaya-theme", next);
+      });
+    }
+  
+    function applyTheme(theme) {
+      html.setAttribute("data-theme", theme);
+      if (themeIcon) themeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
+
+    // ============================================================
+    // LÓGICA DE OBTENCIÓN DE DATOS
+    // ============================================================
+    const loadingState = document.getElementById("loading-state");
+    const errorState = document.getElementById("error-state");
+    const propertyContent = document.getElementById("property-content");
+    const errorMsg = document.getElementById("error-message");
+
+    function formatoPrecio(valor) {
+        if (valor == null || valor === "") return "Consultar";
+        const num = Number(valor);
+        if (Number.isNaN(num)) return String(valor);
+        return num.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+    }
+
+    function escapeHtml(str) {
+        if (str == null) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+    }
+
+    async function cargarDetalle() {
+        // Extraer el ID de la URL
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        if (!id) {
+            mostrarError("No se especificó ningún inmueble en la URL.");
+            return;
+        }
+
+        try {
+            // Llamada a la API
+            const response = await fetch(`http://127.0.0.1:8000/api/inmuebles/${id}/`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error("El inmueble solicitado no existe o fue eliminado.");
+                }
+                throw new Error("Error al conectar con el servidor.");
+            }
+
+            const data = await response.json();
+            renderizarInmueble(data);
+
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    }
+
+    function mostrarError(mensaje) {
+        loadingState.style.display = "none";
+        propertyContent.style.display = "none";
+        errorState.style.display = "block";
+        errorMsg.textContent = mensaje;
+    }
+
+    function renderizarInmueble(inmueble) {
+        // Ocultar carga y mostrar contenido
+        loadingState.style.display = "none";
+        propertyContent.style.display = "block";
+
+        // Extraer datos principales
+        const tipoOp = inmueble.tipo_operacion || "OPERACIÓN";
+        const estado = inmueble.estado || "DISPONIBLE";
+        const direccion = inmueble.direccion || "Dirección no disponible";
+        const barrio = inmueble.barrio || "Barrio no especificado";
+        const ciudad = inmueble.ciudad || "Ciudad no especificada";
+        const precio = formatoPrecio(inmueble.precio);
+        const metraje = inmueble.metraje ? `${inmueble.metraje} m²` : "No especificado";
+        const id = inmueble.id_inmueble || inmueble.id || "--";
+        
+        // Extraer imágenes
+        let imagenes = [];
+        if (inmueble.imagen_principal) {
+            imagenes.push(inmueble.imagen_principal);
+        }
+        if (Array.isArray(inmueble.imagenes)) {
+            inmueble.imagenes.forEach(img => {
+                const url = typeof img === "string" ? img : (img.url_imagen || img.url);
+                if (url && !imagenes.includes(url)) {
+                    imagenes.push(url);
+                }
+            });
+        }
+        // Si no hay imágenes, usar default
+        if (imagenes.length === 0) {
+            imagenes.push("../PAGINA WEB INMOBILIARIA/img/no-image.png"); // o ruta por defecto
+        }
+
+        // Llenar DOM
+        if(document.getElementById("det-tipo-operacion")) document.getElementById("det-tipo-operacion").textContent = tipoOp.toUpperCase();
+        if(document.getElementById("det-tipo-op-text")) document.getElementById("det-tipo-op-text").textContent = tipoOp.toLowerCase();
+        if(document.getElementById("det-estado")) document.getElementById("det-estado").textContent = estado.toUpperCase();
+        
+        // Color badge estado
+        const badgeEstado = document.getElementById("det-estado");
+        if (estado.toUpperCase() === "VENDIDO" || estado.toUpperCase() === "ARRENDADO") {
+            badgeEstado.style.backgroundColor = "#3b82f6"; // Azul
+        } else if (estado.toUpperCase() === "RESERVADO") {
+            badgeEstado.style.backgroundColor = "#f59e0b"; // Naranja
+        } else {
+            badgeEstado.style.backgroundColor = "#10b981"; // Verde (Disponible)
+        }
+
+        if(document.getElementById("det-direccion")) document.getElementById("det-direccion").textContent = direccion;
+        if(document.getElementById("det-ubicacion")) document.getElementById("det-ubicacion").textContent = `${barrio}, ${ciudad}`;
+        if(document.getElementById("det-precio")) document.getElementById("det-precio").textContent = precio;
+        if(document.getElementById("det-metraje")) document.getElementById("det-metraje").textContent = metraje;
+        if(document.getElementById("det-ciudad")) document.getElementById("det-ciudad").textContent = ciudad;
+        if(document.getElementById("det-barrio")) document.getElementById("det-barrio").textContent = barrio;
+        if(document.getElementById("det-id")) document.getElementById("det-id").textContent = id;
+        
+        // Premium Fields
+        if(document.getElementById("det-titulo-main")) document.getElementById("det-titulo-main").textContent = `${tipoOp.charAt(0).toUpperCase() + tipoOp.slice(1).toLowerCase()} en ${barrio}, ${ciudad}`;
+        
+        if(document.getElementById("det-habitaciones")) document.getElementById("det-habitaciones").textContent = inmueble.habitaciones || "0";
+        if(document.getElementById("det-banos")) document.getElementById("det-banos").textContent = inmueble.banos || "0";
+        if(document.getElementById("det-garajes")) document.getElementById("det-garajes").textContent = inmueble.garajes || "0";
+        if(document.getElementById("det-estrato")) document.getElementById("det-estrato").textContent = inmueble.estrato || "0";
+        
+        if(document.getElementById("det-descripcion")) {
+            document.getElementById("det-descripcion").textContent = inmueble.descripcion || "No hay descripción disponible para este inmueble.";
+        }
+        
+        if(document.getElementById("det-caracteristicas")) {
+            const ul = document.getElementById("det-caracteristicas");
+            ul.innerHTML = "";
+            if(inmueble.caracteristicas) {
+                try {
+                    const arr = JSON.parse(inmueble.caracteristicas);
+                    if(arr.length > 0) {
+                        arr.forEach(c => {
+                            const li = document.createElement("li");
+                            li.textContent = c;
+                            ul.appendChild(li);
+                        });
+                    } else {
+                        ul.innerHTML = "<li>No hay características registradas.</li>";
+                    }
+                } catch(e) {
+                    ul.innerHTML = "<li>No hay características registradas.</li>";
+                }
+            } else {
+                ul.innerHTML = "<li>No hay características registradas.</li>";
+            }
+        }
+
+        // Renderizar Galería
+        const gallery = document.getElementById("det-gallery");
+        gallery.innerHTML = "";
+        
+        // Ajustar layout de la galería dependiendo de cuántas fotos hay
+        const numImgs = Math.min(imagenes.length, 5);
+        
+        if (numImgs === 1) {
+            gallery.style.gridTemplateColumns = "1fr";
+            gallery.style.gridTemplateRows = "400px";
+        } else if (numImgs === 2) {
+            gallery.style.gridTemplateColumns = "1fr 1fr";
+            gallery.style.gridTemplateRows = "400px";
+        } else if (numImgs === 3) {
+            gallery.style.gridTemplateColumns = "2fr 1fr";
+            gallery.style.gridTemplateRows = "200px 200px";
+        } else {
+            gallery.style.gridTemplateColumns = "2fr 1fr 1fr";
+            gallery.style.gridTemplateRows = "250px 250px";
+        }
+
+        for (let i = 0; i < numImgs; i++) {
+            const imgSrc = imagenes[i];
+            
+            const imgEl = document.createElement("img");
+            imgEl.src = escapeHtml(imgSrc);
+            imgEl.alt = `Foto ${i+1} de la propiedad`;
+            
+            // Asignar clases dinámicas basadas en la cantidad de fotos
+            if (numImgs === 1) {
+                imgEl.className = "gallery-img";
+                imgEl.style.gridColumn = "1 / -1";
+                imgEl.style.gridRow = "1 / -1";
+            } else if (numImgs === 2) {
+                imgEl.className = "gallery-img";
+            } else if (numImgs === 3) {
+                imgEl.className = `gallery-img`;
+                if(i === 0) { imgEl.style.gridColumn = "1 / 2"; imgEl.style.gridRow = "1 / 3"; }
+                if(i === 1) { imgEl.style.gridColumn = "2 / 3"; imgEl.style.gridRow = "1 / 2"; }
+                if(i === 2) { imgEl.style.gridColumn = "2 / 3"; imgEl.style.gridRow = "2 / 3"; }
+            } else {
+                imgEl.className = `gallery-img gallery-item-${i+1}`;
+            }
+            
+            imgEl.onerror = function() { this.src = '/img/no-image.png'; };
+            gallery.appendChild(imgEl);
+        }
+        
+        // Actualizar el título de la página web
+        document.title = `${direccion} - ${tipoOp} | ING AYA`;
+    }
+
+    // Inicializar
+    document.addEventListener("DOMContentLoaded", cargarDetalle);
+
+    // ============================================================
+    // MAGIA DE LA SESIÓN ACTIVA (Misión 1)
+    // ============================================================
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Buscamos la llave secreta
+      const token = localStorage.getItem("mi_token");
+      
+      // Si la llave existe, el usuario está logueado
+      if (token) {
+        // Usamos selectores múltiples para que funcione en cualquier página
+        const linkIngresar = document.querySelector(".nav-link-ingresar, .inicio-nav");
+        const linkRegistrar = document.querySelector(".nav-link-registrar, .crearcue-nav");
+        const navLinks = document.querySelector(".nav-links, .Menu_principal");
+  
+        // Ocultamos el botón de crear cuenta
+        if (linkRegistrar) {
+          linkRegistrar.parentElement.style.display = "none";
+        }
+  
+        // Cambiamos el botón de Iniciar Sesión por Cerrar Sesión
+        if (linkIngresar) {
+          linkIngresar.innerHTML = "Cerrar sesión";
+          linkIngresar.href = "#"; 
+          linkIngresar.style.color = "#ff4c4c"; // Rojito para destacar
+          
+          linkIngresar.addEventListener("click", function(e) {
+            e.preventDefault();
+            Swal.fire({
+              title: '¿Cerrar sesión?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonText: 'Sí, salir',
+              cancelButtonText: 'Cancelar',
+              confirmButtonColor: '#d33'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                localStorage.removeItem("mi_token"); // Borramos la llave
+                localStorage.removeItem("mi_avatar");
+                localStorage.removeItem("mi_nombre");
+                localStorage.removeItem("is_admin");
+                window.location.reload(); // Recargamos la página
+              }
+            });
+          });
+        }
+  
+        // Creamos el botón de "Mi Perfil" con foto dinámica
+        if (navLinks) {
+          let avatarUrl = localStorage.getItem("mi_avatar");
+          if (!avatarUrl) {
+              let nombre = localStorage.getItem("mi_nombre") || "U";
+              avatarUrl = `https://ui-avatars.com/api/?name=${nombre.replace(" ", "+")}&background=random`;
+          }
+  
+          const liPerfil = document.createElement("li");
+          liPerfil.innerHTML = `
+            <a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/perfil.html" style="display: flex; align-items: center; gap: 8px; color: #3b82f6; font-weight: bold;">
+              <img src="${avatarUrl}" alt="Perfil" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+              Mi Perfil
+            </a>
+          `;
+          // Lo insertamos justo antes de cerrar sesión
+          navLinks.insertBefore(liPerfil, linkIngresar.parentElement);
+        }
+      }
+    });
+
+})();
+
+// ==========================================
+// FUNCIONES DE AUTH EN DETALLES
+// ==========================================
+function irALogin() {
+    // Guardar URL actual para regresar
+    localStorage.setItem("redirect_after_login", window.location.href);
+    window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
+}
+
+async function obtenerPerfilCliente() {
+    const token = localStorage.getItem("mi_token");
+    if (!token) return null;
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/perfil/", {
+            method: "GET",
+            headers: { "Authorization": "Token " + token, "Content-Type": "application/json" }
+        });
+        if (res.ok) return await res.json();
+    } catch(e) { console.error(e); }
+    return null;
+}
+
+async function solicitarReserva() {
+    const perfil = await obtenerPerfilCliente();
+    if (!perfil || perfil.es_empleado) {
+        Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden iniciar trámites. Si eres empleado, usa el panel de administración.', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: '¿Confirmar Reserva?',
+        text: "Enviaremos una solicitud a nuestro equipo para iniciar el trámite de este inmueble. ¿Estás seguro?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, iniciar trámite',
+        cancelButtonText: 'Cancelar',
+        showLoaderOnConfirm: true,
+        preConfirm: async () => {
+            try {
+                // Remove commas and dots from price if formatted, or just use precioRaw if we have it globally
+                // Fortunately we saved "inmueble" globally in cargarDetalle().
+                const valor_total = window.inmuebleObj ? window.inmuebleObj.precio : 0;
+                const tipo_op = window.inmuebleObj ? window.inmuebleObj.tipo_operacion : "VENTA";
+                const id_inmueble = window.inmuebleObj ? window.inmuebleObj.id_inmueble : new URLSearchParams(window.location.search).get("id");
+                
+                const data = {
+                    fecha: new Date().toISOString(),
+                    tipo_operacion: tipo_op,
+                    valor_total: valor_total,
+                    estado: "SEPARACION",
+                    id_cliente: perfil.id_cliente,
+                    id_inmueble: id_inmueble
+                };
+
+                const response = await fetch("http://127.0.0.1:8000/api/transacciones/", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Token " + localStorage.getItem("mi_token"),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                return await response.json();
+            } catch (error) {
+                Swal.showValidationMessage(`Fallo en la solicitud: ${error}`);
+            }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                '¡Trámite Iniciado!',
+                'Hemos registrado tu interés. Un agente se contactará contigo para continuar el proceso.',
+                'success'
+            );
+        }
+    });
+}
+
+async function agendarVisita() {
+    const perfil = await obtenerPerfilCliente();
+    if (!perfil || perfil.es_empleado) {
+        Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden agendar visitas.', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Agendar una Visita',
+        html: '<input type="datetime-local" id="fecha_visita" class="swal2-input">',
+        confirmButtonText: 'Agendar',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        preConfirm: async () => {
+            const fecha = document.getElementById('fecha_visita').value;
+            if (!fecha) {
+                Swal.showValidationMessage('Por favor selecciona una fecha y hora');
+                return false;
+            }
+            
+            const id_inmueble = window.inmuebleObj ? window.inmuebleObj.id_inmueble : new URLSearchParams(window.location.search).get("id");
+            
+            try {
+                const data = {
+                    fecha_hora: new Date(fecha).toISOString(),
+                    estado: "PROGRAMADA",
+                    descripcion: "Visita solicitada para el inmueble ID: " + id_inmueble,
+                    id_cliente: perfil.id_cliente
+                };
+
+                const response = await fetch("http://127.0.0.1:8000/api/citas/", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Token " + localStorage.getItem("mi_token"),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                return await response.json();
+            } catch (error) {
+                Swal.showValidationMessage(`Error: ${error}`);
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Visita Agendada', 'Tu cita ha sido programada con éxito. Revisa el panel para más detalles.', 'success');
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const token = localStorage.getItem("mi_token");
+    const anonBox = document.getElementById("anon-box");
+    const userBox = document.getElementById("user-box");
+    
+    if (token && anonBox && userBox) {
+        anonBox.style.display = "none";
+        userBox.style.display = "block";
+        
+        let nombre = localStorage.getItem("mi_nombre") || "Cliente";
+        // Si el nombre es muy largo, usamos solo el primer nombre
+        nombre = nombre.split(" ")[0];
+        const greeting = document.getElementById("user-greeting");
+        if(greeting) greeting.innerText = "Hola, " + nombre;
+    }
+});

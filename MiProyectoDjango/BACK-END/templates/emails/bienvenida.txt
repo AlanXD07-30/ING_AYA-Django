@@ -1,0 +1,9 @@
+¡Hola, {{ nombre }}!
+
+Nos alegra muchísimo darte la bienvenida a IngAya, tu hogar de confianza.
+
+A partir de este momento, tienes acceso exclusivo a nuestro catálogo de inmuebles y herramientas personalizadas para encontrar la propiedad de tus sueños. Explora, guarda tus inmuebles favoritos y gestiona tu perfil directamente desde nuestra plataforma.
+
+¿Tienes preguntas? Contáctanos respondiendo a este correo o visita nuestra sección de Contáctanos.
+
+© 2026 IngAya. Todos los derechos reservados.

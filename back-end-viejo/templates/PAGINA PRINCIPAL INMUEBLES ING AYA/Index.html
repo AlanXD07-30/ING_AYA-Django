@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ing Aya</title>
+    <link rel="stylesheet" href="Index.css">
+    <link rel="icon" href="../posible logo Ing aya 2026.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Acciones-Pag-Prin.js cargado al final del body para que el DOM esté listo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ===== ENCABEZADO ===== -->
+    <header>
+        <nav class="Imagen_empresa">
+            <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html">
+                <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
+            </a>
+        </nav>
+
+        <nav class="navegación_encabezado">
+            <ul class="Menu_principal">
+                <li><a href="../CONTACTANOS/contactanos.html">Contactanos</a></li>
+                <li><a href="../SOBRE NOSOTROS/sobrenosotros.html">Sobre nosotros</a></li>
+                <li>
+                    <a href="Index.html">Inmuebles</a>
+                    <ul class="Submenu_inmuebles">
+                        <li><a href="../SECCIÓN DE INMUEBLES/Venta/inmuebles.html">En venta</a></li>
+                        <li><a href="../SECCIÓN DE INMUEBLES/Arriendo/inmuebles.html">En Arriendo</a></li>
+                    </ul>
+                </li>
+                <li><a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html" class="inicio-nav">Iniciar sesión</a></li>
+                <li><a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/registro.html" class="crearcue-nav">Crear cuenta</a></li>
+                <!-- NUEVO: Botón de modo oscuro/claro -->
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo de color" title="Cambiar modo">
+                        <span class="toggle-icon" id="themeIcon">☀️</span>
+                        <span id="themeLabel"></span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== SLIDER PRINCIPAL ===== -->
+    <section class="container-2">
+        <div class="Slider-imagenes">
+            <ul>
+                <li>
+                    <img src="Imagenes/EDIFICIO_1.jpg" alt="Edificio 1 – Encuentra el hogar de tus sueños">
+                    <div class="texto">
+                        <h2>Encuentra el hogar de tus sueños</h2>
+                        <p>Encuentra el hogar perfecto para ti con nuestra amplia variedad de propiedades.<br>
+                        Explora opciones que se adaptan a tu estilo de vida y da el primer paso hacia tu nuevo comienzo.</p>
+                    </div>
+                </li>
+                <li>
+                    <img src="Imagenes/EDIFICIO_2.jpg" alt="Edificio 2 – Espacios únicos que inspiran">
+                    <div class="texto">
+                        <h2>Espacios únicos que inspiran</h2>
+                        <p>Descubre espacios únicos diseñados para brindarte comodidad y bienestar.<br>
+                        Desde apartamentos modernos hasta casas familiares, tenemos lo que estás buscando.</p>
+                    </div>
+                </li>
+                <li>
+                    <img src="Imagenes/EDIFICIO_3.jpg" alt="Edificio 3 – Compra fácil y seguro">
+                    <div class="texto">
+                        <h2>Compra fácil y seguro</h2>
+                        <p>Haz realidad tu sueño de tener vivienda propia con un proceso fácil y seguro.<br>
+                        Te acompañamos en cada etapa para que tomes la mejor decisión.</p>
+                    </div>
+                </li>
+                <li>
+                    <img src="Imagenes/EDIFICIO_4.jpg" alt="Edificio 4 – Invierte con confianza">
+                    <div class="texto">
+                        <h2>Invierte con confianza</h2>
+                        <p>Invierte con confianza en propiedades de alto valor.<br>
+                        Nuestro equipo te guía para encontrar oportunidades que se ajusten a tus necesidades y presupuesto.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===== GALERÍA — INMUEBLES MÁS VISTOS ===== -->
+    <section class="container-3">
+        <h2>Nuestros Inmuebles más vistos</h2>
+        <div class="galeria">
+            <img src="https://images.pexels.com/photos/271800/pexels-photo-271800.jpeg" alt="Inmueble 1">
+            <img src="https://images.pexels.com/photos/1866149/pexels-photo-1866149.jpeg" alt="Inmueble 2">
+            <img src="https://images.pexels.com/photos/439391/pexels-photo-439391.jpeg" alt="Inmueble 3">
+            <img src="https://images.pexels.com/photos/276554/pexels-photo-276554.jpeg" alt="Inmueble 4">
+            <img src="https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg" alt="Inmueble 5">
+            <img src="https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg" alt="Inmueble 6">
+        </div>
+        <p class="subtexto">¡Más de 200.000 inmuebles disponibles al alcance de tu mano!</p>
+    </section>
+
+    <!-- ===== CARACTERÍSTICAS ===== -->
+    <section class="caracteristicas">
+        <div class="caracteristica">
+            <div class="icono">✓</div>
+            <h3>Entrega Garantizada</h3>
+            <p>Te hacemos entrega en perfectas condiciones</p>
+        </div>
+        <div class="caracteristica">
+            <div class="icono">🔒</div>
+            <h3>Venta Segura</h3>
+            <p>Nuestra venta de inmuebles es muy segura</p>
+        </div>
+        <div class="caracteristica">
+            <div class="icono">★</div>
+            <h3>Calidad Nacional</h3>
+            <p>Los mejores inmuebles a nivel nacional</p>
+        </div>
+    </section>
+
+    <!-- ===== LA CASA DE TUS SUEÑOS ===== -->
+    <section class="suenos">
+        <img src="https://images.pexels.com/photos/101808/pexels-photo-101808.jpeg" alt="Llaves de casa">
+        <div class="texto-suenos">
+            <h2>La casa de tus sueños</h2>
+            <p>¿Qué esperas para comprar tu nuevo hogar? Disfruta de nuestros llamativos modelos.</p>
+        </div>
+    </section>
+
+    <!-- ===== VISUALIZACIÓN 3D ===== -->
+    <section class="visualizacion" aria-labelledby="vis-title">
+        <div class="contenido-visualizacion">
+            <div class="texto-visualizacion">
+                <h2 id="vis-title">Te ofrecemos visualización 3D</h2>
+                <p>Podrás visualizar el inmueble y ver todos sus espacios tanto por dentro como por fuera, y también podrás agregarlos a tu lista de deseos desde tu cuenta principal.</p>
+            </div>
+            <div class="imagenes-3d">
+                <div class="imagen-wrapper">
+                    <img src="https://images.pexels.com/photos/7031406/pexels-photo-7031406.jpeg" alt="Interior moderno 1" class="base">
+                    <img src="https://images.pexels.com/photos/6489107/pexels-photo-6489107.jpeg" alt="Interior moderno 2" class="superpuesta">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BENEFICIOS ===== -->
+    <section class="beneficios">
+        <div class="beneficio">
+            <div class="icono-beneficio">🏠</div>
+            <h3>Encuentra tu propiedad ideal</h3>
+            <p>Te ayudamos a encontrar casas, apartamentos y lotes que se ajusten a tus necesidades y presupuesto.</p>
+        </div>
+        <div class="beneficio">
+            <div class="icono-beneficio">📈</div>
+            <h3>Inversión segura y rentable</h3>
+            <p>Accede a oportunidades inmobiliarias con alto potencial de valorización y respaldo profesional.</p>
+        </div>
+        <div class="beneficio">
+            <div class="icono-beneficio">🤝</div>
+            <h3>Asesoría personalizada</h3>
+            <p>Te acompañamos durante todo el proceso de compra, venta o alquiler para que tomes la mejor decisión.</p>
+        </div>
+        <div class="beneficio">
+            <div class="icono-beneficio">🔍</div>
+            <h3>Amplio catálogo de propiedades</h3>
+            <p>Explora opciones exclusivas en las mejores ubicaciones y encuentra el inmueble perfecto.</p>
+        </div>
+    </section>
+
+    <!-- ===== TESTIMONIOS ===== -->
+    <section class="testimonios">
+        <h2>Opinión de nuestros clientes</h2>
+        <p class="subtitulo">Accede a nuestras redes sociales y comenta tu opinión, nos ayudas a crecer y mejorar nuestros servicios.</p>
+        <div class="cards-testimonio">
+            <div class="card">
+                <h4>Gustavo Cerati <span>✔</span></h4>
+                <p>@twitter_nametag</p>
+                <p>Me impresionó la calidad del inmueble, tienen un buen diseño y están muy bien ubicados.</p>
+                <small>8:21 PM / Dec 21, 2022</small>
+            </div>
+            <div class="card">
+                <h4>Luis Spinneta <span>✔</span></h4>
+                <p>@twitter_nametag</p>
+                <p>Estoy muy contento en mi hogar, llevo 7 años y no he tenido ningún problema. Está perfectamente construida.</p>
+                <small>8:21 PM / Dec 21, 2022</small>
+            </div>
+            <div class="card">
+                <h4>Indio Solari <span>✔</span></h4>
+                <p>@twitter_nametag</p>
+                <p>Exactly what I've been looking for. We have no regrets! We're loving it. Keep up the excellent work.</p>
+                <small>8:21 PM / Dec 21, 2022</small>
+            </div>
+            <div class="card">
+                <h4>Michael Jackson <span>✔</span></h4>
+                <p>@twitter_nametag</p>
+                <p>Increíble experiencia, el proceso fue muy ágil y el equipo siempre estuvo disponible.</p>
+                <small>8:21 PM / Dec 21, 2022</small>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-top">
+            <div class="social">
+                <p>Síguenos</p>
+                <span title="Web">🌐</span>
+                <span title="Twitter/X">🐦</span>
+                <span title="Instagram">📸</span>
+                <span title="YouTube">🎥</span>
+            </div>
+            <div class="contacto">
+                <p>CONTÁCTANOS</p>
+                <form onsubmit="return false;">
+                    <input type="email" placeholder="Tu dirección de correo electrónico" aria-label="Correo electrónico">
+                    <button type="submit">Enviar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <nav aria-label="Footer">
+                <a href="#">Características</a>
+                <a href="#">About</a>
+                <a href="#">Testimonios</a>
+                <a href="#">Contacto</a>
+                <a href="#">Descargar</a>
+            </nav>
+            <p>Bogotá 2025</p>
+            <small>© 2025 Ing Aya – Tu hogar de confianza</small>
+        </div>
+    </footer>
+
+    <!-- Scripts al final para que el DOM esté disponible -->
+    <script src="Acciones-Pag-Prin.js"></script>
+
+</body>
+</html>

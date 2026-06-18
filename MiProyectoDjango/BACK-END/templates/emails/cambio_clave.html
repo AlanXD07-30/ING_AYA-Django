@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Alerta de Seguridad - IngAya</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background-color: #0f172a;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid #ea580c; /* Orange border */
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .header h1 span {
+            color: #ea580c; /* Orange accent */
+        }
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .content h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-top: 0;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 25px;
+        }
+        .alert-box {
+            background-color: #fff7ed; /* Light orange bg */
+            border-left: 4px solid #ea580c;
+            padding: 15px;
+            text-align: left;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .alert-box p {
+            margin: 0;
+            color: #9a3412;
+            font-size: 15px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #ea580c; /* Orange button */
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #c2410c;
+        }
+        .footer {
+            background-color: #f1f5f9;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ing<span>Aya</span></h1>
+        </div>
+        <div class="content">
+            <h2>¡Hola, {{ nombre }}!</h2>
+            <div class="alert-box">
+                <p><strong>Aviso de seguridad:</strong> Te informamos que la contraseña de tu cuenta de IngAya ha sido modificada recientemente desde tu perfil.</p>
+            </div>
+            <p>
+                Si has sido tú quien ha realizado este cambio, puedes ignorar este correo. 
+                Si <strong>no reconoces</strong> esta acción, por favor contáctanos de inmediato para asegurar tu cuenta.
+            </p>
+            <a href="http://127.0.0.1:5500/PAGINA%20PRINCIPAL%20INMUEBLES%20ING%20AYA/Index.html" class="btn" style="color: #ffffff;">Ir a IngAya</a>
+        </div>
+        <div class="footer">
+            <p>Por motivos de seguridad, este es un mensaje automático. Si necesitas ayuda, visita nuestra sección de Contáctanos.</p>
+            <p>© 2026 IngAya. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+
+    <style>
+        .controles-arriba {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .filtro {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-info {
+            background: #3498db;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        #reportModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #reportModal .modal-content {
+            background: #fff;
+            padding: 20px;
+            width: 500px;
+            max-width: 95%;
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        table th, table td {
+            text-align: center;
+        }
+    </style>
+
+    <script>
+        function filtrarPorRol() {
+            const rolSeleccionado = document.getElementById('filtroRol').value.toLowerCase();
+            const filas = document.querySelectorAll('#usuariosTbody tr');
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                const roles = fila.querySelector('td:nth-child(4)').innerText.toLowerCase();
+                if (rolSeleccionado === 'todos' || roles.includes(rolSeleccionado)) {
+                    fila.style.display = '';
+                    visibles++;
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+
+            document.getElementById('visibleCount').textContent = visibles;
+        }
+
+        function mostrarFormularioAgregar() {
+            const form = document.getElementById('formAgregarUsuario');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            toggleEmployeeFields();
+        }
+
+        function toggleEmployeeFields() {
+            const role = document.getElementById('rol').value;
+            const employeeRoles = ['EMPLEADO', 'SECRETARIA', 'AGENTE_INMOBILIARIO'];
+            const container = document.getElementById('employeeFields');
+            const requiredEls = container.querySelectorAll('[data-employee-required]');
+
+            if (employeeRoles.includes(role)) {
+                container.style.display = 'block';
+                requiredEls.forEach(el => el.required = true);
+            } else {
+                container.style.display = 'none';
+                requiredEls.forEach(el => el.required = false);
+            }
+        }
+
+        function openReportModal() {
+            updateModalCounts();
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function updateModalCounts() {
+            const visibleRows = Array.from(
+                document.querySelectorAll('#usuariosTbody tr')
+            ).filter(row => row.style.display !== 'none');
+
+            const selectedRows = document.querySelectorAll('.select-row:checked');
+
+            document.getElementById('modalVisibleCount').textContent = visibleRows.length;
+            document.getElementById('modalSelectedCount').textContent = selectedRows.length;
+            document.getElementById('visibleCount').textContent = visibleRows.length;
+        }
+
+        function submitReport() {
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const form = document.getElementById('reportForm');
+
+            if (mode === 'selected') {
+                const ids = Array.from(document.querySelectorAll('.select-row:checked'))
+                    .map(cb => cb.value);
+
+                if (ids.length === 0) {
+                    alert('Seleccione al menos un usuario.');
+                    return;
+                }
+
+                document.getElementById('selected_ids').value = ids.join(',');
+                form.method = 'POST';
+            } else {
+                document.getElementById('selected_ids').value = '';
+                form.method = 'GET';
+
+                if (mode === 'filter') {
+                    const rolFiltro = document.getElementById('filtroRol').value;
+                    document.getElementById('rolFiltroHidden').value =
+                        rolFiltro === 'todos' ? '' : rolFiltro.toUpperCase();
+                } else {
+                    document.getElementById('rolFiltroHidden').value = '';
+                }
+            }
+
+            form.target = '_blank';
+            form.submit();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            filtrarPorRol();
+            updateModalCounts();
+        });
+
+        document.addEventListener('change', function (e) {
+            if (e.target.classList.contains('select-row') ||
+                e.target.id === 'select_all') {
+
+                if (e.target.id === 'select_all') {
+                    document.querySelectorAll('.select-row')
+                        .forEach(cb => cb.checked = e.target.checked);
+                }
+                updateModalCounts();
+            }
+        });
+
+        document.addEventListener('keydown', function(e){
+            if(e.key === 'Escape'){
+                closeReportModal();
+            }
+        });
+
+        window.onclick = function(e) {
+            const modal = document.getElementById('reportModal');
+            if (e.target === modal) {
+                closeReportModal();
+            }
+        };
+    </script>
+</head>
+
+<body>
+<header>
+    <nav class="Imagen_empresa">
+        <a href="{{ url_for('admin') }}">
+            <img src="{{ url_for('static', filename='posible logo Ing aya 2026.png') }}" alt="Logo">
+        </a>
+    </nav>
+
+    <h2 class="title-prin">Gestión de Usuarios</h2>
+
+    <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+        <a class="btn btn-outline" href="{{ url_for('admin') }}" style="text-decoration:none;">
+            Volver al menú
+        </a>
+    </div>
+</header>
+
+<main>
+<section class="gestion">
+    <h2>Gestión de Usuarios</h2>
+
+    <!-- Controles -->
+    <div class="controles-arriba">
+        <div class="filtro">
+            <label for="filtroRol">Filtrar por rol:</label>
+            <select id="filtroRol" onchange="filtrarPorRol()">
+                <option value="todos">Todos</option>
+                <option value="empleado">Empleado</option>
+                <option value="secretaria">Secretaria</option>
+                <option value="cliente">Cliente</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <span class="badge-info">
+                <span id="visibleCount">0</span> visibles
+            </span>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <button class="btn" onclick="mostrarFormularioAgregar()">Agregar Usuario</button>
+
+            <button class="btn"
+                    onclick="openReportModal()"
+                    style="background:#2980b9; color:white;">
+                📄 Imprimir Reporte
+            </button>
+        </div>
+    </div>
+
+    <!-- Formulario -->
+    <div id="formAgregarUsuario" class="card form-card" style="display:none;">
+        <h3>Nuevo Usuario</h3>
+        <form method="POST" action="/admin/usuarios/agregar">
+            <div class="form-row">
+                <label>Email:</label>
+                <input class="form-control" type="email" name="email" required>
+            </div>
+
+            <div class="form-row">
+                <label>Contraseña:</label>
+                <input class="form-control" type="password" name="contrasena" required>
+            </div>
+
+            <div class="form-row">
+                <label>Rol:</label>
+                <select class="form-control" id="rol" name="rol" required onchange="toggleEmployeeFields()">
+                    <option value="">Seleccione rol</option>
+                    <option value="EMPLEADO">Empleado</option>
+                    <option value="SECRETARIA">Secretaria</option>
+                    <option value="AGENTE_INMOBILIARIO">Agente Inmobiliario</option>
+                </select>
+            </div>
+
+            <div id="employeeFields" style="display:none;">
+                <div class="form-grid">
+                    <div>
+                        <label>Nombre completo:</label>
+                        <input class="form-control" type="text" name="nombre_empleado" data-employee-required>
+                    </div>
+                    <div>
+                        <label>Identificación:</label>
+                        <input class="form-control" type="text" name="identificacion_empleado" data-employee-required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label>Teléfono:</label>
+                        <input class="form-control" type="text" name="telefono_empleado">
+                    </div>
+                    <div>
+                        <label>Tipo de empleado:</label>
+                        <input class="form-control" type="text" name="tipo_empleado">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:15px;">
+                <button class="btn" type="submit">Guardar Usuario</button>
+                <button type="button" class="btn btn-outline"
+                        onclick="document.getElementById('formAgregarUsuario').style.display='none'">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabla -->
+    <table>
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select_all"></th>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Estado</th>
+                <th>Fecha de Creación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="usuariosTbody">
+            {% for usuario in usuarios %}
+            <tr>
+                <td><input type="checkbox" class="select-row" value="{{ usuario.id_usuario }}"></td>
+                <td>{{ usuario.id_usuario }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.roles | join(', ') }}</td>
+                <td>{{ usuario.estado }}</td>
+                <td>{{ usuario.fecha_creacion }}</td>
+                <td>
+                    <button class="btn btn-outline"
+                        onclick="window.location.href='/admin/usuarios/editar/{{ usuario.id_usuario }}'">
+                        Editar
+                    </button>
+                    <button class="btn btn-outline"
+                        onclick="window.location.href='/admin/usuarios/eliminar/{{ usuario.id_usuario }}'">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No hay usuarios registrados</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+</main>
+
+<!-- Modal Reporte -->
+<div id="reportModal">
+    <div class="modal-content">
+        <h3>Opciones de Reporte</h3>
+
+        <p>
+            Usuarios visibles: <strong id="modalVisibleCount">0</strong><br>
+            Usuarios seleccionados: <strong id="modalSelectedCount">0</strong>
+        </p>
+
+        <form id="reportForm" method="GET"
+              action="{{ url_for('admin_reporte_usuarios') }}">
+            <label>
+                <input type="radio" name="mode" value="all" checked>
+                Todos los usuarios
+            </label><br>
+
+            <label>
+                <input type="radio" name="mode" value="filter">
+                Usuarios filtrados por rol
+            </label><br>
+
+            <label>
+                <input type="radio" name="mode" value="selected">
+                Solo usuarios seleccionados
+            </label>
+
+            <input type="hidden" name="selected_ids" id="selected_ids">
+            <input type="hidden" name="rol" id="rolFiltroHidden">
+
+            <div style="margin-top:15px; text-align:right;">
+                <button type="button" class="btn btn-outline" onclick="closeReportModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn" onclick="submitReport()">
+                    Generar PDF
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

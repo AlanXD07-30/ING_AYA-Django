@@ -1,0 +1,44 @@
+{% extends "SecretariaOpciones/panel_secretaria.html" %}
+{% block content %}
+  <section class="seccion-agendar">
+    <h2 class="titulo-seccion">Agendar Cita</h2>
+
+    <div class="form-contenedor">
+      <form method="post" action="{{ url_for('secretaria_agendar_cita') }}" class="form-agendar">
+        <label for="id_cliente">Cliente</label>
+        <select name="id_cliente" id="id_cliente" required>
+          <option value="">-- Seleccionar cliente --</option>
+          {% for cl in clientes %}
+            <option value="{{ cl[0] }}">{{ cl[1] or cl[2] }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="id_empleado">Empleado (opcional)</label>
+        <select name="id_empleado" id="id_empleado">
+          <option value="">-- Asignar a --</option>
+          {% for e in empleados %}
+            <option value="{{ e[0] }}">{{ e[1] }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="fecha_hora">Fecha y hora</label>
+        <input type="datetime-local" name="fecha_hora" id="fecha_hora" required>
+
+        <label for="asunto">Asunto</label>
+        <input type="text" name="asunto" id="asunto" required>
+
+        <label for="estado">Estado</label>
+        <select name="estado" id="estado">
+          <option value="PENDIENTE">PENDIENTE</option>
+          <option value="CONFIRMADA">CONFIRMADA</option>
+          <option value="CANCELADA">CANCELADA</option>
+        </select>
+
+        <div class="botones-form">
+          <button class="btn" type="submit">Agendar</button>
+          <a class="btn btn-outline" href="{{ url_for('secretaria_citas') }}">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,15 @@
+flask
+flask-cors
+python-dotenv
+sqlalchemy
+flask-sqlalchemy
+psycopg2-binary
+pymysql
+passlib[bcrypt]
+bcrypt
+requests
+reportlab
+pandas
+openpyxl
+jinja2
+werkzeug

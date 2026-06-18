@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Inmueble - ING AYA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="Imagen_empresa">
+            <a href="http://127.0.0.1:5500/index.html">
+                <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png') }}" alt="Logo ING AYA">
+            </a>
+        </nav>
+        <h2 class="title-prin">Eliminar Inmueble</h2>
+        <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+            <a class="btn btn-outline" href="/admin" style="text-decoration:none;">Volver al menú</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="gestion" style="max-width:700px; margin: 30px auto;">
+            <div class="card" style="background:#fff; padding:20px; border-radius:8px;">
+                <h3 style="margin-bottom:8px;">Confirmar eliminación</h3>
+                <p style="color:#333; margin-bottom:18px;">¿Está seguro de eliminar la propiedad <strong>#{{ inmueble.id_inmueble }}</strong> — <em>{{ inmueble.direccion }}</em> en <strong>{{ inmueble.ciudad }}</strong>?</p>
+
+                <div style="display:flex; gap:12px;">
+                    <form method="POST" action="{{ url_for('eliminar_inmueble', id_inmueble=inmueble.id_inmueble) }}">
+                        <button type="submit" class="btn" style="background:#c0392b; color:white;">Sí, eliminar</button>
+                    </form>
+
+                    <a class="btn btn-outline" href="{{ url_for('gestion_inmuebles') }}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Cancelar</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

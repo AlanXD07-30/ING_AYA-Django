@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Bienvenido a IngAya</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background-color: #0f172a;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid #3b82f6;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+        .header h1 span {
+            color: #3b82f6;
+        }
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .content h2 {
+            color: #0f172a;
+            font-size: 24px;
+            margin-top: 0;
+        }
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 25px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2563eb;
+        }
+        .footer {
+            background-color: #f1f5f9;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ing<span>Aya</span></h1>
+        </div>
+        <div class="content">
+            <h2>¡Hola, {{ nombre }}!</h2>
+            <p>
+                Nos alegra muchísimo darte la bienvenida a <strong>IngAya</strong>, tu hogar de confianza.
+                A partir de este momento, tienes acceso exclusivo a nuestro catálogo de inmuebles y herramientas
+                personalizadas para encontrar la propiedad de tus sueños.
+            </p>
+            <p>
+                Explora, guarda tus inmuebles favoritos y gestiona tu perfil directamente desde nuestra plataforma.
+            </p>
+            <a href="http://127.0.0.1:5500/PAGINA%20PRINCIPAL%20INMUEBLES%20ING%20AYA/Index.html" class="btn" style="color: #ffffff;">Ir a mi plataforma</a>
+        </div>
+        <div class="footer">
+            <p>¿Tienes preguntas? Contáctanos respondiendo a este correo o visita nuestra sección de Contáctanos.</p>
+            <p>© 2026 IngAya. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

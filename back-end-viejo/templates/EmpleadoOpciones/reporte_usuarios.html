@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Reporte de Usuarios - Empleado</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    /* Estilos optimizados para impresión y PDF */
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #222;
+      margin: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid #e6e6e6;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    header img {
+      height: 48px;
+    }
+
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    header .meta {
+      margin-left: auto;
+      text-align: right;
+      font-size: 12px;
+      color: #555;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f4f4f4;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fbfbfb;
+    }
+
+    .small {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .no-data {
+      padding: 18px;
+      text-align: center;
+      color: #666;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 11px;
+      color: #666;
+      border-top: 1px solid #eee;
+      padding-top: 8px;
+      text-align: center;
+    }
+
+    .estado-activo {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .estado-inactivo {
+      color: #c0392b;
+      font-weight: bold;
+    }
+
+    @media print {
+      body {
+        margin: 8mm;
+      }
+
+      header img {
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  {% set mode = request.values.get('mode', 'all') %}
+
+  <header>
+    <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png', _external=True) }}" alt="Logo ING AYA">
+
+    <div>
+      <h1>Reporte de Usuarios (Empleado)</h1>
+      <div class="small">
+        {% if mode == 'selected' %}
+          Usuarios seleccionados
+        {% elif mode == 'filter' %}
+          Usuarios filtrados
+        {% else %}
+          Todos los usuarios
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="meta">
+      <div><strong>Generado:</strong> {{ now.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+      <div class="small">
+        <strong>Modo:</strong>
+        {% if mode == 'selected' %}
+          Seleccionados
+        {% elif mode == 'filter' %}
+          Filtrados
+        {% else %}
+          Todos
+        {% endif %}
+      </div>
+
+      {% if mode == 'selected' and request.values.get('selected_ids') %}
+      <div class="small">
+        <strong>IDs:</strong> {{ request.values.get('selected_ids') }}
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <main>
+    {% if not usuarios %}
+      <div class="no-data">
+        No hay usuarios para los criterios seleccionados.
+      </div>
+    {% else %}
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">ID</th>
+            <th>Email</th>
+            <th style="width:120px;">Estado</th>
+            <th style="width:160px;">Fecha creación</th>
+            <th>Roles</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in usuarios %}
+          <tr>
+            <td>{{ r[0] }}</td>
+            <td>{{ r[1] or '' }}</td>
+            <td class="{% if r[2] == 'ACTIVO' %}estado-activo{% else %}estado-inactivo{% endif %}">
+              {{ r[2] or '' }}
+            </td>
+            <td>
+              {% if r[3] %}
+                {{ r[3].strftime('%Y-%m-%d %H:%M') if r[3].strftime else r[3] }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ (r[4] or []) | join(', ') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </main>
+
+  <footer>
+    <div class="small">
+      ING AYA — Sistema de Gestión Inmobiliaria
+    </div>
+  </footer>
+
+</body>
+</html>

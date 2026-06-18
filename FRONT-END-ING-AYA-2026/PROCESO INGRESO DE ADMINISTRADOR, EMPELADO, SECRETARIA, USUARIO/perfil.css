@@ -1,0 +1,458 @@
+/* ============================================================
+   perfil.css — Diseño Premium para Mi Perfil
+   Solo cards + layout. No toca header, footer ni body bg.
+   ============================================================ */
+
+/* ── CONTENEDOR PRINCIPAL ─────────────────────────────────── */
+/* Override login.css main{display:flex} que pone todo en fila */
+main.perfil-container {
+    display: block !important;
+    flex-direction: unset !important;
+    align-items: unset !important;
+    max-width: 1600px;
+    margin: 50px auto;
+    padding: 0 3%;
+}
+
+/* ── FILA SUPERIOR: Avatar (izq) + Datos (der) ───────────── */
+.perfil-top-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+    margin-bottom: 35px;
+    align-items: stretch;
+}
+
+/* ── CARD BASE (glassmorphism) ────────────────────────────── */
+.card-box {
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    padding: 40px;
+    transition: box-shadow 0.3s ease;
+}
+
+.card-box:hover {
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ── CARD: FOTO DE PERFIL (arriba-izq) ────────────────────── */
+.perfil-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Brillo decorativo detrás del avatar */
+.perfil-header::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    pointer-events: none;
+}
+
+.perfil-header .avatar-container {
+    position: relative;
+    z-index: 2;
+}
+
+.perfil-header img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.08), 0 8px 24px rgba(0, 0, 0, 0.3);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.perfil-header img:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.14), 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.avatar-overlay {
+    transition: all 0.3s ease;
+    font-size: 13px;
+}
+
+label[for="input-foto"]:hover .avatar-overlay {
+    transform: scale(1.15);
+    filter: brightness(1.2);
+}
+
+.perfil-info {
+    position: relative;
+    z-index: 2;
+}
+
+.perfil-info h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+}
+
+.perfil-info p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* ── CARD: DATOS PERSONALES (arriba-der) ──────────────────── */
+.perfil-sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil-sidebar h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #e2e8f0;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfil-sidebar h2::before {
+    content: "";
+    width: 4px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.datos-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px 0;
+    flex-grow: 1;
+}
+
+.datos-lista li {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: #cbd5e1;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    transition: background 0.2s ease;
+}
+
+.datos-lista li:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.datos-lista li strong {
+    color: #94a3b8;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    color: var(--accent);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+.btn-secondary:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+    transform: translateY(-1px);
+}
+
+/* ── FILA INFERIOR: FAVORITOS + HISTORIAL ────────────── */
+.perfil-bottom-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+    align-items: stretch;
+}
+
+@media (max-width: 900px) {
+    .perfil-bottom-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.perfil-main {
+    min-width: 0;
+}
+
+.perfil-main h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e2e8f0;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.perfil-main h2::before {
+    content: "";
+    width: 4px;
+    height: 20px;
+    background: #f472b6;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.favoritos-desc {
+    color: #64748b;
+    margin-bottom: 28px;
+    font-size: 15px;
+}
+
+.favoritos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 28px;
+}
+
+/* ── TARJETA DE INMUEBLE FAVORITO ─────────────────────────── */
+.inmueble-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inmueble-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.inmueble-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: transform 0.4s ease;
+}
+
+.inmueble-card:hover img {
+    transform: scale(1.04);
+}
+
+.inmueble-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.inmueble-info h3 {
+    font-size: 17px;
+    color: #f1f5f9;
+    margin-bottom: 6px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.inmueble-info p {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.inmueble-info .precio-txt {
+    font-size: 20px;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 16px;
+    margin-top: auto;
+    letter-spacing: -0.3px;
+}
+
+.btn-eliminar-fav {
+    background: rgba(239, 68, 68, 0.08);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.btn-eliminar-fav:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ── MODAL DE EDICIÓN ─────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(2, 6, 23, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.25s ease-out forwards;
+}
+
+.modal-content {
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    width: 90%;
+    max-width: 480px;
+    padding: 36px;
+    border-radius: 20px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    font-size: 26px;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #ef4444;
+    transform: rotate(90deg);
+}
+
+.modal-content h2 {
+    color: #e2e8f0;
+    margin-top: 0;
+    margin-bottom: 28px;
+    font-size: 1.4rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.modal-content h3 {
+    color: #cbd5e1;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.input-group {
+    margin-bottom: 1.1rem;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.6);
+    color: #f1f5f9;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .perfil-top-row {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .favoritos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── ANIMACIONES ──────────────────────────────────────────── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

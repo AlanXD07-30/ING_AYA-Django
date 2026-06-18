@@ -1,0 +1,9 @@
+¡Hola, {{ nombre }}!
+
+Aviso de seguridad: Te informamos que la contraseña de tu cuenta de IngAya ha sido modificada recientemente desde tu perfil.
+
+Si has sido tú quien ha realizado este cambio, puedes ignorar este correo. Si no reconoces esta acción, por favor contáctanos de inmediato para asegurar tu cuenta.
+
+Por motivos de seguridad, este es un mensaje automático. Si necesitas ayuda, visita nuestra sección de Contáctanos.
+
+© 2026 IngAya. Todos los derechos reservados.

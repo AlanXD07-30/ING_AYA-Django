@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Inmueble - ING AYA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+
+    <style>
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .warning-box {
+            background: #fff5f5;
+            border-left: 5px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: #c0392b;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: #a93226;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="Imagen_empresa">
+            <a href="{{ url_for('empleado_gestion_inmuebles') }}">
+                <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png') }}" alt="Logo ING AYA">
+            </a>
+        </nav>
+        <h2 class="title-prin">Eliminar Inmueble</h2>
+        <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+            <a class="btn btn-outline" href="/empleado" style="text-decoration:none;">Volver al menú</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="gestion" style="max-width:700px; margin: 30px auto;">
+            <div class="card">
+                <h3 style="margin-bottom:10px;">Confirmar eliminación</h3>
+
+                <div class="warning-box">
+                    <p>
+                        ¿Está seguro de eliminar la propiedad
+                        <strong>#{{ inmueble.id_inmueble }}</strong> —
+                        <em>{{ inmueble.direccion }}</em> en
+                        <strong>{{ inmueble.ciudad }}</strong>?
+                    </p>
+                    <p style="margin-top:8px; color:#c0392b; font-size:14px;">
+                        Esta acción no se puede deshacer.
+                    </p>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <!-- Formulario para eliminar -->
+                    <form method="POST"
+                          action="{{ url_for('empleado_eliminar_inmueble', id_inmueble=inmueble.id_inmueble) }}">
+                        <button type="submit" class="btn btn-danger">
+                            Sí, eliminar
+                        </button>
+                    </form>
+
+                    <!-- Botón cancelar -->
+                    <a class="btn btn-outline"
+                       href="{{ url_for('empleado_gestion_inmuebles') }}"
+                       style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                        Cancelar
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

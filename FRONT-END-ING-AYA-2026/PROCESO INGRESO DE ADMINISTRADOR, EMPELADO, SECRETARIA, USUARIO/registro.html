@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ING AYA | Crear cuenta</title>
+    <link rel="stylesheet" href="registro.css">
+    <link rel="icon" href="../posible logo Ing aya 2026.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="logo-head">
+            <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="../SOBRE NOSOTROS/sobrenosotros.html">Sobre nosotros</a></li>
+            <li><a href="../SECCIÓN DE INMUEBLES/Venta/inmuebles.html">Inmuebles</a></li>
+            <li><a href="../CONTACTANOS/contactanos.html">Contáctanos</a></li>
+            <li><a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html" class="nav-link-ingresar">Iniciar sesión</a></li>
+            <li><a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/registro.html" class="nav-link-registrar">Crear cuenta</a></li>
+            <li>
+                <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="nav-link-home" title="Inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li>
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo de color" title="Cambiar modo">
+                    <span id="themeIcon">☀️</span>
+                </button>
+            </li>
+        </ul>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+        <div class="register-card">
+
+            <!-- Logo + nombre -->
+            <div class="register-logo">
+                <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
+                <span>Ing. Aya</span>
+                <small>Tu hogar de confianza</small>
+            </div>
+
+            <h2>Crea tu cuenta</h2>
+
+            <!-- Mensaje del servidor -->
+            <div id="server-message" class="server-message" role="status" aria-live="polite"></div>
+
+            <form
+                id="form-registro"
+                action="http://localhost:8080/registrar"
+                method="POST"
+                novalidate>
+
+                <!-- ─── Información personal ─── -->
+                <div class="section-divider">
+                    <span>Información personal</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo *</label>
+                        <input type="text" id="nombre" name="nombre"
+                               placeholder="Tu nombre completo" required autocomplete="name">
+                        <span class="field-error" id="error-nombre">Ingresa tu nombre.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="identificacion">Cédula / ID *</label>
+                        <input type="text" id="identificacion" name="identificacion"
+                               placeholder="Número de identificación" required>
+                        <span class="field-error" id="error-id">Ingresa tu cédula.</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">Teléfono / Celular</label>
+                        <input type="tel" id="telefono" name="telefono"
+                               placeholder="+57 300 000 0000" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_nacimiento">Fecha de nacimiento</label>
+                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección de residencia</label>
+                    <input type="text" id="direccion" name="direccion"
+                           placeholder="Calle 00 # 00-00, Bogotá" autocomplete="street-address">
+                </div>
+
+                <!-- ─── Datos de cuenta ─── -->
+                <div class="section-divider">
+                    <span>Datos de cuenta</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo electrónico *</label>
+                    <input type="email" id="email" name="email"
+                           placeholder="tucorreo@ejemplo.com" required autocomplete="username">
+                    <span class="field-error" id="error-email">Ingresa un correo válido.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña *</label>
+                    <input type="password" id="contrasena" name="contrasena"
+                           placeholder="Mínimo 6 caracteres" required minlength="6"
+                           autocomplete="new-password">
+                    <span class="field-error" id="error-pass">Mínimo 6 caracteres.</span>
+
+                    <!-- Indicador de fortaleza -->
+                    <div class="password-strength" id="pass-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <span class="strength-label" id="strength-label">Fortaleza: —</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-registrar">
+                    <span id="btn-text">Crear cuenta</span>
+                    <span class="btn-spinner" id="btn-spinner"></span>
+                </button>
+
+            </form>
+
+            <p class="register-footer-text">
+                ¿Ya tienes cuenta? <a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html">Iniciar sesión</a>
+            </p>
+
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-top">
+            <div class="social">
+                <p>Síguenos</p>
+                <span title="Web">🌐</span>
+                <span title="Twitter/X">🐦</span>
+                <span title="Instagram">📸</span>
+                <span title="YouTube">🎥</span>
+            </div>
+            <div class="contacto">
+                <p>CONTÁCTANOS</p>
+                <form onsubmit="return false;">
+                    <input type="email" placeholder="Tu dirección de correo electrónico" aria-label="Correo electrónico">
+                    <button type="button">Enviar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <nav aria-label="Footer">
+                <a href="#">Características</a>
+                <a href="#">About</a>
+                <a href="#">Testimonios</a>
+                <a href="#">Contacto</a>
+            </nav>
+            <p>Bogotá 2025</p>
+            <small>© 2025 Ing Aya – Tu hogar de confianza</small>
+        </div>
+    </footer>
+
+    <script src="Acciones-Registro.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Inmueble - ING AYA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="Imagen_empresa">
+            <a href="http://127.0.0.1:5500/index.html">
+                <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png') }}" alt="Logo ING AYA">
+            </a>
+        </nav>
+        <h2 class="title-prin">Editar Inmueble</h2>
+        <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+            <a class="btn btn-outline" href="/admin" style="text-decoration:none;">Volver al menú</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="gestion" style="max-width: 900px; margin: 20px auto;">
+            <h3 style="margin-bottom: 12px;">Editar propiedad #{{ inmueble.id_inmueble }}</h3>
+
+            <form method="POST" action="{{ url_for('editar_inmueble', id_inmueble=inmueble.id_inmueble) }}" enctype="multipart/form-data" class="card form-card" style="background:#fff; padding:20px; border-radius:8px;">
+                <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div>
+                        <label class="form-label">Dirección</label>
+                        <input class="form-control" type="text" name="direccion" value="{{ inmueble.direccion }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Barrio</label>
+                        <input class="form-control" type="text" name="barrio" value="{{ inmueble.barrio or '' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px; margin-top:15px;">
+                    <div>
+                        <label class="form-label">Ciudad</label>
+                        <input class="form-control" type="text" name="ciudad" value="{{ inmueble.ciudad or '' }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Precio ($)</label>
+                        <input class="form-control" type="number" name="precio" step="0.01" value="{{ inmueble.precio }}" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Metraje (m²)</label>
+                        <input class="form-control" type="number" step="0.01" name="metraje" value="{{ inmueble.metraje or '' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px; margin-top:15px;">
+                    <div>
+                        <label class="form-label">Tipo Propiedad</label>
+                        <select class="form-control" name="id_tipo" required>
+                            {% for t in tipos %}
+                                <option value="{{ t[0] }}" {% if t[0] == inmueble.id_tipo %}selected{% endif %}>{{ t[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Operación</label>
+                        <select class="form-control" name="tipo_operacion" required>
+                            <option value="VENTA" {% if inmueble.tipo_operacion == 'VENTA' %}selected{% endif %}>Venta</option>
+                            <option value="ARRIENDO" {% if inmueble.tipo_operacion == 'ARRIENDO' %}selected{% endif %}>Arriendo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Estado</label>
+                        <select class="form-control" name="estado">
+                            <option value="DISPONIBLE" {% if inmueble.estado == 'DISPONIBLE' %}selected{% endif %}>Disponible</option>
+                            <option value="MANTENIMIENTO" {% if inmueble.estado == 'MANTENIMIENTO' %}selected{% endif %}>Mantenimiento</option>
+                            <option value="OCUPADO" {% if inmueble.estado == 'OCUPADO' %}selected{% endif %}>Ocupado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; display:flex; gap:18px; align-items:flex-start;">
+                    <div style="flex:1;">
+                        <label class="form-label">Imagen principal actual</label>
+                        {% if imagen_principal %}
+                            <div style="display:flex; gap:12px; align-items:center;">
+                                <img src="{{ url_for('static', filename='uploads/' + imagen_principal.url_imagen) }}" alt="Imagen principal" style="width:120px; height:90px; object-fit:cover; border-radius:6px; border:1px solid #e6e6e6;">
+                                <div style="font-size:14px; color:#555;">
+                                    <div><strong>Archivo:</strong> {{ imagen_principal.url_imagen }}</div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div style="font-size:13px; color:#888;">No hay imagen principal</div>
+                        {% endif %}
+                    </div>
+
+                    <div style="flex:1;">
+                        <label class="form-label">Reemplazar imagen principal</label>
+                        <input type="file" name="imagen_principal" accept="image/*" class="form-control">
+                        <small style="color:#666; display:block; margin-top:6px;">Si subes una nueva imagen, la anterior será reemplazada.</small>
+                    </div>
+                </div>
+
+                <div style="margin-top:20px; display:flex; gap:12px;">
+                    <button class="btn" type="submit" style="background:#27ae60; color:white;">Guardar cambios</button>
+                    <a class="btn btn-outline" href="{{ url_for('gestion_inmuebles') }}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inmuebles en Venta | ING AYA</title>
+    <link rel="stylesheet" href="inmuebles.css">
+    <link rel="icon" href="../../posible logo Ing aya 2026.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <a href="../../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="logo-head">
+            <img src="../../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="../../SOBRE NOSOTROS/sobrenosotros.html">Sobre nosotros</a></li>
+            <li><a href="../../CONTACTANOS/contactanos.html">Contáctanos</a></li>
+            <li>
+                <a href="inmuebles.html">Inmuebles</a>
+                <ul class="submenu">
+                    <li><a href="../Venta/inmuebles.html">En venta</a></li>
+                    <li><a href="../Arriendo/inmuebles.html">En arriendo</a></li>
+                </ul>
+            </li>
+            
+            <li>
+                <a href="../../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html"
+                   class="nav-link-ingresar">Iniciar sesión</a>
+            </li>
+            <li>
+                <a href="../../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/registro.html"
+                   class="nav-link-registrar">Crear cuenta</a>
+            </li>
+            <li>
+                <a href="../../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="nav-link-home" title="Inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li>
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo de color" title="Cambiar modo">
+                    <span id="themeIcon">☀️</span>
+                </button>
+            </li>
+        </ul>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <span class="hero-eyebrow">🏡 Venta</span>
+        <h2>Encuentra tu hogar ideal</h2>
+        <p>Explora nuestra selección de propiedades en venta. Filtra por ciudad o tipo de inmueble y encuentra la propiedad perfecta para ti.</p>
+    </section>
+
+    <!-- ===== GRID DE INMUEBLES ===== -->
+    <section class="contenedor-inmuebles reveal">
+        <div class="actions-bar">
+            <div>
+                <h2>Propiedades en venta</h2>
+                <p class="subtitle">Usa los filtros para encontrar rápido lo que buscas.</p>
+            </div>
+            <div class="filtros">
+                <select id="ciudad" aria-label="Filtrar por ciudad">
+                    <option value="todos">Todas las ciudades</option>
+                    <option value="Bogotá">Bogotá</option>
+                    <option value="Medellín">Medellín</option>
+                    <option value="Cali">Cali</option>
+                    <option value="Barranquilla">Barranquilla</option>
+                    <option value="Cartagena">Cartagena</option>
+                    <option value="Bucaramanga">Bucaramanga</option>
+                    <option value="Santa Marta">Santa Marta</option>
+                </select>
+
+                <select id="tipo" aria-label="Filtrar por tipo">
+                    <option value="todos">Todos los tipos</option>
+                    <option value="Apartamento">Apartamento</option>
+                    <option value="Casa">Casa</option>
+                    <option value="Finca">Finca</option>
+                    <option value="Casa Quinta">Casa Quinta</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Banner aviso favoritos -->
+        <div class="mensaje-info" id="mensaje-favorito" role="alert">
+            Debes iniciar sesión para guardar favoritos en tu historial.
+        </div>
+
+        <!-- Grid dinámico -->
+        <div class="grid-inmuebles" id="gridInmuebles" aria-live="polite" aria-label="Listado de inmuebles">
+        </div>
+
+        <!-- Estado vacío -->
+        <div class="empty-state" id="emptyState" hidden>
+            <div class="empty-state-icon">🏘️</div>
+            <h3>No hay propiedades disponibles</h3>
+            <p>
+                Prueba cambiando los filtros, o conecta tu base de datos usando<br>
+                <code>window.INMUEBLES.setItems([])</code>
+            </p>
+        </div>
+
+        <!-- Estado error -->
+        <div class="error-state" id="errorState" hidden>
+            <div class="error-state-icon">⚠️</div>
+            <h3>No se pudieron cargar las propiedades</h3>
+            <p id="errorMessage">Verifica tu conexión o intenta más tarde.</p>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-top">
+            <div class="social">
+                <p>Síguenos</p>
+                <span title="Web">🌐</span>
+                <span title="Twitter/X">🐦</span>
+                <span title="Instagram">📸</span>
+                <span title="YouTube">🎥</span>
+            </div>
+            <div class="contacto">
+                <p>CONTÁCTANOS</p>
+                <form id="footerForm" onsubmit="return false;">
+                    <input type="email" placeholder="Tu dirección de correo electrónico" aria-label="Correo electrónico">
+                    <button type="submit">Enviar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <nav aria-label="Footer">
+                <a href="#">Características</a>
+                <a href="#">About</a>
+                <a href="#">Testimonios</a>
+                <a href="#">Contacto</a>
+            </nav>
+            <p>Bogotá 2025</p>
+            <small>© 2025 Ing Aya – Tu hogar de confianza</small>
+        </div>
+    </footer>
+
+    <script src="inmuebles.js" defer></script>
+
+</body>
+</html>

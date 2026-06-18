@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Reporte de Inmuebles - ING AYA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css', _external=True) }}">
+    <style>
+        body { font-family: Arial, sans-serif; color: #222; }
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+        .logo { height:50px; }
+        h1 { font-size:18px; margin:0; }
+        table { width:100%; border-collapse: collapse; font-size:12px; }
+        th, td { padding:8px 6px; border:1px solid #ddd; text-align:left; vertical-align:middle; }
+        th { background:#f4f4f4; font-weight:600; }
+        .img-thumb { width:80px; height:60px; object-fit:cover; border-radius:4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png', _external=True) }}" class="logo" alt="Logo">
+        </div>
+        <div style="text-align:right;">
+            <h1>Reporte de Inmuebles</h1>
+            <div>Generado: {{ now.strftime('%Y-%m-%d %H:%M:%S') if now else '' }}</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Foto</th>
+                <th>Dirección</th>
+                <th>Ciudad / Barrio</th>
+                <th>Tipo / Operación</th>
+                <th>Precio</th>
+                <th>m²</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inmueble in inmuebles %}
+            <tr>
+                <td>{{ inmueble[0] }}</td>
+                <td>
+                    {% if inmueble[9] %}
+                        <img src="{{ url_for('static', filename='uploads/' + inmueble[9], _external=True) }}" class="img-thumb" alt="img">
+                    {% else %}
+                        Sin foto
+                    {% endif %}
+                </td>
+                <td>{{ inmueble[1] }}</td>
+                <td>{{ inmueble[3] }} / {{ inmueble[2] }}</td>
+                <td>{{ inmueble[6] }} / {{ inmueble[7] }}</td>
+                <td style="text-align:right;">${{ "{:,.2f}".format(inmueble[4] or 0) }}</td>
+                <td style="text-align:right;">{{ inmueble[5] or '' }}</td>
+                <td>{{ inmueble[8] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

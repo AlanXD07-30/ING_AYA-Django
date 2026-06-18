@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Reporte de Inmuebles - ING AYA</title>
+
+    <!-- Estilos externos para PDF -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css', _external=True) }}">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #222;
+            font-size: 12px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .logo {
+            height: 50px;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .fecha {
+            font-size: 11px;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px 6px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f4f4f4;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .img-thumb {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: -10mm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #777;
+        }
+
+        .page-number::after {
+            content: "Página " counter(page) " de " counter(pages);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado -->
+    <div class="header">
+        <div>
+            <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png', _external=True) }}"
+                 class="logo" alt="Logo ING AYA">
+        </div>
+        <div style="text-align:right;">
+            <h1>Reporte de Inmuebles</h1>
+            <div class="fecha">
+                Generado: {{ now.strftime('%Y-%m-%d %H:%M:%S') if now else '' }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de datos -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Foto</th>
+                <th>Dirección</th>
+                <th>Ciudad / Barrio</th>
+                <th>Tipo / Operación</th>
+                <th>Precio</th>
+                <th>m²</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if inmuebles %}
+                {% for inmueble in inmuebles %}
+                <tr>
+                    <td class="text-center">{{ inmueble[0] }}</td>
+                    <td class="text-center">
+                        {% if inmueble[9] %}
+                            <img src="{{ url_for('static', filename='uploads/' + inmueble[9], _external=True) }}"
+                                 class="img-thumb" alt="Imagen del inmueble">
+                        {% else %}
+                            Sin foto
+                        {% endif %}
+                    </td>
+                    <td>{{ inmueble[1] }}</td>
+                    <td>{{ inmueble[3] }} / {{ inmueble[2] }}</td>
+                    <td>{{ inmueble[6] }} / {{ inmueble[7] }}</td>
+                    <td class="text-right">
+                        ${{ "{:,.2f}".format(inmueble[4] or 0) }}
+                    </td>
+                    <td class="text-right">
+                        {{ inmueble[5] or '' }}
+                    </td>
+                    <td class="text-center">{{ inmueble[8] }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8" class="no-data">
+                        No hay inmuebles registrados para los criterios seleccionados.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <!-- Pie de página -->
+    <div class="footer">
+        <span class="page-number"></span><br>
+        © {{ now.year if now else '' }} ING AYA - Sistema de Gestión Inmobiliaria
+    </div>
+
+</body>
+</html>

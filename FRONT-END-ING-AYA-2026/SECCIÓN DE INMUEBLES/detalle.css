@@ -1,0 +1,452 @@
+@import url("Venta/inmuebles.css");
+
+/* ============================================================
+   ESTILOS ESPECÍFICOS DE DETALLE DE INMUEBLE
+   Sobrescriben o extienden inmuebles.css
+============================================================ */
+
+.detalle-container {
+    max-width: 1200px;
+    margin: 120px auto 40px auto;
+    padding: 0 20px;
+}
+
+/* Loading y Error */
+.loading-state, .error-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+.loading-spinner {
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.error-state-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+/* Encabezado */
+.property-header {
+    margin-bottom: 25px;
+}
+.property-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 15px 0 5px 0;
+    color: var(--text-color);
+    text-transform: capitalize;
+}
+.property-location {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+.property-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background-color: var(--primary-color);
+    color: white;
+    margin-right: 10px;
+}
+.property-badge.secondary {
+    background-color: #10b981; /* Verde */
+}
+
+/* Galería (Estilo Grid Moderno) */
+.property-gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 250px 250px;
+    gap: 15px;
+    margin-bottom: 40px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+.gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.gallery-img:hover {
+    transform: scale(1.02);
+}
+.gallery-item-1 {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+}
+.gallery-item-2 { grid-column: 2 / 3; grid-row: 1 / 2; }
+.gallery-item-3 { grid-column: 3 / 4; grid-row: 1 / 2; }
+.gallery-item-4 { grid-column: 2 / 3; grid-row: 2 / 3; }
+.gallery-item-5 { grid-column: 3 / 4; grid-row: 2 / 3; }
+
+/* Layout de dos columnas */
+.property-layout {
+    display: flex;
+    gap: 40px;
+}
+.property-main {
+    flex: 2;
+}
+.property-sidebar {
+    flex: 1;
+    position: sticky;
+    top: 100px; /* Para que baje junto con el scroll */
+    height: fit-content;
+}
+
+/* Secciones de Información */
+.info-section {
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+}
+.info-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+.feature-icon {
+    font-size: 1.8rem;
+}
+.feature-item div {
+    display: flex;
+    flex-direction: column;
+}
+.feature-item strong {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.feature-item span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Tarjeta de Precio */
+.price-card {
+    padding: 25px;
+    text-align: center;
+}
+.price-label {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+.price-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
+}
+.divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 20px 0;
+}
+.full-width {
+    width: 100%;
+}
+.btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.btn-primary {
+    background-color: #3b82f6; /* Azul primario */
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+.btn-secondary {
+    background-color: #475569; /* Gris */
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #334155;
+    transform: translateY(-2px);
+}
+.contact-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 15px;
+}
+
+/* Modo Claro Mínimo Ajuste */
+[data-theme="light"] .property-badge.secondary {
+    background-color: #059669;
+}
+
+/* Responsividad */
+@media (max-width: 900px) {
+    .property-layout {
+        flex-direction: column;
+    }
+    .property-sidebar {
+        position: static;
+        order: -1; /* Muestra el precio arriba en móviles */
+    }
+    .property-gallery {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+    .gallery-item-1 {
+        grid-column: 1;
+        grid-row: 1;
+        height: 300px;
+    }
+    .gallery-item-2, .gallery-item-3, .gallery-item-4, .gallery-item-5 {
+        display: none; /* Oculta las fotos secundarias en móvil para ahorrar espacio */
+    }
+}
+
+/* Auth actions */
+.auth-locked-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.locked-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+.auth-locked-box h4 {
+    margin-bottom: 10px;
+    color: var(--text-light);
+}
+.auth-locked-box p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+.btn-action-premium {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+.btn-action-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+.auth-unlocked-box {
+    text-align: center;
+}
+.auth-unlocked-box h4 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+/* =========================================
+   PREMIUM LAYOUT STYLES
+   ========================================= */
+
+.property-header-premium {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.header-left .badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    background: var(--primary-color);
+    color: white;
+    margin-bottom: 10px;
+    margin-right: 5px;
+}
+.header-left .badge-op {
+    background: #dc2626; /* Red for Arriendo/Venta like screenshot */
+}
+.property-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+.property-ref {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+.header-right {
+    text-align: right;
+}
+.price-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+.est-mortgage {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.property-grid-premium {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* Gallery Hero */
+.gallery-hero {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+/* Atributos */
+.content-section {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--text-color);
+}
+.atributos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+.atributo-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.atributo-item i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+.attr-text {
+    display: flex;
+    flex-direction: column;
+}
+.attr-text span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+.attr-text strong {
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+/* Descripcion */
+.descripcion-texto {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-light);
+}
+
+/* Caracteristicas */
+.caracteristicas-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+}
+.caracteristicas-list li {
+    position: relative;
+    padding-left: 20px;
+    color: var(--text-light);
+}
+.caracteristicas-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Asesor Card */
+.asesor-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+.asesor-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+.asesor-info p {
+    margin: 2px 0;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+    .property-grid-premium {
+        grid-template-columns: 1fr;
+    }
+    .property-header-premium {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .header-right {
+        text-align: left;
+        margin-top: 15px;
+    }
+}

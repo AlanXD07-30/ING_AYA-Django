@@ -1,0 +1,573 @@
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "DM Sans", sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ============================================================
+   TOKENS — MODO OSCURO (idéntico a sobrenosotros.css)
+   ============================================================ */
+:root {
+    --bg-body:          #0a0f1a;
+    --bg-card:          #1e293b;
+    --bg-section-alt:   #111827;
+    --bg-header:        #ffffff;
+    --accent:           #3b82f6;
+    --accent-hover:     #2563eb;
+    --text-primary:     #f8fafc;
+    --text-secondary:   #94a3b8;
+    --border-subtle:    rgba(255,255,255,0.1);
+    --card-bg:          #1e293b;
+    --card-text:        #f8fafc;
+    --footer-bg:        #1e293b;
+    --footer-text:      #94a3b8;
+    --input-bg:         #0f172a;
+    --input-border:     #334155;
+
+    --section-py:       75px;
+    --section-px:       5%;
+    --card-shadow:      0 10px 25px rgba(0,0,0,0.25);
+    --radius-card:      12px;
+}
+
+/* ============================================================
+   MODO CLARO
+   ============================================================ */
+[data-theme="light"] {
+    --bg-body:          #f1f5f9;
+    --bg-card:          #ffffff;
+    --bg-section-alt:   #e6e6e6;
+    --bg-header:        #ffffff;
+    --text-primary:     #0f172a;
+    --text-secondary:   #475569;
+    --border-subtle:    rgba(0,0,0,0.08);
+    --card-bg:          #ffffff;
+    --card-text:        #1e293b;
+    --footer-bg:        #e2e8f0;
+    --footer-text:      #475569;
+    --input-bg:         #ffffff;
+    --input-border:     #cbd5e1;
+}
+
+/* ============================================================
+   BODY
+   ============================================================ */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main { flex: 1; }
+
+/* ============================================================
+   HEADER — idéntico a sobrenosotros.css
+   ============================================================ */
+header {
+    background: var(--bg-header);
+    border-bottom: 3px solid var(--accent);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    flex-wrap: nowrap;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    font-size: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    transition: background 0.3s ease;
+}
+
+.logo-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #1e293b;
+}
+
+.logo-head img {
+    height: 80px;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+}
+
+.nav-links li a {
+    display: block;
+    padding: 10px 16px;
+    color: #353535;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.nav-links li a:hover {
+    color: var(--accent);
+    background: rgba(59,130,246,0.07);
+}
+
+.nav-link-ingresar {
+    border: 2px solid #6b7280;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+}
+
+.nav-link-registrar {
+    border: 2px solid #6b7280;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    background-color: rgb(231,208,178) !important;
+}
+
+.nav-link-home {
+    border: 2px solid #6b7280;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+}
+
+.theme-toggle {
+    background: none;
+    border: 2px solid #6b7280;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #353535;
+    margin-left: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   HERO — Contáctanos
+   ============================================================ */
+.contact-hero {
+    padding: 90px var(--section-px) 70px;
+    text-align: center;
+    background-image:
+        linear-gradient(to bottom, rgba(10,15,26,0.82), rgba(10,15,26,0.72)),
+        url('../PAGINA PRINCIPAL INMUEBLES ING AYA/Imagenes/EDIFICIO_1.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+
+[data-theme="light"] .contact-hero {
+    background-image:
+        linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(10,15,26,0.70)),
+        url('../PAGINA PRINCIPAL INMUEBLES ING AYA/Imagenes/EDIFICIO_1.jpg');
+}
+
+.contact-hero h1 {
+    font-size: clamp(30px, 5vw, 54px);
+    font-weight: 700;
+    margin-bottom: 18px;
+    line-height: 1.15;
+}
+
+.contact-hero h1 span { color: var(--accent); }
+
+.contact-hero p {
+    font-size: clamp(15px, 2vw, 18px);
+    color: #cbd5e1;
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.65;
+    font-weight: 400;
+}
+
+/* ============================================================
+   SECCIÓN PRINCIPAL DE CONTACTO
+   ============================================================ */
+.contact-section {
+    padding: var(--section-py) var(--section-px);
+    background-color: var(--bg-body);
+    transition: background-color 0.3s ease;
+}
+
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ---- Tarjeta compartida ---- */
+.contact-form,
+.contact-info {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-card);
+    border-top: 4px solid var(--accent);
+    padding: 40px 36px;
+    box-shadow: var(--card-shadow);
+    transition: transform 240ms ease, box-shadow 240ms ease, background-color 0.3s ease;
+}
+
+.contact-form:hover,
+.contact-info:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 44px rgba(0,0,0,0.2);
+}
+
+.contact-form h2,
+.contact-info h2 {
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+/* ---- Formulario ---- */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    border-radius: 10px;
+    padding: 13px 16px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.form-group textarea {
+    min-height: 160px;
+    resize: vertical;
+}
+
+.contact-form button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.contact-form button[type="submit"]:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(59,130,246,0.3);
+}
+
+/* ---- Info de contacto ---- */
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.contact-info-item:last-child {
+    border-bottom: none;
+}
+
+.contact-info-icon {
+    font-size: 26px;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: rgba(59,130,246,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-info-text strong {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.contact-info-text span {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Redes sociales dentro de info */
+.social-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    background: rgba(59,130,246,0.1);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid rgba(59,130,246,0.2);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.social-btn:hover {
+    background: rgba(59,130,246,0.2);
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   MAPA (placeholder)
+   ============================================================ */
+.map-section {
+    padding: 0 var(--section-px) var(--section-py);
+    background-color: var(--bg-body);
+    transition: background-color 0.3s ease;
+}
+
+.map-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    border-top: 4px solid var(--accent);
+}
+
+.map-wrapper iframe {
+    width: 100%;
+    height: 340px;
+    border: none;
+    display: block;
+    filter: grayscale(0.2);
+}
+
+/* ============================================================
+   FOOTER — idéntico a sobrenosotros.css
+   ============================================================ */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 50px var(--section-px) 20px;
+    transition: background-color 0.3s ease;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-top .social p,
+.footer-top .contacto p {
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--footer-text);
+}
+
+.footer-top .social span {
+    font-size: 24px;
+    margin: 0 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.footer-top .social span:hover { transform: scale(1.2); }
+
+.footer-top .contacto form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-top input {
+    padding: 9px 12px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-radius: 6px;
+    min-width: 200px;
+    flex: 1;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.footer-top input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.footer-top button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.2s;
+}
+
+.footer-top button:hover { background-color: var(--accent-hover); }
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.footer-bottom nav { margin-bottom: 10px; }
+
+.footer-bottom a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: var(--footer-text);
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.footer-bottom a:hover { color: var(--accent); }
+
+.footer-bottom p { margin: 6px 0; font-size: 13px; }
+.footer-bottom small { color: #64748b; font-size: 12px; }
+
+/* ============================================================
+   ANIMACIONES
+   ============================================================ */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================================
+   REDUCCIÓN DE MOVIMIENTO
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .contact-form,
+    .contact-info {
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE — TABLETS (≤ 1000px)
+   ============================================================ */
+@media (max-width: 1000px) {
+    :root {
+        --section-py: 50px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 5%;
+        gap: 10px;
+    }
+
+    .nav-links { flex-wrap: wrap; gap: 4px; }
+
+    .contact-container {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-top form {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .footer-top input,
+    .footer-top button { width: 90%; }
+}
+
+/* ============================================================
+   RESPONSIVE — MÓVILES (≤ 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+    .contact-form,
+    .contact-info { padding: 28px 20px; }
+
+    .contact-form:hover,
+    .contact-info:hover { transform: none; }
+
+    .social-row { gap: 8px; }
+}

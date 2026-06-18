@@ -1,0 +1,509 @@
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "DM Sans", sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ============================================================
+   TOKENS — MODO OSCURO (idéntico a sobrenosotros.css)
+   ============================================================ */
+:root {
+    --bg-body:          #0a0f1a;
+    --bg-card:          #1e293b;
+    --bg-section-alt:   #111827;
+    --bg-header:        #ffffff;
+    --accent:           #3b82f6;
+    --accent-hover:     #2563eb;
+    --text-primary:     #f8fafc;
+    --text-secondary:   #94a3b8;
+    --border-subtle:    rgba(255,255,255,0.1);
+    --card-bg:          #1e293b;
+    --footer-bg:        #1e293b;
+    --footer-text:      #94a3b8;
+    --input-bg:         #0f172a;
+    --input-border:     #334155;
+
+    --section-py:       75px;
+    --section-px:       5%;
+    --card-shadow:      0 10px 25px rgba(0,0,0,0.25);
+    --radius-card:      12px;
+}
+
+/* ============================================================
+   MODO CLARO
+   ============================================================ */
+[data-theme="light"] {
+    --bg-body:          #f1f5f9;
+    --bg-card:          #ffffff;
+    --bg-section-alt:   #e6e6e6;
+    --bg-header:        #ffffff;
+    --text-primary:     #0f172a;
+    --text-secondary:   #475569;
+    --border-subtle:    rgba(0,0,0,0.08);
+    --card-bg:          #ffffff;
+    --footer-bg:        #e2e8f0;
+    --footer-text:      #475569;
+    --input-bg:         #ffffff;
+    --input-border:     #cbd5e1;
+}
+
+/* ============================================================
+   BODY — fondo con foto, flex column para empujar footer abajo
+   ============================================================ */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-primary);
+    overflow-x: hidden;
+    transition: color 0.3s ease;
+    background:
+        linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)),
+        url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg')
+        no-repeat center center / cover;
+    background-attachment: fixed;
+}
+
+/* En modo claro el overlay sube un poco para que la foto se vea algo más */
+[data-theme="light"] body {
+    background:
+        linear-gradient(rgba(15,23,42,0.70), rgba(15,23,42,0.70)),
+        url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg')
+        no-repeat center center / cover;
+    background-attachment: fixed;
+}
+
+/* ============================================================
+   HEADER — idéntico a sobrenosotros.css
+   ============================================================ */
+header {
+    background: var(--bg-header);
+    border-bottom: 3px solid var(--accent);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    flex-wrap: nowrap;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    font-size: 18px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    transition: background 0.3s ease;
+}
+
+.logo-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #1e293b;
+}
+
+.logo-head img {
+    height: 80px;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+}
+
+.nav-links li a {
+    display: block;
+    padding: 10px 16px;
+    color: #353535;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.nav-links li a:hover {
+    color: var(--accent);
+    background: rgba(59,130,246,0.07);
+}
+
+.nav-link-ingresar {
+    border: 2px solid #6b7280;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+}
+
+.nav-link-registrar {
+    border: 2px solid #6b7280;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    background-color: rgb(231,208,178) !important;
+}
+
+.nav-link-home {
+    border: 2px solid #6b7280;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+}
+
+.theme-toggle {
+    background: none;
+    border: 2px solid #6b7280;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #353535;
+    margin-left: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   CONTENEDOR PRINCIPAL — crece para centrar el card
+   ============================================================ */
+main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px var(--section-px);
+}
+
+/* ============================================================
+   CARD DE LOGIN
+   ============================================================ */
+.login-card {
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-top: 4px solid var(--accent);
+    border-radius: var(--radius-card);
+    padding: 50px 44px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    animation: cardIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
+    color: #f8fafc;
+}
+
+/* En modo claro el card sigue siendo oscuro para legibilidad sobre foto */
+[data-theme="light"] .login-card {
+    background: rgba(15, 23, 42, 0.92);
+}
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo dentro del card */
+.login-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+.login-logo img {
+    height: 70px;
+}
+
+.login-logo span {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.3px;
+}
+
+.login-logo small {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Título del formulario */
+.login-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #f8fafc;
+    text-align: center;
+}
+
+/* Grupos de campo */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: #0a0f1a;
+    color: #f8fafc;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.form-group input::placeholder {
+    color: #475569;
+}
+
+.form-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
+}
+
+/* Fila "Recordarme / Olvidé contraseña" */
+.login-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.login-meta label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #94a3b8;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.login-meta a {
+    font-size: 14px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.login-meta a:hover { color: var(--accent-hover); }
+
+/* Botón primario */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 20px;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(59,130,246,0.35);
+}
+
+/* Divisor */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #475569;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.10);
+}
+
+/* Enlace de registro */
+.login-footer-text {
+    text-align: center;
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.login-footer-text a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.login-footer-text a:hover { color: var(--accent-hover); }
+
+/* ============================================================
+   FOOTER — idéntico a sobrenosotros.css
+   ============================================================ */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 50px var(--section-px) 20px;
+    transition: background-color 0.3s ease;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-top .social p,
+.footer-top .contacto p {
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--footer-text);
+}
+
+.footer-top .social span {
+    font-size: 24px;
+    margin: 0 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.footer-top .social span:hover { transform: scale(1.2); }
+
+.footer-top .contacto form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-top input {
+    padding: 9px 12px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    border-radius: 6px;
+    min-width: 200px;
+    flex: 1;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.footer-top input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.footer-top button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.2s;
+}
+
+.footer-top button:hover { background-color: var(--accent-hover); }
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.footer-bottom nav { margin-bottom: 10px; }
+
+.footer-bottom a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: var(--footer-text);
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.footer-bottom a:hover { color: var(--accent); }
+
+.footer-bottom p { margin: 6px 0; font-size: 13px; }
+.footer-bottom small { color: #64748b; font-size: 12px; }
+
+/* ============================================================
+   REDUCCIÓN DE MOVIMIENTO
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .login-card { animation: none; }
+}
+
+/* ============================================================
+   RESPONSIVE — TABLETS (≤ 1000px)
+   ============================================================ */
+@media (max-width: 1000px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 5%;
+        gap: 10px;
+    }
+
+    .nav-links { flex-wrap: wrap; gap: 4px; }
+
+    .footer-top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-top form {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .footer-top input,
+    .footer-top button { width: 90%; }
+}
+
+/* ============================================================
+   RESPONSIVE — MÓVILES (≤ 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+    main { padding: 40px 16px; }
+    .login-card { padding: 36px 24px; }
+}

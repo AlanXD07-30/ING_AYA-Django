@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Gestión de Inmuebles - ING AYA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <style>
+        .filtro-rapido { display:flex; gap:8px; align-items:center; }
+        .filtro-rapido .small-input { width:140px; }
+        .result-count { font-size:13px; color:#444; margin-left:8px; }
+        .badge-info { background:#3498db; color:#fff; padding:4px 8px; border-radius:12px; font-size:12px; }
+        @media (max-width:600px) {
+            #reportModal > div { width: 92%; padding:14px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="Imagen_empresa">
+            <a href="{{ url_for('empleado_gestion_inmuebles') }}">
+                <img src="{{ url_for('static', filename='logo_INGAYA_gris-sin fondo.png') }}" alt="Logo ING AYA">
+            </a>
+        </nav>
+        <h2 class="title-prin">Panel de Inmuebles</h2>
+        <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+            <a class="btn btn-outline" href="/empleado" style="text-decoration:none;">Volver al menú</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="gestion">
+            <h2>Inventario de Propiedades</h2>
+
+            <div class="controles-arriba" style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <div class="filtro-rapido">
+                        <label for="filtroEstado">Estado:</label>
+                        <select id="filtroEstado" class="form-control small-input">
+                            <option value="todos">Todos</option>
+                            <option value="DISPONIBLE">Disponible</option>
+                            <option value="MANTENIMIENTO">Mantenimiento</option>
+                            <option value="OCUPADO">Ocupado</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-rapido">
+                        <label for="filtroOperacion">Operación:</label>
+                        <select id="filtroOperacion" class="form-control small-input">
+                            <option value="todos">Todos</option>
+                            <option value="VENTA">Venta</option>
+                            <option value="ARRIENDO">Arriendo</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-rapido">
+                        <label for="filtroTipo">Tipo:</label>
+                        <select id="filtroTipo" class="form-control small-input">
+                            <option value="todos">Todos</option>
+                            <option value="1">Apartamento</option>
+                            <option value="2">Casa</option>
+                            <option value="3">Local</option>
+                        </select>
+                    </div>
+
+                    <div class="filtro-rapido">
+                        <label for="buscador">Buscar:</label>
+                        <input id="buscador" class="form-control small-input" type="search" placeholder="Dirección o barrio">
+                    </div>
+
+                    <div class="result-count">
+                        <span class="badge-info" id="visibleCount">0</span>
+                        <span style="margin-left:6px; color:#666; font-size:13px;">visibles</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; align-items:center;">
+                    <button class="btn" onclick="mostrarFormulario()">+ Registrar Nuevo Inmueble</button>
+                    <button class="btn" onclick="openReportModal()" style="background:#2980b9; color:white; border-radius:4px;">
+                        📄 Imprimir reporte
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORMULARIO -->
+            <div id="formInmueble" class="card form-card" style="display:none; background:#fff; padding:20px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1); margin-bottom:30px;">
+                <h3 style="border-bottom:2px solid #eee; padding-bottom:10px;">Nuevo Registro de Inmueble</h3>
+                <form method="POST" action="{{ url_for('empleado_agregar_inmueble') }}" enctype="multipart/form-data">
+
+                    <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+                        <div>
+                            <label class="form-label">Dirección:</label>
+                            <input class="form-control" type="text" name="direccion" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Barrio:</label>
+                            <input class="form-control" type="text" name="barrio" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; margin-top:15px;">
+                        <div>
+                            <label class="form-label">Ciudad:</label>
+                            <input class="form-control" type="text" name="ciudad" value="Bogotá" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Precio ($):</label>
+                            <input class="form-control" type="number" name="precio" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Metraje (m²):</label>
+                            <input class="form-control" type="number" step="0.01" name="metraje">
+                        </div>
+                    </div>
+
+                    <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; margin-top:15px;">
+                        <div>
+                            <label class="form-label">Tipo Propiedad:</label>
+                            <select class="form-control" name="id_tipo" required>
+                                <option value="1">Apartamento</option>
+                                <option value="2">Casa</option>
+                                <option value="3">Local</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Operación:</label>
+                            <select class="form-control" name="tipo_operacion" required>
+                                <option value="VENTA">Venta</option>
+                                <option value="ARRIENDO">Arriendo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Estado:</label>
+                            <select class="form-control" name="estado">
+                                <option value="DISPONIBLE">Disponible</option>
+                                <option value="MANTENIMIENTO">Mantenimiento</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; padding:15px; background:#f9f9f9; border:1px dashed #ccc; border-radius:5px;">
+                        <label class="form-label">📸 Foto del Inmueble:</label>
+                        <input type="file" name="imagen_principal" accept="image/*" class="form-control">
+                    </div>
+
+                    <div style="margin-top:20px; display:flex; gap:12px;">
+                        <button class="btn" type="submit" style="background:#27ae60; color:white;">Guardar Propiedad</button>
+                        <button type="button" class="btn btn-outline" onclick="mostrarFormulario()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TABLA -->
+            <div class="table-container">
+                <table id="inmueblesTable" class="table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f4f4f4;">
+                            <th><input type="checkbox" id="select_all"></th>
+                            <th>ID</th>
+                            <th>Foto</th>
+                            <th>Ubicación</th>
+                            <th>Precio</th>
+                            <th>Tipo / Operación</th>
+                            <th>m²</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inmueblesTbody">
+                        {% for inmueble in inmuebles %}
+                        <tr class="inmueble-row"
+                            data-estado="{{ inmueble[8] }}"
+                            data-operacion="{{ inmueble[7] }}"
+                            data-tipo="{{ inmueble[6] }}">
+                            <td><input type="checkbox" class="select-row" value="{{ inmueble[0] }}"></td>
+                            <td>{{ inmueble[0] }}</td>
+                            <td>
+                                {% if inmueble[9] %}
+                                    <img src="{{ url_for('static', filename='uploads/' + inmueble[9]) }}"
+                                         style="width:60px;height:45px;object-fit:cover;border-radius:4px;">
+                                {% else %}
+                                    <span style="font-size:10px;color:#999;">Sin foto</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ inmueble[1] }}</strong><br><small>{{ inmueble[2] }}</small></td>
+                            <td style="font-weight:bold;color:#2c3e50;">
+                                ${{ "{:,.0f}".format(inmueble[4]) }}
+                            </td>
+                            <td>{{ inmueble[6] }} / <small>{{ inmueble[7] }}</small></td>
+                            <td>{{ inmueble[5] }} m²</td>
+                            <td>{{ inmueble[8] }}</td>
+                            <td>
+                                <a href="{{ url_for('empleado_editar_inmueble', id_inmueble=inmueble[0]) }}" class="btn-mini">📝</a>
+                                <a href="{{ url_for('empleado_eliminar_inmueble', id_inmueble=inmueble[0]) }}" class="btn-mini" style="color:red;">🗑️</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" style="text-align:center;padding:30px;">
+                                No hay registros en la base de datos.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL REPORTE -->
+    <div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:20px; width:560px; border-radius:8px;">
+            <h3>Opciones de reporte</h3>
+            <form id="reportForm" method="GET" action="{{ url_for('empleado_reporte_inmuebles') }}">
+                <label><input type="radio" name="mode" value="all" checked> Todos</label><br>
+                <label><input type="radio" name="mode" value="filter"> Filtrar</label><br>
+                <label><input type="radio" name="mode" value="selected"> Seleccionados</label>
+
+                <input type="hidden" name="selected_ids" id="selected_ids">
+
+                <div style="margin-top:15px; text-align:right;">
+                    <button type="button" class="btn btn-outline" onclick="closeReportModal()">Cancelar</button>
+                    <button type="button" class="btn" onclick="submitReport()">Generar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function mostrarFormulario() {
+            const f = document.getElementById('formInmueble');
+            f.style.display = (f.style.display === 'none' || f.style.display === '') ? 'block' : 'none';
+        }
+
+        function openReportModal(){
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function closeReportModal(){
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function submitReport(){
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const form = document.getElementById('reportForm');
+
+            if(mode === 'selected'){
+                const ids = Array.from(document.querySelectorAll('.select-row:checked')).map(i => i.value);
+                if(ids.length === 0){
+                    alert('No hay inmuebles seleccionados.');
+                    return;
+                }
+                document.getElementById('selected_ids').value = ids.join(',');
+                form.method = 'POST';
+            } else {
+                form.method = 'GET';
+            }
+
+            form.target = '_blank';
+            form.submit();
+        }
+    </script>
+</body>
+</html>
