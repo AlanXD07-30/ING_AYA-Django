@@ -232,6 +232,8 @@
       const allInmuebles = Array.isArray(data) ? data : [];
       inmueblesGlobal = allInmuebles.filter(inm => {
           const t = inm.tipo_operacion || "";
+          const estado = (inm.estado || "").toUpperCase();
+          if (estado === "MANTENIMIENTO" || estado === "NO DISPONIBLE" || estado === "RESERVADO" || estado === "EN TRAMITE") return false;
           return t.toUpperCase() === "ARRIENDO";
       });
       aplicarFiltros();

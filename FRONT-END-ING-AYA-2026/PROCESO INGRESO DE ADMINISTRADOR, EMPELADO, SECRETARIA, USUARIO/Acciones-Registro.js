@@ -41,9 +41,10 @@
 
   const camposObligatorios = [
     { id: "nombre",         errorId: "error-nombre", validate: v => v.trim().length >= 2 },
-    { id: "identificacion", errorId: "error-id",     validate: v => /^\d{6,12}$/.test(v.trim()) },
+    { id: "identificacion", errorId: "error-id",     validate: v => /^\d{10}$/.test(v.trim()) },
+    { id: "telefono",       errorId: "error-tel",    validate: v => /^\d{10}$/.test(v.trim()) },
     { id: "email",          errorId: "error-email",  validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
-    { id: "contrasena",     errorId: "error-pass",   validate: v => v.length >= 6 },
+    { id: "contrasena",     errorId: "error-pass",   validate: v => v.length >= 8 && v.length <= 16 },
   ];
 
   // ============================================================

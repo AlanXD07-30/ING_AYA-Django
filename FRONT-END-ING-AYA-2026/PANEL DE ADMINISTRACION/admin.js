@@ -156,6 +156,121 @@ async function eliminarInmueble(id) {
 }
 
 // ==========================================
+// VER HISTORIAL INMUEBLE
+// ==========================================
+window.verHistorialInmueble = async function(id) {
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/api/inmuebles/${id}/historial/`);
+        if (!response.ok) throw new Error("No se pudo cargar el historial.");
+        const movimientos = await response.json();
+        
+        let htmlContent = "";
+        if (movimientos.length === 0) {
+            htmlContent = "<p style='text-align:center;'>No hay historial de cambios para este inmueble.</p>";
+        } else {
+            htmlContent = `
+                <div style="max-height: 400px; overflow-y: auto; text-align: left; font-size: 14px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #ccc;">
+                                <th style="padding: 8px;">Fecha</th>
+                                <th style="padding: 8px;">Tipo</th>
+                                <th style="padding: 8px;">Detalles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${movimientos.map(m => `
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 8px;">${new Date(m.fecha).toLocaleString("es-CO")}</td>
+                                    <td style="padding: 8px; font-weight: bold; color: #3b82f6;">${m.tipo_movimiento}</td>
+                                    <td style="padding: 8px;">${m.descripcion}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        Swal.fire({
+            title: `Historial del Inmueble #${id}`,
+            html: htmlContent,
+            width: '700px',
+            confirmButtonText: 'Cerrar',
+            confirmButtonColor: '#3b82f6'
+        });
+    } catch (e) {
+        Swal.fire('Error', e.message, 'error');
+    }
+}
+
+// ==========================================
+// VER INMUEBLE (OJO)
+// ==========================================
+window.verInmueble = function(id) {
+    const inm = inmueblesGlobal.find(i => (i.id_inmueble || i.id) === id);
+    if (!inm) return;
+
+    let imgSrc = "../PAGINA WEB INMOBILIARIA/img/no-image.png";
+    if (inm.imagen_principal) {
+        imgSrc = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "http://127.0.0.1:8000" + inm.imagen_principal;
+    }
+
+    let caracteristicasStr = "Ninguna";
+    if (inm.caracteristicas) {
+        try {
+            const arr = JSON.parse(inm.caracteristicas);
+            if (arr.length > 0) caracteristicasStr = arr.join(", ");
+        } catch(e) {
+            caracteristicasStr = inm.caracteristicas;
+        }
+    }
+    
+    // Formatear fecha
+    let fechaStr = "N/A";
+    if (inm.fecha_registro) {
+        const d = new Date(inm.fecha_registro);
+        fechaStr = d.toLocaleDateString("es-CO");
+    }
+
+    Swal.fire({
+        html: `
+            <div style="position: relative; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <img src="${imgSrc}" style="width: 100%; height: 350px; object-fit: cover; display: block;" alt="Imagen del Inmueble">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 30px 20px 20px 20px; text-align: left; color: white;">
+                    <h2 style="margin: 0; font-size: 26px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">${inm.direccion || 'Sin Dirección'}</h2>
+                    <p style="margin: 5px 0 0 0; font-size: 16px; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${inm.barrio || 'N/A'}, ${inm.ciudad || 'N/A'}</p>
+                </div>
+            </div>
+            
+            <div style="text-align: left; font-size: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; background: rgba(0,0,0,0.1); border-radius: 12px;">
+                <p style="margin: 0;"><strong>ID:</strong> #${inm.id_inmueble}</p>
+                <p style="margin: 0;"><strong>Estado:</strong> ${inm.estado || 'N/A'}</p>
+                <p style="margin: 0;"><strong>Tipo:</strong> ${inm.tipo_inmueble || 'N/A'}</p>
+                <p style="margin: 0;"><strong>Operación:</strong> <span style="background-color: var(--primary-color, #3b82f6); color: white; padding: 2px 6px; border-radius: 4px;">${inm.tipo_operacion || 'N/A'}</span></p>
+                <p style="margin: 0;"><strong>Precio:</strong> <span style="color: #10b981; font-weight: bold;">$ ${inm.precio ? parseInt(inm.precio).toLocaleString("es-CO") : 'N/A'}</span></p>
+                <p style="margin: 0;"><strong>Metraje:</strong> ${inm.metraje ? parseFloat(inm.metraje).toFixed(2) + ' m²' : 'N/A'}</p>
+                <p style="margin: 0;"><strong>Habitaciones:</strong> ${inm.habitaciones || '0'}</p>
+                <p style="margin: 0;"><strong>Baños:</strong> ${inm.banos || '0'}</p>
+                <p style="margin: 0;"><strong>Garajes:</strong> ${inm.garajes || '0'}</p>
+                <p style="margin: 0;"><strong>Estrato:</strong> ${inm.estrato || 'N/A'}</p>
+                <p style="margin: 0;"><strong>Fecha Registro:</strong> ${fechaStr}</p>
+                <p style="margin: 0; grid-column: 1 / -1;"><strong>Características:</strong> ${caracteristicasStr}</p>
+                <p style="margin: 0; grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;"><strong>Descripción:</strong> <br>${inm.descripcion || 'Sin descripción adicional.'}</p>
+            </div>
+        `,
+        width: 750,
+        padding: '1.5em',
+        showConfirmButton: true,
+        confirmButtonColor: '#3b82f6',
+        confirmButtonText: 'Cerrar',
+        customClass: {
+            popup: 'swal-premium-popup'
+        }
+    });
+};
+
+// ==========================================
 // MODAL: CREAR Y EDITAR
 // ==========================================
 function abrirModalCrear() {
@@ -177,13 +292,22 @@ function abrirModalEditar(id) {
     document.getElementById("modal-submit-btn").innerText = "Actualizar Inmueble";
 
     // Llenar datos
-    document.getElementById("tipo_operacion").value = inm.tipo_operacion === "VENTA" ? "Venta" : "Arriendo";
+    document.getElementById("tipo_operacion").value = (inm.tipo_operacion || "").toUpperCase() === "VENTA" ? "Venta" : "Arriendo";
+    
+    let tInm = (inm.tipo_inmueble || "Casa").toUpperCase();
+    document.getElementById("tipo_inmueble").value = tInm === "APARTAMENTO" ? "Apartamento" : (tInm === "LOTE" ? "Lote" : "Casa");
     document.getElementById("precio").value = inm.precio ? parseInt(inm.precio) : "";
     document.getElementById("direccion").value = inm.direccion || "";
     document.getElementById("barrio").value = inm.barrio || "";
     document.getElementById("ciudad").value = inm.ciudad || "";
     document.getElementById("metraje").value = inm.metraje || "";
-    document.getElementById("estado").value = inm.estado === "VENDIDO" ? "Vendido" : (inm.estado === "ARRENDADO" ? "Arrendado" : "Disponible");
+    let est = (inm.estado || "Disponible").toUpperCase();
+    if (est === "VENDIDO") document.getElementById("estado").value = "Vendido";
+    else if (est === "ARRENDADO") document.getElementById("estado").value = "Arrendado";
+    else if (est === "RESERVADO") document.getElementById("estado").value = "Reservado";
+    else if (est === "MANTENIMIENTO") document.getElementById("estado").value = "Mantenimiento";
+    else if (est === "NO DISPONIBLE") document.getElementById("estado").value = "No Disponible";
+    else document.getElementById("estado").value = "Disponible";
     document.getElementById("habitaciones").value = inm.habitaciones || 0;
     document.getElementById("banos").value = inm.banos || 0;
     document.getElementById("garajes").value = inm.garajes || 0;
@@ -246,6 +370,7 @@ document.getElementById("form-inmueble").addEventListener("submit", async functi
     const isEdit = editId !== "";
 
     const tipo_operacion = document.getElementById("tipo_operacion").value;
+    const tipo_inmueble = document.getElementById("tipo_inmueble").value;
     const precioVal = document.getElementById("precio").value;
     const direccion = document.getElementById("direccion").value;
     const barrio = document.getElementById("barrio").value;
@@ -266,6 +391,7 @@ document.getElementById("form-inmueble").addEventListener("submit", async functi
 
     const data = {
         tipo_operacion: tipo_operacion.toUpperCase(),
+        tipo_inmueble: tipo_inmueble,
         direccion: direccion,
         barrio: barrio,
         ciudad: ciudad,
@@ -955,10 +1081,13 @@ function renderInmueblesFiltered() {
         const estado = inm.estado ? inm.estado.toUpperCase() : "N/A";
         
         let colorOp = operacion === "VENTA" ? "venta" : "arriendo";
-        let badgeEstado = "bg-gray-500";
-        if(estado === "DISPONIBLE") badgeEstado = "bg-green-500";
-        if(estado === "VENDIDO" || estado === "ARRENDADO") badgeEstado = "bg-blue-500";
-        if(estado === "RESERVADO") badgeEstado = "bg-orange-500";
+        let badgeEstado = "estado-mantenimiento";
+        if(estado === "DISPONIBLE") badgeEstado = "estado-disponible";
+        if(estado === "VENDIDO") badgeEstado = "estado-vendido";
+        if(estado === "ARRENDADO") badgeEstado = "estado-arrendado";
+        if(estado === "RESERVADO") badgeEstado = "estado-reservado";
+        if(estado === "EN TRAMITE") badgeEstado = "estado-entramite";
+        if(estado === "NO DISPONIBLE") badgeEstado = "estado-nodisponible";
         
         let imgSrc = "../PAGINA WEB INMOBILIARIA/img/no-image.png";
         if (inm.imagen_principal) {
@@ -971,13 +1100,15 @@ function renderInmueblesFiltered() {
             <td>#${inm.id_inmueble}</td>
             <td><strong>${inm.direccion || 'N/A'}</strong></td>
             <td>${inm.barrio || 'N/A'}</td>
+            <td><strong>${inm.tipo_inmueble || 'N/A'}</strong></td>
             <td><span class="badge ${colorOp}">${operacion}</span></td>
             <td>${inm.ciudad || "N/A"}</td>
             <td>${precioStr}</td>
             <td>${inm.metraje ? inm.metraje + " m²" : "N/A"}</td>
-            <td><span class="badge ${badgeEstado}" style="color:white; padding:4px 8px; border-radius:12px;">${estado}</span></td>
+            <td><span class="badge ${badgeEstado}">${estado}</span></td>
             <td>
                 <button class="btn-icon view" title="Ver/Imágenes" onclick="verInmueble(${inm.id_inmueble})">👁️</button>
+                <button class="btn-icon history" title="Historial" onclick="verHistorialInmueble(${inm.id_inmueble})">📜</button>
                 <button class="btn-icon edit" title="Editar" onclick="abrirModalEditar(${inm.id_inmueble})">✏️</button>
                 <button class="btn-icon delete" title="Eliminar" onclick="eliminarInmueble(${inm.id_inmueble})">🗑️</button>
             </td>
@@ -1026,10 +1157,13 @@ function renderInmueblesFiltered() {
         const estado = inm.estado ? inm.estado.toUpperCase() : "N/A";
         
         let colorOp = operacion === "VENTA" ? "venta" : "arriendo";
-        let badgeEstado = "bg-gray-500";
-        if(estado === "DISPONIBLE") badgeEstado = "bg-green-500";
-        if(estado === "VENDIDO" || estado === "ARRENDADO") badgeEstado = "bg-blue-500";
-        if(estado === "RESERVADO") badgeEstado = "bg-orange-500";
+        let badgeEstado = "estado-mantenimiento";
+        if(estado === "DISPONIBLE") badgeEstado = "estado-disponible";
+        if(estado === "VENDIDO") badgeEstado = "estado-vendido";
+        if(estado === "ARRENDADO") badgeEstado = "estado-arrendado";
+        if(estado === "RESERVADO") badgeEstado = "estado-reservado";
+        if(estado === "EN TRAMITE") badgeEstado = "estado-entramite";
+        if(estado === "NO DISPONIBLE") badgeEstado = "estado-nodisponible";
         
         let imgSrc = "../PAGINA WEB INMOBILIARIA/img/no-image.png";
         if (inm.imagen_principal) {
@@ -1042,13 +1176,15 @@ function renderInmueblesFiltered() {
             <td>#${inm.id_inmueble || inm.id || ""}</td>
             <td><strong>${inm.direccion || 'N/A'}</strong></td>
             <td>${inm.barrio || 'N/A'}</td>
+            <td><strong>${inm.tipo_inmueble || 'N/A'}</strong></td>
             <td><span class="badge ${colorOp}">${operacion}</span></td>
             <td>${inm.ciudad || "N/A"}</td>
             <td>${precioStr}</td>
             <td>${inm.metraje ? parseFloat(inm.metraje).toFixed(2) + " m²" : "N/A"}</td>
-            <td><span class="badge ${badgeEstado}" style="color:white; padding:4px 8px; border-radius:12px;">${estado}</span></td>
+            <td><span class="badge ${badgeEstado}">${estado}</span></td>
             <td>
                 <button class="btn-action view" title="Ver" onclick="verInmueble(${inm.id_inmueble || inm.id})">👁️</button>
+                <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${inm.id_inmueble || inm.id})">📜</button>
                 <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${inm.id_inmueble || inm.id})">✏️</button>
                 <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${inm.id_inmueble || inm.id})">🗑️</button>
             </td>
@@ -1701,8 +1837,11 @@ function renderTransaccionesFiltered() {
             <td>Cliente ID: ${t.id_cliente}</td>
             <td>Inmueble ID: ${t.id_inmueble}</td>
             <td>
-                <button class="btn-primary" style="background-color: #1e3a8a;" onclick="verTimelineTransaccion(${t.id_transaccion})">⏳ Ver Timeline</button>
-                <button class="btn-secondary" onclick="abrirModalEditarTransaccion(${t.id_transaccion})">✏️</button>
+                <div style="display: flex; gap: 8px; justify-content: flex-start; align-items: center;">
+                    <button class="btn-primary" style="background-color: #1e3a8a; padding: 6px 12px; border: none; border-radius: 4px; color: white; cursor: pointer; white-space: nowrap;" onclick="verTimelineTransaccion(${t.id_transaccion})">⏳ Ver Timeline</button>
+                    <button class="btn-secondary" style="background-color: #4b5563; padding: 6px 12px; border: none; border-radius: 4px; color: white; cursor: pointer;" onclick="abrirModalEditarTransaccion(${t.id_transaccion})">✏️</button>
+                    <button class="btn-secondary" style="background-color: #ef4444; padding: 6px 12px; border: none; border-radius: 4px; color: white; cursor: pointer;" onclick="eliminarTransaccion(${t.id_transaccion})">🗑️</button>
+                </div>
             </td>
         </tr>
     `).join('');
@@ -2048,3 +2187,38 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof cargarTransacciones === 'function') cargarTransacciones();
     if (typeof cargarPagos === 'function') cargarPagos();
 });
+
+async function eliminarTransaccion(id) {
+    const confirmacion = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto! La transacción se eliminará permanentemente.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#3b82f6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (confirmacion.isConfirmed) {
+        const token = localStorage.getItem("mi_token");
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/transacciones/${id}/`, {
+                method: 'DELETE',
+                headers: {
+                    "Authorization": `Token ${token}`
+                }
+            });
+
+            if (response.ok || response.status === 204) {
+                Swal.fire('Eliminada', 'La transacción ha sido eliminada.', 'success');
+                cargarTransacciones();
+            } else {
+                Swal.fire('Error', 'No se pudo eliminar la transacción.', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Ocurrió un error al intentar conectarse al servidor.', 'error');
+        }
+    }
+}

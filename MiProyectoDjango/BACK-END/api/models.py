@@ -165,7 +165,6 @@ class ImagenInmueble(models.Model):
     url_imagen = models.TextField()
     es_principal = models.IntegerField(blank=True, null=True)
     id_inmueble = models.ForeignKey('Inmueble', models.DO_NOTHING, db_column='id_inmueble', blank=True, null=True)
-    field_id_inmueble_principal = models.BigIntegerField(db_column='_id_inmueble_principal', unique=True, blank=True, null=True)  # Field renamed because it started with '_'.
 
     class Meta:
         managed = False
@@ -180,7 +179,7 @@ class Inmueble(models.Model):
     precio = models.DecimalField(max_digits=15, decimal_places=2)
     estado = models.CharField(max_length=13, blank=True, null=True)
     metraje = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    id_tipo = models.ForeignKey('TipoInmueble', models.DO_NOTHING, db_column='id_tipo', blank=True, null=True)
+    tipo_inmueble = models.CharField(max_length=11, choices=[('Casa', 'Casa'), ('Apartamento', 'Apartamento')])
     id_empleado_encargado = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='id_empleado_encargado', blank=True, null=True)
     fecha_registro = models.DateTimeField()
     tipo_operacion = models.CharField(max_length=8)
@@ -223,24 +222,6 @@ class Pago(models.Model):
         db_table = 'pago'
 
 
-class Rol(models.Model):
-    id_rol = models.AutoField(primary_key=True)
-    nombre_rol = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = False
-        db_table = 'rol'
-
-
-class TipoInmueble(models.Model):
-    id_tipo = models.AutoField(primary_key=True)
-    nombre_tipo = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = False
-        db_table = 'tipo_inmueble'
-
-
 class Transaccion(models.Model):
     id_transaccion = models.BigAutoField(primary_key=True)
     fecha = models.DateTimeField()
@@ -254,28 +235,6 @@ class Transaccion(models.Model):
     class Meta:
         managed = False
         db_table = 'transaccion'
-
-
-class Usuario(models.Model):
-    id_usuario = models.BigAutoField(primary_key=True)
-    email = models.CharField(unique=True, max_length=150)
-    contrasena = models.CharField(max_length=255)
-    estado = models.CharField(max_length=10, blank=True, null=True)
-    fecha_creacion = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'usuario'
-
-
-class UsuarioRol(models.Model):
-    id_usuario = models.OneToOneField(Usuario, models.DO_NOTHING, db_column='id_usuario', primary_key=True)  # The composite primary key (id_usuario, id_rol) found, that is not supported. The first column is selected.
-    id_rol = models.ForeignKey(Rol, models.DO_NOTHING, db_column='id_rol')
-
-    class Meta:
-        managed = False
-        db_table = 'usuario_rol'
-        unique_together = (('id_usuario', 'id_rol'),)
 
 
 class InmuebleFavorito(models.Model):

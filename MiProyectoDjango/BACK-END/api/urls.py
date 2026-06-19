@@ -1,13 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ClienteViewSet, AdministradorViewSet, InmuebleViewSet, RegistroView, PerfilView, FavoritosView, EmpleadoViewSet, RolViewSet
+from .views import ClienteViewSet, AdministradorViewSet, InmuebleViewSet, RegistroView, PerfilView, FavoritosView, EmpleadoViewSet
 
 router = DefaultRouter()
 router.register(r'clientes', ClienteViewSet, basename='cliente') # Esta será la ruta web
 router.register(r'administradores', AdministradorViewSet, basename='administrador')
 router.register(r'inmuebles', InmuebleViewSet)
 router.register(r'empleados', EmpleadoViewSet)
-router.register(r'roles', RolViewSet)
 
 from .views import TransaccionViewSet, PagoViewSet, CitaViewSet
 

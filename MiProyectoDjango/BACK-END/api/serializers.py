@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cliente, Inmueble, InmuebleFavorito, Empleado, Rol
+from .models import Cliente, Inmueble, InmuebleFavorito, Empleado
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -41,6 +41,13 @@ class InmuebleFavoritoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = InmuebleFavorito
+        fields = '__all__'
+
+from .models import MovimientoInmueble
+
+class MovimientoInmuebleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MovimientoInmueble
         fields = '__all__'
 
 class RegistroSerializer(serializers.ModelSerializer):
@@ -123,10 +130,6 @@ class EmpleadoSerializer(serializers.ModelSerializer):
         model = Empleado
         fields = '__all__'
 
-class RolSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rol
-        fields = '__all__'
 
 from .models import Transaccion, Pago, Cita
 

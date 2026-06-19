@@ -74,6 +74,12 @@
             }
 
             const data = await response.json();
+            
+            const estadoStr = (data.estado || "").toUpperCase();
+            if (estadoStr === "MANTENIMIENTO" || estadoStr === "NO DISPONIBLE") {
+                throw new Error("El inmueble solicitado no está disponible por el momento.");
+            }
+
             renderizarInmueble(data);
 
         } catch (error) {

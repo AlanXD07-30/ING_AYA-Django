@@ -145,6 +145,7 @@
                         <option value="">Todos los estados</option>
                         <option value="DISPONIBLE">Disponible</option>
                         <option value="RESERVADO">Reservado</option>
+                        <option value="EN TRAMITE">En tramite</option>
                         <option value="VENDIDO">Vendido</option>
                         <option value="ARRENDADO">Arrendado</option>
                     </select>
@@ -159,6 +160,7 @@
                                 <th>ID</th>
                                 <th>Dirección</th>
                                 <th>Barrio</th>
+                                <th>Tipo</th>
                                 <th>Operación</th>
                                 <th>Ciudad</th>
                                 <th>Precio</th>
@@ -534,6 +536,13 @@
                         </select>
                     </div>
                     <div class="input-group">
+                        <label for="tipo_inmueble">Tipo de Inmueble</label>
+                        <select id="tipo_inmueble" required>
+                            <option value="Casa">Casa</option>
+                            <option value="Apartamento">Apartamento</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
                         <label for="precio">Precio (COP)</label>
                         <input type="number" id="precio" required placeholder="Ej: 500000000">
                     </div>
@@ -564,8 +573,12 @@
                         <label for="estado">Estado</label>
                         <select id="estado">
                             <option value="Disponible">Disponible</option>
+                            <option value="Reservado">Reservado</option>
+                            <option value="En tramite">En tramite</option>
                             <option value="Vendido">Vendido</option>
                             <option value="Arrendado">Arrendado</option>
+                            <option value="Mantenimiento">Mantenimiento</option>
+                            <option value="No Disponible">No Disponible</option>
                         </select>
                     </div>
                 </div>

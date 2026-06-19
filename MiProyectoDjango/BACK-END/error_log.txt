@@ -1,0 +1,2 @@
+(1054, "Unknown column '_id_inmueble_principal' in 'field list'")
+(1054, "Unknown column '_id_inmueble_principal' in 'field list'")

@@ -7,8 +7,8 @@ from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import Cliente, Inmueble, InmuebleFavorito, Empleado, Rol, ImagenInmueble
-from .serializers import RegistroSerializer, ClienteSerializer, InmuebleSerializer, InmuebleFavoritoSerializer, EmpleadoSerializer, RolSerializer
+from .models import Cliente, Inmueble, InmuebleFavorito, Empleado, ImagenInmueble, MovimientoInmueble
+from .serializers import RegistroSerializer, ClienteSerializer, InmuebleSerializer, InmuebleFavoritoSerializer, EmpleadoSerializer, MovimientoInmuebleSerializer
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -53,6 +53,45 @@ class AdministradorViewSet(viewsets.ModelViewSet):
 class InmuebleViewSet(viewsets.ModelViewSet):
     queryset = Inmueble.objects.all()
     serializer_class = InmuebleSerializer
+
+    @action(detail=True, methods=['get'])
+    def historial(self, request, pk=None):
+        inmueble = self.get_object()
+        movimientos = MovimientoInmueble.objects.filter(id_inmueble=inmueble).order_by('-fecha')
+        serializer = MovimientoInmuebleSerializer(movimientos, many=True)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        from django.utils import timezone
+        old_instance = self.get_object()
+        old_precio = old_instance.precio
+        old_estado = old_instance.estado
+        
+        new_instance = serializer.save()
+        
+        # Check for price change
+        if old_precio != new_instance.precio:
+            MovimientoInmueble.objects.create(
+                tipo_movimiento='Cambio Precio',
+                fecha=timezone.now(),
+                precio_momento=new_instance.precio,
+                estado_momento=new_instance.estado,
+                descripcion=f"El precio cambió de {old_precio} a {new_instance.precio}",
+                id_inmueble=new_instance
+            )
+            
+        # Check for state change
+        old_estado_upper = (old_estado or "").upper()
+        new_estado_upper = (new_instance.estado or "").upper()
+        if old_estado_upper != new_estado_upper:
+            MovimientoInmueble.objects.create(
+                tipo_movimiento='Cambio Estado',
+                fecha=timezone.now(),
+                precio_momento=new_instance.precio,
+                estado_momento=new_instance.estado,
+                descripcion=f"El estado cambió de '{old_estado}' a '{new_instance.estado}'",
+                id_inmueble=new_instance
+            )
 
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser])
     def upload_images(self, request, pk=None):
@@ -251,10 +290,7 @@ class EmpleadoViewSet(viewsets.ModelViewSet):
                 user.delete()
     # permission_classes = [IsAuthenticated] # Para desarrollo podemos dejarlo publico o con token
 
-class RolViewSet(viewsets.ModelViewSet):
-    queryset = Rol.objects.all()
-    serializer_class = RolSerializer
-    # permission_classes = [IsAuthenticated]
+
 
 
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -313,6 +349,84 @@ from .serializers import TransaccionSerializer, PagoSerializer, CitaSerializer
 class TransaccionViewSet(viewsets.ModelViewSet):
     queryset = Transaccion.objects.all()
     serializer_class = TransaccionSerializer
+
+    def perform_create(self, serializer):
+        from django.utils import timezone
+        from .models import MovimientoInmueble
+        transaccion = serializer.save()
+        
+        if transaccion.id_inmueble:
+            inmueble = transaccion.id_inmueble
+            inmueble.estado = 'Reservado'
+            inmueble.save()
+            
+            MovimientoInmueble.objects.create(
+                tipo_movimiento='Cambio Estado',
+                fecha=timezone.now(),
+                precio_momento=inmueble.precio,
+                estado_momento=inmueble.estado,
+                descripcion=f"El inmueble fue Reservado (Transacción #{transaccion.id_transaccion})",
+                id_inmueble=inmueble
+            )
+
+    @action(detail=True, methods=['post'])
+    def firmar_promesa(self, request, pk=None):
+        from django.utils import timezone
+        from .models import MovimientoInmueble
+        transaccion = self.get_object()
+        acepta = request.data.get('acepta', False)
+        inmueble = transaccion.id_inmueble
+        
+        if acepta:
+            transaccion.estado = 'PROMESA'
+            transaccion.save()
+            if inmueble:
+                inmueble.estado = 'En tramite'
+                inmueble.save()
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El cliente aceptó la promesa (Transacción #{transaccion.id_transaccion}). Pasa a En trámite.",
+                    id_inmueble=inmueble
+                )
+            return Response({"status": "Promesa aceptada y en trámite."})
+        else:
+            transaccion.estado = 'ANULADA'
+            transaccion.save()
+            if inmueble:
+                inmueble.estado = 'Disponible'
+                inmueble.save()
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El cliente rechazó la promesa (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
+                    id_inmueble=inmueble
+                )
+            return Response({"status": "Promesa rechazada. Transacción anulada."})
+
+    def perform_destroy(self, instance):
+        from django.utils import timezone
+        from .models import MovimientoInmueble
+        
+        if instance.id_inmueble:
+            inmueble = instance.id_inmueble
+            inmueble.estado = 'Disponible'
+            inmueble.save()
+            
+            MovimientoInmueble.objects.create(
+                tipo_movimiento='Cambio Estado',
+                fecha=timezone.now(),
+                precio_momento=inmueble.precio,
+                estado_momento=inmueble.estado,
+                descripcion=f"Transacción #{instance.id_transaccion} eliminada. Inmueble liberado.",
+                id_inmueble=inmueble
+            )
+            
+        instance.delete()
 
 class PagoViewSet(viewsets.ModelViewSet):
     queryset = Pago.objects.all()

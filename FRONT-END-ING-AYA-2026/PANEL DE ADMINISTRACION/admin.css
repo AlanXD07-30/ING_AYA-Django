@@ -305,6 +305,15 @@ body {
 .badge.venta { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
 .badge.arriendo { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
 
+/* Estados del Inmueble */
+.badge.estado-disponible { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+.badge.estado-vendido { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+.badge.estado-arrendado { background-color: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+.badge.estado-reservado { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.badge.estado-entramite { background-color: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+.badge.estado-mantenimiento { background-color: rgba(107, 114, 128, 0.2); color: #6b7280; }
+.badge.estado-nodisponible { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
 /* Botones de acción en la tabla */
 .btn-action {
     background: transparent;
@@ -450,17 +459,20 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 20px;
     position: relative;
-    height: 280px; /* Gráficos más pequeños y estéticos */
+    min-height: 320px;
     width: 100%;
 }
 
 .chart-container-inner {
     position: relative;
-    height: 280px;
+    height: 250px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .chart-card h3 {
