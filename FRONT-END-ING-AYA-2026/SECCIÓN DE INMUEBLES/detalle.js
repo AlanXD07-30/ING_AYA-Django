@@ -163,6 +163,16 @@
         }
         
         if(document.getElementById("det-caracteristicas")) {
+            
+        // Modificar botón de acción
+        const btnTramite = document.getElementById("btn-tramite-main");
+        if (btnTramite) {
+            if (tipoOp.toUpperCase() === "ARRIENDO") {
+                btnTramite.innerHTML = "📝 Iniciar Trámite de Arriendo";
+            } else {
+                btnTramite.innerHTML = "🔑 Reservar / Separar";
+            }
+        }
             const ul = document.getElementById("det-caracteristicas");
             ul.innerHTML = "";
             if(inmueble.caracteristicas) {
@@ -338,9 +348,11 @@ async function solicitarReserva() {
         return;
     }
 
+    const isArriendo = window.inmuebleObj && window.inmuebleObj.tipo_operacion && window.inmuebleObj.tipo_operacion.toUpperCase() === "ARRIENDO";
+    
     Swal.fire({
-        title: '¿Confirmar Reserva?',
-        text: "Enviaremos una solicitud a nuestro equipo para iniciar el trámite de este inmueble. ¿Estás seguro?",
+        title: isArriendo ? '¿Iniciar trámite de arriendo?' : '¿Confirmar Reserva?',
+        text: isArriendo ? "Enviaremos una solicitud a nuestro equipo para iniciar tu proceso de arriendo. ¿Estás seguro?" : "Enviaremos una solicitud a nuestro equipo para iniciar el trámite de separación de este inmueble. ¿Estás seguro?",
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#10b981',
@@ -356,11 +368,14 @@ async function solicitarReserva() {
                 const tipo_op = window.inmuebleObj ? window.inmuebleObj.tipo_operacion : "VENTA";
                 const id_inmueble = window.inmuebleObj ? window.inmuebleObj.id_inmueble : new URLSearchParams(window.location.search).get("id");
                 
+                // Determinamos el estado inicial según la operación
+                const estadoInicial = (tipo_op.toUpperCase() === "ARRIENDO") ? "REVISION" : "SEPARACION";
+
                 const data = {
                     fecha: new Date().toISOString(),
                     tipo_operacion: tipo_op,
                     valor_total: valor_total,
-                    estado: "SEPARACION",
+                    estado: estadoInicial,
                     id_cliente: perfil.id_cliente,
                     id_inmueble: id_inmueble
                 };
@@ -401,24 +416,132 @@ async function agendarVisita() {
         return;
     }
 
-    Swal.fire({
-        title: 'Agendar una Visita',
-        html: '<input type="datetime-local" id="fecha_visita" class="swal2-input">',
-        confirmButtonText: 'Agendar',
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        preConfirm: async () => {
-            const fecha = document.getElementById('fecha_visita').value;
-            if (!fecha) {
-                Swal.showValidationMessage('Por favor selecciona una fecha y hora');
-                return false;
-            }
-            
-            const id_inmueble = window.inmuebleObj ? window.inmuebleObj.id_inmueble : new URLSearchParams(window.location.search).get("id");
-            
-            try {
-                const data = {
-                    fecha_hora: new Date(fecha).toISOString(),
+    try {
+        const resFechas = await fetch("http://127.0.0.1:8000/api/citas/fechas_ocupadas/");
+        let fechasOcupadas = [];
+        if (resFechas.ok) {
+            fechasOcupadas = await resFechas.json();
+        }
+
+        let horaSeleccionada = null;
+        let fechaSeleccionada = null;
+
+        Swal.fire({
+            title: 'Agendar una Visita',
+            html: `
+                <div id="flatpickr-container" style="display: flex; justify-content: center; margin-top: 15px;"></div>
+                <div id="time-slots-wrapper" style="display: none;">
+                    <h3 style="color: white; margin-top: 15px; font-size: 16px;">Selecciona una hora:</h3>
+                    <div id="time-slots-container"></div>
+                </div>
+            `,
+            confirmButtonText: 'Agendar',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            didOpen: () => {
+                flatpickr("#flatpickr-container", {
+                    inline: true,
+                    enableTime: false, // Ahora la hora es por lista
+                    locale: "es",
+                    minDate: "today",
+                    disable: [
+                        function(date) {
+                            const dateString = date.toISOString().split('T')[0];
+                            return fechasOcupadas.includes(dateString);
+                        }
+                    ],
+                    onDayCreate: function(dObj, dStr, fp, dayElem) {
+                        const dateString = dayElem.dateObj.toISOString().split('T')[0];
+                        if (fechasOcupadas.includes(dateString)) {
+                            dayElem.classList.add("fully-booked");
+                        }
+                    },
+                    onChange: async function(selectedDates, dateStr, instance) {
+                        if (selectedDates.length > 0) {
+                            fechaSeleccionada = selectedDates[0];
+                            horaSeleccionada = null; // Reset
+                            const dateString = fechaSeleccionada.toISOString().split('T')[0];
+                            
+                            // Mostrar cargando
+                            const wrapper = document.getElementById('time-slots-wrapper');
+                            const container = document.getElementById('time-slots-container');
+                            wrapper.style.display = 'block';
+                            container.innerHTML = '<p style="color: #9ca3af; grid-column: span 3;">Consultando disponibilidad...</p>';
+                            
+                            // Obtener horas ocupadas para este día
+                            try {
+                                const resHoras = await fetch(`http://127.0.0.1:8000/api/citas/horas_ocupadas/?fecha=${dateString}`);
+                                let horasOcupadas = [];
+                                if (resHoras.ok) {
+                                    horasOcupadas = await resHoras.json(); // ["08:00", "14:00"]
+                                }
+                                
+                                const now = new Date();
+                                const isToday = fechaSeleccionada.toDateString() === now.toDateString();
+                                const currentHour = now.getHours();
+                                
+                                container.innerHTML = '';
+                                
+                                // Generar slots de 08:00 a 17:00
+                                for (let h = 8; h <= 17; h++) {
+                                    const horaString = `${h.toString().padStart(2, '0')}:00`;
+                                    
+                                    const btn = document.createElement('button');
+                                    btn.type = 'button';
+                                    btn.className = 'time-slot';
+                                    
+                                    // Formato amigable AM/PM
+                                    const ampm = h >= 12 ? 'PM' : 'AM';
+                                    const displayHour = h > 12 ? h - 12 : h;
+                                    btn.innerText = `${displayHour}:00 ${ampm}`;
+                                    
+                                    // Validaciones
+                                    if (isToday && h <= currentHour) {
+                                        btn.classList.add('past');
+                                        btn.disabled = true;
+                                    } else if (horasOcupadas.includes(horaString)) {
+                                        btn.classList.add('busy');
+                                        btn.disabled = true;
+                                    } else {
+                                        btn.classList.add('free');
+                                        btn.onclick = () => {
+                                            // Desmarcar otros
+                                            document.querySelectorAll('.time-slot.free').forEach(b => b.classList.remove('selected'));
+                                            btn.classList.add('selected');
+                                            horaSeleccionada = horaString;
+                                        };
+                                    }
+                                    
+                                    container.appendChild(btn);
+                                }
+                                
+                            } catch (e) {
+                                container.innerHTML = '<p style="color: #ef4444; grid-column: span 3;">Error al cargar las horas.</p>';
+                            }
+                        }
+                    }
+                });
+            },
+            preConfirm: async () => {
+                if (!fechaSeleccionada) {
+                    Swal.showValidationMessage('Por favor selecciona una fecha en el calendario');
+                    return false;
+                }
+                if (!horaSeleccionada) {
+                    Swal.showValidationMessage('Por favor selecciona una hora en la lista (verde)');
+                    return false;
+                }
+                
+                // Ensamblar la fecha y hora final
+                const [hr, min] = horaSeleccionada.split(':');
+                const finalDate = new Date(fechaSeleccionada);
+                finalDate.setHours(parseInt(hr), parseInt(min), 0, 0);
+                
+                const id_inmueble = window.inmuebleObj ? window.inmuebleObj.id_inmueble : new URLSearchParams(window.location.search).get("id");
+                
+                try {
+                    const data = {
+                        fecha_hora: finalDate.toISOString(),
                     estado: "PROGRAMADA",
                     descripcion: "Visita solicitada para el inmueble ID: " + id_inmueble,
                     id_cliente: perfil.id_cliente
@@ -446,6 +569,10 @@ async function agendarVisita() {
             Swal.fire('Visita Agendada', 'Tu cita ha sido programada con éxito. Revisa el panel para más detalles.', 'success');
         }
     });
+    } catch (err) {
+        console.error("Error al obtener fechas ocupadas:", err);
+        Swal.fire("Error", "No se pudo cargar la disponibilidad.", "error");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {

@@ -152,6 +152,7 @@ class Empleado(models.Model):
     nombre = models.CharField(max_length=100)
     identificacion = models.CharField(unique=True, max_length=20)
     telefono = models.CharField(max_length=20, blank=True, null=True)
+    correo = models.CharField(max_length=150, unique=True, blank=True, null=True)
     tipo_empleado = models.CharField(max_length=50)
     id_usuario = models.OneToOneField('auth.User', models.DO_NOTHING, db_column='id_usuario', blank=True, null=True)
 

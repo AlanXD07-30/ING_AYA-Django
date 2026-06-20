@@ -55,7 +55,6 @@
                     <ul class="submenu" id="submenu-empleados" style="display: none;">
                         <li><a href="#" onclick="mostrarSeccion('panel-administradores', this)">↳ Lista de Administradores</a></li>
                         <li><a href="#" onclick="mostrarSeccion('panel-empleados', this)">↳ Lista de Empleados</a></li>
-                        <li><a href="#" onclick="mostrarSeccion('panel-roles', this)">↳ Configuración de Roles</a></li>
                     </ul>
                 </li>
                 <li>
@@ -263,9 +262,12 @@
                     <div class="filtros-container card-box" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
                         <input type="text" id="filtro-emp-nombre" placeholder="Filtrar por nombre..." class="form-input" style="flex: 1; min-width: 150px;">
                         <input type="text" id="filtro-emp-id" placeholder="Filtrar por identificación..." class="form-input" style="flex: 1; min-width: 150px;">
-                        <select id="filtro-emp-rol" class="form-input" style="flex: 1; min-width: 150px;">
-                            <option value="">Todos los roles</option>
-                        </select>
+                        <select id="filtro-emp-rol" class="filter-input" onchange="renderEmpleadosFiltered()">
+                                <option value="">Todos los roles</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Secretaria">Secretaria</option>
+                                <option value="Agente">Agente</option>
+                            </select>
                     </div>
 
                     <div class="card-box">
@@ -290,28 +292,6 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN DE ROLES -->
-                <div id="panel-roles" class="panel-section" style="display: none;">
-                    <div class="section-header">
-                        <h1>Roles y Cargos</h1>
-                        <button class="btn-primary" onclick="abrirModalRol()">+ Nuevo Rol</button>
-                    </div>
-                    <div class="card-box">
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID ROL</th>
-                                        <th>NOMBRE DEL CARGO</th>
-                                        <th>ACCIONES</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabla-roles">
-                                    <tr><td colspan="3">Cargando roles...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- SECCIÓN GRÁFICOS INMUEBLES -->
@@ -386,15 +366,20 @@
                         </div>
                     </div>
                     
-                    <div class="filtros-container card-box" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="filtros-container card-box" style="margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                         <input type="date" id="filtro-cita-fecha" class="form-input" style="flex: 1; min-width: 150px;">
                         <select id="filtro-cita-estado" class="form-input" style="flex: 1; min-width: 150px;">
                             <option value="">Todos los estados</option>
-                            <option value="PENDIENTE">Pendiente</option>
-                            <option value="REALIZADA">Realizada</option>
+                            <option value="PROGRAMADA">Programada (Pendiente Agente)</option>
+                            <option value="CONFIRMADA">Confirmada (Con Agente)</option>
+                            <option value="FINALIZADA">Finalizada (Cerrada)</option>
+                            <option value="NO_ASISTIO">No asistió</option>
                             <option value="CANCELADA">Cancelada</option>
-                            <option value="REPROGRAMADA">Reprogramada</option>
                         </select>
+                        <div style="flex: 1; min-width: 150px; display: flex; align-items: center; gap: 10px; color: white;">
+                            <input type="checkbox" id="filtro-cita-historial" style="width: 20px; height: 20px; accent-color: #3b82f6; cursor: pointer;">
+                            <label for="filtro-cita-historial" style="cursor: pointer; font-weight: bold; margin: 0;">Ver Historial (Cerradas/Canceladas)</label>
+                        </div>
                     </div>
 
                     <div class="card-box">
@@ -639,7 +624,7 @@
         </div>
     </div>
 
-    <script src="admin.js"></script>
+    <script src="admin.js?v=6"></script>
 
     <!-- MODAL CITA -->
     <div id="modal-cita" class="modal-overlay" style="display: none;">
@@ -656,10 +641,11 @@
                     <div class="input-group">
                         <label for="cita-estado">Estado</label>
                         <select id="cita-estado" required>
-                            <option value="PENDIENTE">Pendiente</option>
-                            <option value="REALIZADA">Realizada</option>
+                            <option value="PROGRAMADA">Programada</option>
+                            <option value="CONFIRMADA">Confirmada</option>
+                            <option value="FINALIZADA">Finalizada</option>
+                            <option value="NO_ASISTIO">No asistió</option>
                             <option value="CANCELADA">Cancelada</option>
-                            <option value="REPROGRAMADA">Reprogramada</option>
                         </select>
                     </div>
                 </div>
@@ -857,9 +843,18 @@
                         <input type="text" id="emp-telefono">
                     </div>
                     <div class="input-group">
+                        <label for="emp-correo">Correo Electrónico</label>
+                        <input type="email" id="emp-correo" required placeholder="Ej: empleado@correo.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
                         <label for="emp-rol">Rol / Cargo</label>
                         <select id="emp-rol" required>
-                            <!-- Se llena dinmicamente -->
+                            <option value="">Seleccione un rol...</option>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Secretaria">Secretaria</option>
+                            <option value="Agente">Agente</option>
                         </select>
                     </div>
                 </div>
@@ -883,5 +878,25 @@
             </form>
         </div>
     </div>
+    <!-- MODAL CAMBIO DE CREDENCIALES (OBLIGATORIO) -->
+    <div id="modal-cambio-credenciales" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h2 style="color: #ef4444; margin-bottom: 10px;">⚠️ Acción Requerida</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Por tu seguridad, debes establecer tu propio correo y una nueva contraseña para continuar.</p>
+            
+            <form id="form-cambio-credenciales" style="text-align: left;">
+                <div class="input-group" style="margin-bottom: 15px;">
+                    <label for="nuevo-correo">Nuevo Correo Electrónico</label>
+                    <input type="email" id="nuevo-correo" required placeholder="tu@correo.com" style="width: 100%;">
+                </div>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label for="nueva-password">Nueva Contraseña</label>
+                    <input type="password" id="nueva-password" required minlength="8" placeholder="Mínimo 8 caracteres" style="width: 100%;">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Guardar y Continuar</button>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>

@@ -27,6 +27,49 @@ document.addEventListener("DOMContentLoaded", function () {
     inicializarTema();
     verificarSesion();
     cargarInmuebles();
+    
+    // Handler para cambio de credenciales obligatorio
+    const formCredenciales = document.getElementById("form-cambio-credenciales");
+    if (formCredenciales) {
+        formCredenciales.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const nuevoCorreo = document.getElementById("nuevo-correo").value;
+            const nuevaPassword = document.getElementById("nueva-password").value;
+            const btn = formCredenciales.querySelector("button");
+            
+            btn.textContent = "Guardando...";
+            btn.disabled = true;
+            
+            try {
+                const token = localStorage.getItem("mi_token");
+                const response = await fetch("http://127.0.0.1:8000/api/perfil-empleado/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Token ${token}`
+                    },
+                    body: JSON.stringify({
+                        correo: nuevoCorreo,
+                        password: nuevaPassword
+                    })
+                });
+                
+                if (response.ok) {
+                    localStorage.removeItem("requiere_cambio");
+                    document.getElementById("modal-cambio-credenciales").style.display = "none";
+                    Swal.fire('¡Éxito!', 'Tus credenciales han sido actualizadas. Por favor, recuérdalas.', 'success');
+                } else {
+                    const data = await response.json();
+                    Swal.fire('Error', data.error || 'No se pudo actualizar', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Problema de conexión con el servidor', 'error');
+            } finally {
+                btn.textContent = "Guardar y Continuar";
+                btn.disabled = false;
+            }
+        });
+    }
 });
 
 // Guardamos los datos globales para poder editarlos
@@ -54,19 +97,31 @@ function verificarSesion() {
             return;
         }
 
-        // Secretaria
+        // Secretaria: Solo Inmuebles, Clientes y Citas. Sin permisos de edición/borrado/creación en Inmuebles y Clientes.
         if (rol && rol.toLowerCase().includes('secretari')) {
-            document.getElementById("nav-inmuebles").parentElement.style.display = 'none';
             document.getElementById("nav-empleados").parentElement.style.display = 'none';
             document.getElementById("nav-financiera").parentElement.style.display = 'none';
+            
+            // Ocultar botones de crear, editar y eliminar para Secretaria (excepto en citas)
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #btn-nuevo-inmueble, #btn-nuevo-cliente { display: none !important; }
+                #tabla-inmuebles .btn-action.edit, #tabla-inmuebles .btn-action.delete { display: none !important; }
+                #tabla-clientes .btn-action.edit, #tabla-clientes .btn-action.delete { display: none !important; }
+            `;
+            document.head.appendChild(style);
         }
         
-        // Agente
+        // Agente: Inmuebles, Clientes, Citas. Con permisos de edición/creación en Inmuebles y Clientes.
         if (rol && rol.toLowerCase().includes('agente')) {
-            document.getElementById("nav-clientes").parentElement.style.display = 'none';
             document.getElementById("nav-empleados").parentElement.style.display = 'none';
             document.getElementById("nav-financiera").parentElement.style.display = 'none';
         }
+    }
+    
+    // Verificación de cambio de credenciales obligatorio
+    if (localStorage.getItem("requiere_cambio") === "true") {
+        document.getElementById("modal-cambio-credenciales").style.display = "flex";
     }
 
     const nombre = localStorage.getItem("mi_nombre") || "Admin";
@@ -865,7 +920,6 @@ function abrirModalEmpleado() {
     document.getElementById("form-empleado").reset();
     document.getElementById("emp-id").value = "";
     document.getElementById("modal-empleado-titulo").innerText = "Agregar Empleado";
-    llenarSelectRoles();
     document.getElementById("modal-empleado").style.display = "flex";
 }
 
@@ -874,8 +928,9 @@ function abrirModalEditarEmpleado(emp) {
     document.getElementById("emp-nombre").value = emp.nombre;
     document.getElementById("emp-identificacion").value = emp.identificacion;
     document.getElementById("emp-telefono").value = emp.telefono || "";
+    document.getElementById("emp-correo").value = emp.correo || "";
     
-    llenarSelectRoles(emp.tipo_empleado);
+    document.getElementById("emp-rol").value = emp.tipo_empleado || "";
     
     document.getElementById("modal-empleado-titulo").innerText = "Editar Empleado #" + (emp.id_empleado || emp.id);
     document.getElementById("modal-empleado").style.display = "flex";
@@ -889,96 +944,12 @@ document.addEventListener("DOMContentLoaded", () => {
             nombre: document.getElementById("emp-nombre").value,
             identificacion: document.getElementById("emp-identificacion").value,
             telefono: document.getElementById("emp-telefono").value,
+            correo: document.getElementById("emp-correo").value,
             tipo_empleado: document.getElementById("emp-rol").value
         };
         await guardarRegistro("empleados", id, data, cargarEmpleados, "modal-empleado");
     });
 });
-
-
-// ==========================================
-// MÓDULO ROLES
-// ==========================================
-async function cargarRoles() {
-    const tabla = document.getElementById("tabla-roles");
-    try {
-        const res = await fetch("http://127.0.0.1:8000/api/roles/");
-        if (!res.ok) throw new Error("Error");
-        const data = await res.json();
-        
-        if (data.length === 0) {
-            tabla.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No hay roles registrados.</td></tr>';
-            return;
-        }
-
-        tabla.innerHTML = "";
-        data.forEach(rol => {
-            const id = rol.id_rol || rol.id;
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>#${id}</td>
-                <td><strong>${rol.nombre_rol}</strong></td>
-                <td>
-                    <button class="btn-action edit" onclick='abrirModalEditarRol(${JSON.stringify(rol)})' title="Editar">✏️</button>
-                    <button class="btn-action delete" onclick="eliminarRegistro('roles', ${id}, cargarRoles)" title="Eliminar">🗑️</button>
-                </td>
-            `;
-            tabla.appendChild(tr);
-        });
-
-        // POBLAR EL FILTRO DE ROLES EN EMPLEADOS
-        const filtroRol = document.getElementById("filtro-emp-rol");
-        if(filtroRol) {
-            filtroRol.innerHTML = '<option value="">Todos los roles</option>';
-            data.forEach(rol => {
-                filtroRol.innerHTML += `<option value="${rol.nombre_rol}">${rol.nombre_rol}</option>`;
-            });
-        }
-    } catch (e) {
-        tabla.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error al cargar.</td></tr>';
-    }
-}
-
-function abrirModalRol() {
-    document.getElementById("form-rol").reset();
-    document.getElementById("rol-id").value = "";
-    document.getElementById("modal-rol-titulo").innerText = "Agregar Rol";
-    document.getElementById("modal-rol").style.display = "flex";
-}
-
-function abrirModalEditarRol(rol) {
-    document.getElementById("rol-id").value = rol.id_rol || rol.id;
-    document.getElementById("rol-nombre").value = rol.nombre_rol;
-    document.getElementById("modal-rol-titulo").innerText = "Editar Rol #" + (rol.id_rol || rol.id);
-    document.getElementById("modal-rol").style.display = "flex";
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("form-rol")?.addEventListener("submit", async function(e) {
-        e.preventDefault();
-        const id = document.getElementById("rol-id").value;
-        const data = { nombre_rol: document.getElementById("rol-nombre").value.toUpperCase() };
-        await guardarRegistro("roles", id, data, cargarRoles, "modal-rol");
-    });
-});
-
-async function llenarSelectRoles(rolActivo = "") {
-    const select = document.getElementById("emp-rol");
-    select.innerHTML = '<option value="">Seleccione un rol...</option>';
-    try {
-        const res = await fetch("http://127.0.0.1:8000/api/roles/");
-        if (res.ok) {
-            const roles = await res.json();
-            roles.forEach(rol => {
-                const opt = document.createElement("option");
-                opt.value = rol.nombre_rol;
-                opt.innerText = rol.nombre_rol;
-                if(rol.nombre_rol === rolActivo) opt.selected = true;
-                select.appendChild(opt);
-            });
-        }
-    } catch(e) {}
-}
 
 
 // ==========================================
@@ -1037,7 +1008,9 @@ async function guardarRegistro(endpoint, id, data, callbackCargar, modalId) {
         }
 
         Swal.fire('¡Éxito!', `Registro ${id ? 'actualizado' : 'creado'} correctamente.`, 'success');
-        cerrarModal(modalId);
+        if (modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
         callbackCargar();
     } catch (error) {
         Swal.fire('Error', error.message || 'Hubo un problema al guardar el registro.', 'error');
@@ -1659,6 +1632,112 @@ let citasGlobal = [];
 let transaccionesGlobal = [];
 let pagosGlobal = [];
 
+async function finalizarCita(id_cita) {
+    const token = localStorage.getItem("mi_token");
+    Swal.fire({
+        title: '¿Marcar cita como Finalizada?',
+        text: "Se le enviará un correo de agradecimiento al cliente.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, finalizar'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/citas/${id_cita}/finalizar_cita/`, {
+                    method: 'POST',
+                    headers: { "Authorization": "Token " + token }
+                });
+                if (response.ok) {
+                    Swal.fire('Éxito', 'Cita finalizada.', 'success');
+                    cargarCitas();
+                } else throw new Error("Error API");
+            } catch (e) {
+                Swal.fire('Error', 'No se pudo procesar.', 'error');
+            }
+        }
+    });
+}
+
+async function citaNoAsistio(id_cita) {
+    const token = localStorage.getItem("mi_token");
+    Swal.fire({
+        title: '¿Cliente no asistió?',
+        text: "Se registrará como inasistencia y se le notificará al cliente.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, marcar no asistió',
+        confirmButtonColor: '#ef4444'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/citas/${id_cita}/no_asistio/`, {
+                    method: 'POST',
+                    headers: { "Authorization": "Token " + token }
+                });
+                if (response.ok) {
+                    Swal.fire('Guardado', 'Inasistencia registrada.', 'success');
+                    cargarCitas();
+                } else throw new Error("Error API");
+            } catch (e) {
+                Swal.fire('Error', 'No se pudo procesar.', 'error');
+            }
+        }
+    });
+}
+
+async function abrirModalAsignarAgente(id_cita) {
+    // Buscar lista de empleados (Agentes)
+    try {
+        const token = localStorage.getItem("mi_token");
+        const res = await fetch("http://127.0.0.1:8000/api/empleados/", { headers: { "Authorization": "Token " + token } });
+        if (!res.ok) return;
+        const empleados = await res.json();
+        const agentes = empleados.filter(e => e.tipo_empleado === 'AGENTE');
+        
+        let optionsHtml = agentes.map(a => `<option value="${a.id_empleado}">${a.nombre}</option>`).join('');
+        
+        Swal.fire({
+            title: 'Asignar Agente a Cita #' + id_cita,
+            html: `
+                <select id="swal-agente-id" class="swal2-input">
+                    <option value="">Seleccione un agente...</option>
+                    ${optionsHtml}
+                </select>
+            `,
+            confirmButtonText: 'Asignar',
+            showCancelButton: true,
+            preConfirm: () => {
+                const selected = document.getElementById('swal-agente-id').value;
+                if (!selected) {
+                    Swal.showValidationMessage('Debe seleccionar un agente');
+                    return false;
+                }
+                return selected;
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`http://127.0.0.1:8000/api/citas/${id_cita}/asignar_agente/`, {
+                        method: 'POST',
+                        headers: {
+                            "Authorization": "Token " + token,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ id_empleado: result.value })
+                    });
+                    if (response.ok) {
+                        Swal.fire('Asignado', 'Agente notificado y cita confirmada.', 'success');
+                        cargarCitas();
+                    } else throw new Error("API Error");
+                } catch(e) {
+                    Swal.fire('Error', 'Error al asignar agente', 'error');
+                }
+            }
+        });
+        
+    } catch(e) { console.error(e); }
+}
+
 // ---- CITAS ----
 async function cargarCitas(silent = false) {
     if(silent) { try { const r = await fetch("http://127.0.0.1:8000/api/citas/"); if(r.ok) citasGlobal = await r.json(); }catch(e){} return; }
@@ -1670,37 +1749,86 @@ async function cargarCitas(silent = false) {
     renderCitasFiltered();
 }
 
+function formatCitaDate(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+    return date.toLocaleString('es-CO', options).replace(',', ' -');
+}
+
 function renderCitasFiltered() {
     const tabla = document.getElementById("tabla-citas");
     if (!tabla) return;
     
+    const perfil = JSON.parse(localStorage.getItem("mi_perfil") || "{}");
+    const esAgente = perfil.tipo_empleado === 'AGENTE';
+    
+    const verHistorial = document.getElementById("filtro-cita-historial")?.checked;
     const filtroFecha = document.getElementById("filtro-cita-fecha").value;
     const filtroEstado = document.getElementById("filtro-cita-estado").value;
     
     let filtradas = citasGlobal.filter(c => {
         let matchFecha = !filtroFecha || c.fecha_hora.startsWith(filtroFecha);
-        let matchEstado = !filtroEstado || c.estado === filtroEstado;
-        return matchFecha && matchEstado;
+        let cEstado = (c.estado || "").toUpperCase();
+        let matchEstado = !filtroEstado || cEstado === filtroEstado;
+        
+        let activa = cEstado === 'PROGRAMADA' || cEstado === 'CONFIRMADA';
+        let historial = cEstado === 'FINALIZADA' || cEstado === 'NO_ASISTIO' || cEstado === 'CANCELADA';
+        
+        let matchTab = verHistorial ? historial : activa;
+        
+        let matchRol = true;
+        if (esAgente) {
+            matchRol = (c.id_empleado === perfil.id_empleado);
+            if (!verHistorial) matchRol = matchRol && cEstado === 'CONFIRMADA';
+        }
+        
+        return matchFecha && matchEstado && matchTab && matchRol;
     });
 
     if (filtradas.length === 0) {
-        tabla.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay citas registradas.</td></tr>';
+        tabla.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay citas para mostrar en esta vista.</td></tr>';
         return;
     }
 
-    tabla.innerHTML = filtradas.map(c => `
-        <tr>
-            <td>${c.id_cita}</td>
-            <td>${c.fecha_hora.replace('T', ' ')}</td>
-            <td><span class="badge badge-${c.estado.toLowerCase()}">${c.estado}</span></td>
-            <td>Cliente ID: ${c.id_cliente}</td>
-            <td>Empleado ID: ${c.id_empleado}</td>
-            <td>
+    tabla.innerHTML = filtradas.map(c => {
+        let empleadoHtml = c.id_empleado ? c.empleado_nombre : '<span style="color: #f59e0b; font-weight: bold;">Agente pendiente por confirmar</span>';
+        let cEstado = (c.estado || "").toUpperCase();
+        
+        let accionesHtml = '';
+        if (esAgente && cEstado === 'CONFIRMADA') {
+            accionesHtml = `
+                <button class="btn-success" onclick="finalizarCita(${c.id_cita})" style="margin-right: 5px;">✅ Finalizada</button>
+                <button class="btn-danger" onclick="citaNoAsistio(${c.id_cita})">❌ No asistió</button>
+            `;
+        } else if (!esAgente && !verHistorial) {
+            if (!c.id_empleado && cEstado === 'PROGRAMADA') {
+                accionesHtml += `<button class="btn-primary" onclick="abrirModalAsignarAgente(${c.id_cita})" style="margin-right: 5px;">👤 Asignar Agente</button>`;
+            }
+            accionesHtml += `
                 <button class="btn-secondary" onclick="abrirModalEditarCita(${c.id_cita})">✏️ Editar</button>
                 <button class="btn-danger" onclick="eliminarRegistro('citas', ${c.id_cita}, cargarCitas)">🗑️</button>
-            </td>
+            `;
+        }
+        
+        let badgeColor = '';
+        if (cEstado === 'PROGRAMADA') badgeColor = '#f59e0b';
+        else if (cEstado === 'CONFIRMADA') badgeColor = '#3b82f6';
+        else if (cEstado === 'FINALIZADA') badgeColor = '#10b981';
+        else if (cEstado === 'NO_ASISTIO') badgeColor = '#ef4444';
+        else if (cEstado === 'CANCELADA') badgeColor = '#6b7280';
+        
+        return `
+        <tr>
+            <td>${c.id_cita}</td>
+            <td>${formatCitaDate(c.fecha_hora)}</td>
+            <td><span style="background-color: ${badgeColor}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">${cEstado}</span></td>
+            <td>${c.cliente_nombre || 'Cliente ID: ' + c.id_cliente}</td>
+            <td>${empleadoHtml}</td>
+            <td>${accionesHtml}</td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function llenarSelectGenerico(selectId, datos, idField, displayField, defaultText) {
@@ -1745,11 +1873,20 @@ async function abrirModalEditarCita(id) {
     llenarSelectGenerico("cita-empleado", empleadosGlobal, "id_empleado", "nombre", "Seleccione un empleado...");
 
     document.getElementById("cita-id").value = id;
-    document.getElementById("cita-fecha").value = c.fecha_hora;
-    document.getElementById("cita-estado").value = c.estado;
+    
+    if (c.fecha_hora) {
+        const d = new Date(c.fecha_hora);
+        const tzOffset = d.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 16);
+        document.getElementById("cita-fecha").value = localISOTime;
+    } else {
+        document.getElementById("cita-fecha").value = "";
+    }
+    
+    document.getElementById("cita-estado").value = (c.estado || "").toUpperCase();
     document.getElementById("cita-descripcion").value = c.descripcion;
     document.getElementById("cita-cliente").value = c.id_cliente;
-    document.getElementById("cita-empleado").value = c.id_empleado;
+    document.getElementById("cita-empleado").value = c.id_empleado || "";
     
     document.getElementById("modal-cita-titulo").innerText = "Editar Cita #" + id;
     document.getElementById("modal-cita").style.display = "flex";
@@ -1854,15 +1991,39 @@ function verTimelineTransaccion(id) {
     if (!t) return;
     
     let pasoActual = 1;
-    if (t.estado === "PROMESA") pasoActual = 2;
-    if (t.estado === "TRAMITE") pasoActual = 3;
-    if (t.estado === "ESCRITURACION") pasoActual = 4;
-    if (t.estado === "COMPLETADA") pasoActual = 5;
+    let isArriendo = t.tipo_operacion && t.tipo_operacion.toUpperCase() === "ARRIENDO";
+    
+    if (isArriendo) {
+        if (t.estado === "CONTRATO") pasoActual = 2;
+        if (t.estado === "ARRENDADO") pasoActual = 3;
+    } else {
+        if (t.estado === "PROMESA") pasoActual = 2;
+        if (t.estado === "TRAMITE") pasoActual = 3;
+        if (t.estado === "ESCRITURACION") pasoActual = 4;
+        if (t.estado === "COMPLETADA") pasoActual = 5;
+    }
 
-    Swal.fire({
-        title: `Progreso de Transacción #${id}`,
-        width: '800px',
-        html: `
+    let timelineHtml = '';
+    if (isArriendo) {
+        timelineHtml = `
+            <div class="timeline-container">
+                <div class="timeline-step ${pasoActual >= 1 ? 'active' : ''}">
+                    <div class="timeline-icon">1</div>
+                    <div class="timeline-text">En Revisión</div>
+                </div>
+                <div class="timeline-line ${pasoActual >= 2 ? 'active' : ''}"></div>
+                <div class="timeline-step ${pasoActual >= 2 ? 'active' : ''}">
+                    <div class="timeline-icon">2</div>
+                    <div class="timeline-text">Firma Contrato</div>
+                </div>
+                <div class="timeline-line ${pasoActual >= 3 ? 'active' : ''}"></div>
+                <div class="timeline-step ${pasoActual >= 3 ? 'active' : ''}">
+                    <div class="timeline-icon">3</div>
+                    <div class="timeline-text">Arrendado</div>
+                </div>
+            </div>`;
+    } else {
+        timelineHtml = `
             <div class="timeline-container">
                 <div class="timeline-step ${pasoActual >= 1 ? 'active' : ''}">
                     <div class="timeline-icon">1</div>
@@ -1883,7 +2044,14 @@ function verTimelineTransaccion(id) {
                     <div class="timeline-icon">4</div>
                     <div class="timeline-text">Escrituración</div>
                 </div>
-            </div>
+            </div>`;
+    }
+
+    Swal.fire({
+        title: `Progreso de Transacción #${id}`,
+        width: '800px',
+        html: `
+            ${timelineHtml}
             
             <div style="margin-top: 30px; text-align: left; padding: 15px; background: #f8fafc; border-radius: 8px;">
                 <h3 style="margin-top:0; color: #1e3a8a;">Plan de Pagos Actual</h3>
@@ -2181,6 +2349,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("filtro-trans-estado")?.addEventListener("change", renderTransaccionesFiltered);
     document.getElementById("filtro-pago-metodo")?.addEventListener("change", renderPagosFiltered);
     document.getElementById("filtro-pago-estado")?.addEventListener("change", renderPagosFiltered);
+    
+    // Filtros de Citas
+    document.getElementById("filtro-cita-fecha")?.addEventListener("input", renderCitasFiltered);
+    document.getElementById("filtro-cita-estado")?.addEventListener("change", renderCitasFiltered);
+    document.getElementById("filtro-cita-historial")?.addEventListener("change", renderCitasFiltered);
     
     // Cargar datos
     if (typeof cargarCitas === 'function') cargarCitas();

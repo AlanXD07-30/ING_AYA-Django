@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Cita Asignada</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f5; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="color: #1e3a8a; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">Nueva Cita Asignada</h2>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Hola <strong>{{ agente_nombre }}</strong>,
+        </p>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Se te ha asignado una nueva cita en el sistema.
+        </p>
+        <div style="background-color: #f3f4f6; padding: 15px; border-left: 4px solid #3b82f6; margin: 20px 0;">
+            <p style="margin: 5px 0;"><strong>Cliente:</strong> {{ cliente_nombre }}</p>
+            <p style="margin: 5px 0;"><strong>Fecha y Hora:</strong> {{ fecha_hora }}</p>
+            <p style="margin: 5px 0;"><strong>Detalles:</strong> {{ descripcion }}</p>
+        </div>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Por favor, asegúrate de estar disponible y prepararte para esta visita. Podrás marcar el resultado en tu panel una vez finalizada.
+        </p>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+            Atentamente,<br>
+            <strong>El Equipo de IngAya Inmobiliaria</strong>
+        </p>
+    </div>
+</body>
+</html>

@@ -12,6 +12,72 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <!-- Flatpickr (Calendario Premium) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    
+    <style>
+        .flatpickr-day.fully-booked {
+            background-color: #ef4444 !important;
+            border-color: #ef4444 !important;
+            color: white !important;
+            text-decoration: line-through;
+        }
+
+        /* Time Slots Grid */
+        #time-slots-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+        }
+        
+        .time-slot {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-slot.free {
+            background-color: #34d399; /* Verde suave */
+            color: #064e3b;
+        }
+
+        .time-slot.free:hover {
+            background-color: #10b981;
+            transform: scale(1.05);
+        }
+
+        .time-slot.selected {
+            background-color: #059669 !important; /* Verde oscuro seleccionado */
+            color: white !important;
+            box-shadow: 0 0 10px rgba(5, 150, 105, 0.5);
+            transform: scale(1.05);
+            border: 2px solid white;
+        }
+
+        .time-slot.busy {
+            background-color: #ef4444; /* Rojo ocupado */
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.8;
+            text-decoration: line-through;
+        }
+
+        .time-slot.past {
+            background-color: #4b5563; /* Gris para horas que ya pasaron */
+            color: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
 </head>
 <body>
 
@@ -190,7 +256,7 @@
                                 <hr class="divider">
                                 <h4 id="user-greeting">Hola, Cliente</h4>
                                 <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--text-muted);">¿Qué deseas hacer con esta propiedad?</p>
-                                <button class="btn-action-premium full-width" onclick="solicitarReserva()" style="margin-bottom: 10px;"> Reservar / Iniciar Trámite</button>
+                                <button class="btn-action-premium full-width" id="btn-tramite-main" onclick="solicitarReserva()" style="margin-bottom: 10px;"> Reservar / Iniciar Trámite</button>
                                 <button class="btn-primary full-width" onclick="agendarVisita()" style="margin-bottom: 10px;">📅 Agendar una visita</button>
                                 <button class="btn-secondary full-width" onclick="window.history.back()">Regresar</button>
                             </div>
@@ -232,6 +298,6 @@
         </div>
     </footer>
 
-    <script src="detalle.js" defer></script>
+    <script src="detalle.js?v=5" defer></script>
 </body>
 </html>

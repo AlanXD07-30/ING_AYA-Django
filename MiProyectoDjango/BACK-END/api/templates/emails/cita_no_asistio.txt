@@ -1,0 +1,8 @@
+Hola {{ cliente_nombre }},
+
+Notamos que no pudiste asistir a tu cita programada el día {{ fecha_hora }} con nuestro agente {{ agente_nombre }}.
+
+Entendemos que pueden surgir imprevistos. Te invitamos a ingresar nuevamente a nuestro portal para reprogramar tu visita en un horario que te sea más conveniente. ¡Estaremos encantados de atenderte!
+
+Atentamente,
+El Equipo de IngAya Inmobiliaria

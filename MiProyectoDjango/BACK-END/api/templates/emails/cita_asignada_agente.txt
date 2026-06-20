@@ -1,0 +1,12 @@
+Hola {{ agente_nombre }},
+
+Se te ha asignado una nueva cita en el sistema.
+
+Cliente: {{ cliente_nombre }}
+Fecha y Hora: {{ fecha_hora }}
+Detalles: {{ descripcion }}
+
+Por favor, asegúrate de estar disponible y prepararte para esta visita. Podrás marcar el resultado en tu panel una vez finalizada.
+
+Atentamente,
+El Equipo de IngAya Inmobiliaria

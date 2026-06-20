@@ -1,0 +1,8 @@
+Hola {{ cliente_nombre }},
+
+Queremos agradecerte por asistir a tu cita programada con nosotros el día {{ fecha_hora }}. Esperamos que la información proporcionada por nuestro agente {{ agente_nombre }} haya sido de gran utilidad para ti.
+
+Si tienes alguna duda adicional o deseas dar el siguiente paso, no dudes en contactarnos.
+
+Atentamente,
+El Equipo de IngAya Inmobiliaria

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ClienteViewSet, AdministradorViewSet, InmuebleViewSet, RegistroView, PerfilView, FavoritosView, EmpleadoViewSet
+from .views import ClienteViewSet, AdministradorViewSet, InmuebleViewSet, RegistroView, PerfilView, FavoritosView, EmpleadoViewSet, ActualizarCredencialesEmpleado
 
 router = DefaultRouter()
 router.register(r'clientes', ClienteViewSet, basename='cliente') # Esta será la ruta web
@@ -19,4 +19,5 @@ urlpatterns = [
     path('registro/', RegistroView.as_view(), name='registro'),
     path('perfil/', PerfilView.as_view(), name='perfil'),
     path('favoritos/', FavoritosView.as_view(), name='favoritos'),
+    path('perfil-empleado/', ActualizarCredencialesEmpleado.as_view(), name='perfil-empleado'),
 ]

@@ -1,0 +1,8 @@
+¡Gracias por tu dedicación, {{ nombre }}!
+
+Queremos agradecerte por todo tu trabajo, esfuerzo y compromiso durante tu tiempo con nosotros como {{ cargo }} en IngAya Inmobiliaria.
+
+Ha sido un placer contar contigo en nuestro equipo. Te deseamos el mayor de los éxitos en tus futuros proyectos personales y profesionales. ¡Esperamos que nuestros caminos se vuelvan a cruzar en otra ocasión!
+
+Atentamente,
+La Administración de IngAya Inmobiliaria

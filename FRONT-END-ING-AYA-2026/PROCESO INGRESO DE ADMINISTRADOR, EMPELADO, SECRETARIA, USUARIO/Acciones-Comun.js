@@ -138,6 +138,12 @@
         } else {
             localStorage.removeItem("rol");
         }
+        
+        if (data.requiere_cambio) {
+            localStorage.setItem("requiere_cambio", "true");
+        } else {
+            localStorage.removeItem("requiere_cambio");
+        }
 
         Swal.fire({
           icon:               "success",
@@ -171,6 +177,8 @@
             if (redirectUrl) {
                 localStorage.removeItem("redirect_after_login");
                 window.location.href = redirectUrl;
+            } else if (data.is_admin || (data.rol && data.rol !== 'Cliente')) {
+                window.location.href = "../PANEL DE ADMINISTRACION/admin_dashboard.html";
             } else {
                 window.location.href = "../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html";
             }

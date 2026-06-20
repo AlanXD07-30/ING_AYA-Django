@@ -508,6 +508,134 @@ window.leerPromesa = async function(id_transaccion) {
     }
 };
 
+window.leerContratoArriendo = async function(id_transaccion) {
+    const token = localStorage.getItem('mi_token');
+    if (!token) return;
+
+    Swal.fire({
+        title: 'Generando Contrato...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    try {
+        const resTx = await fetch(`http://127.0.0.1:8000/api/transacciones/${id_transaccion}/`, {
+            headers: { 'Authorization': 'Token ' + token }
+        });
+        const tx = await resTx.json();
+        
+        let inmueble = null;
+        if (tx.id_inmueble) {
+            const resInm = await fetch(`http://127.0.0.1:8000/api/inmuebles/${tx.id_inmueble}/`);
+            if (resInm.ok) inmueble = await resInm.json();
+        }
+        
+        let precioFormat = inmueble ? `$${parseFloat(inmueble.precio).toLocaleString('es-CO')}` : "$0";
+        let dir = inmueble ? inmueble.direccion : "N/A";
+        let barrio = inmueble ? inmueble.barrio : "N/A";
+        let tipo = inmueble ? inmueble.tipo_inmueble : "N/A";
+        let ciudad = inmueble ? inmueble.ciudad : "N/A";
+        
+        const docHtml = `
+            <html>
+            <head>
+                <title>Contrato de Arrendamiento - Ing Aya</title>
+                <style>
+                    body { font-family: 'Times New Roman', Times, serif; padding: 40px; margin: 0 auto; max-width: 800px; color: #000; line-height: 1.6; }
+                    .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+                    .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; }
+                    .header h2 { margin: 5px 0 0 0; font-size: 18px; color: #555; }
+                    .content p { text-align: justify; margin-bottom: 15px; }
+                    .signature-box { margin-top: 50px; display: flex; justify-content: space-between; }
+                    .signature { width: 45%; border-top: 1px solid #000; padding-top: 10px; text-align: center; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>INMOBILIARIA ING AYA S.A.S.</h1>
+                    <h2>CONTRATO DE ARRENDAMIENTO DE INMUEBLE</h2>
+                    <p>NIT: 901.234.567-8 | Bogotá D.C., Colombia</p>
+                </div>
+                <div class="content">
+                    <p>Entre los suscritos a saber, por una parte <strong>INMOBILIARIA ING AYA S.A.S.</strong>, quien actúa en representación del propietario del inmueble y quien en adelante se denominará <strong>EL ARRENDADOR</strong>, y por la otra parte el <strong>CLIENTE</strong> registrado bajo la identificación vinculada a la transacción #${id_transaccion}, quien en adelante se denominará <strong>EL ARRENDATARIO</strong>, hemos celebrado el presente contrato de arrendamiento, el cual se regirá por las siguientes cláusulas:</p>
+                    
+                    <p><strong>PRIMERA - OBJETO:</strong> EL ARRENDADOR entrega a título de arrendamiento al ARRENDATARIO el goce del inmueble ubicado en la ciudad de <strong>${ciudad}</strong>, identificado como un(a) <strong>${tipo}</strong>, ubicado en el barrio <strong>${barrio}</strong>, con dirección exacta: <strong>${dir}</strong>.</p>
+                    
+                    <p><strong>SEGUNDA - CANON DE ARRENDAMIENTO Y FORMA DE PAGO:</strong> El canon de arrendamiento mensual será por la suma de <strong>${precioFormat}</strong> moneda corriente colombiana, pagaderos anticipadamente dentro de los primeros cinco (5) días calendario de cada mes.</p>
+                    
+                    <p><strong>TERCERA - DESTINACIÓN:</strong> EL ARRENDATARIO se compromete a destinar el inmueble exclusivamente para los fines acordados (vivienda o comercio, según corresponda a la propiedad), y no podrá subarrendar ni ceder el contrato sin autorización escrita del ARRENDADOR.</p>
+                    
+                    <p><strong>CUARTA - DURACIÓN:</strong> El presente contrato tendrá una duración inicial de doce (12) meses, contados a partir de la firma y entrega formal del inmueble.</p>
+
+                    <p>Para constancia de lo anterior, se expide y acepta electrónicamente este documento a través de la plataforma de Ing Aya.</p>
+                </div>
+                <div class="signature-box">
+                    <div class="signature">
+                        <strong>INMOBILIARIA ING AYA S.A.S.</strong><br>
+                        Firma Autorizada
+                    </div>
+                    <div class="signature">
+                        <strong>EL ARRENDATARIO</strong><br>
+                        Aceptación Electrónica
+                    </div>
+                </div>
+                <script>
+                    window.onload = function() { window.print(); }
+                </script>
+            </body>
+            </html>
+        `;
+
+        const pdfWindow = window.open('', '_blank');
+        pdfWindow.document.write(docHtml);
+        pdfWindow.document.close();
+
+        Swal.fire({
+            title: '¿Firmar Contrato?',
+            text: '¿Has leído el documento PDF que se abrió y aceptas todas las cláusulas de arrendamiento?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Sí, Acepto y Firmo',
+            cancelButtonText: 'Rechazar',
+            reverseButtons: true
+        }).then(async (result) => {
+            if (result.isConfirmed || result.dismiss === Swal.DismissReason.cancel) {
+                const acepta = result.isConfirmed;
+                try {
+                    const response = await fetch(`http://127.0.0.1:8000/api/transacciones/${id_transaccion}/firmar_contrato_arriendo/`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Token ' + token,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ acepta: acepta })
+                    });
+
+                    if (response.ok) {
+                        Swal.fire(
+                            acepta ? '¡Contrato Firmado!' : 'Trámite Cancelado',
+                            acepta ? 'El inmueble ahora es tuyo y está Arrendado.' : 'El trámite se ha cancelado.',
+                            acepta ? 'success' : 'info'
+                        ).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', 'No se pudo procesar la solicitud.', 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Problema de conexión.', 'error');
+                }
+            }
+        });
+    } catch (err) {
+        Swal.fire('Error', 'No se pudo cargar la información del contrato.', 'error');
+        console.error(err);
+    }
+};
+
 async function cargarTramitesPendientes(token, clienteData) {
     const container = document.getElementById("tramites-container");
     const fila = document.getElementById("fila-tramites-pendientes");
@@ -538,7 +666,10 @@ async function cargarTramitesPendientes(token, clienteData) {
             const transaccionesAll = await response.json();
             const tramites = transaccionesAll.filter(t => 
                 t.id_cliente == clienteData.id_cliente && 
-                ((t.estado || "").toUpperCase() === "SEPARACION" || (t.estado || "").toUpperCase() === "PROMESA" || (t.estado || "").toUpperCase() === "RESERVADO")
+                ((t.estado || "").toUpperCase() === "SEPARACION" || 
+                 (t.estado || "").toUpperCase() === "PROMESA" || 
+                 (t.estado || "").toUpperCase() === "RESERVADO" || 
+                 (t.estado || "").toUpperCase() === "REVISION")
             );
 
             if (tramites.length === 0) {
@@ -570,6 +701,8 @@ async function cargarTramitesPendientes(token, clienteData) {
                 let estadoTramite = (t.estado || "").toUpperCase();
                 if (estadoTramite === "SEPARACION" || estadoTramite === "RESERVADO") {
                     btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #3b82f6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerPromesa(${t.id_transaccion})">Leer Promesa</button>`;
+                } else if (estadoTramite === "REVISION") {
+                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #8b5cf6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerContratoArriendo(${t.id_transaccion})">Firmar Contrato Arriendo</button>`;
                 } else if (estadoTramite === "PROMESA") {
                     btnAction = `<button class="btn-secondary" style="width: 100%; margin-top: 10px; font-size: 14px; cursor: not-allowed; padding: 8px; border-radius: 4px;" disabled>En trámite avanzado...</button>`;
                 }

@@ -1,0 +1,8 @@
+Hola {{ cliente_nombre }},
+
+Lamentamos informarte que tu cita programada para el {{ fecha_hora }} ha sido cancelada debido a la falta de disponibilidad de nuestros agentes en ese horario específico.
+
+Por favor, te invitamos a reprogramar tu visita en nuestro portal seleccionando otro horario disponible. Pedimos sinceras disculpas por los inconvenientes causados.
+
+Atentamente,
+El Equipo de IngAya Inmobiliaria

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cancelación de Cita</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f5; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="color: #6b7280; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">Aviso de Cancelación de Cita</h2>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Hola <strong>{{ cliente_nombre }}</strong>,
+        </p>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Lamentamos informarte que tu cita programada para el <strong>{{ fecha_hora }}</strong> ha sido cancelada debido a la falta de disponibilidad de nuestros agentes en ese horario específico.
+        </p>
+        <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Por favor, te invitamos a reprogramar tu visita en nuestro portal seleccionando otro horario disponible. Pedimos sinceras disculpas por los inconvenientes causados.
+        </p>
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+            Atentamente,<br>
+            <strong>El Equipo de IngAya Inmobiliaria</strong>
+        </p>
+    </div>
+</body>
+</html>

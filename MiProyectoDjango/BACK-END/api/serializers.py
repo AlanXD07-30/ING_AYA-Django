@@ -144,6 +144,9 @@ class PagoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CitaSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.CharField(source='id_cliente.nombre', read_only=True)
+    empleado_nombre = serializers.CharField(source='id_empleado.nombre', read_only=True)
+
     class Meta:
         model = Cita
         fields = '__all__'

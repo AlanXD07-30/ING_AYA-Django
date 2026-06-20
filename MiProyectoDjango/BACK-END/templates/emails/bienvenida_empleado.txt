@@ -1,0 +1,17 @@
+¡Hola, {{ nombre }}!
+
+Nos alegra muchísimo darte la bienvenida al equipo de trabajo de IngAya.
+
+A partir de este momento, has sido registrado en nuestro sistema bajo el cargo de {{ cargo }}.
+Tendrás acceso a nuestro Panel de Administración donde podrás desempeñar tus funciones y utilizar
+las herramientas personalizadas de nuestra plataforma de bienes raíces.
+
+Recuerda que tus credenciales de acceso son:
+Usuario/Correo: {{ correo }}
+Contraseña (Temporal): {{ identificacion }}
+
+Ingresa a tu panel desde aquí:
+http://127.0.0.1:5500/PROCESO%20INGRESO%20DE%20ADMINISTRADOR,%20EMPELADO,%20SECRETARIA,%20USUARIO/login.html
+
+Si tienes dudas sobre el acceso al sistema, contacta con tu supervisor o administrador de sistemas.
+© 2026 IngAya. Todos los derechos reservados.

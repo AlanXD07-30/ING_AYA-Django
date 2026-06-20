@@ -275,14 +275,68 @@ class EmpleadoViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             empleado = serializer.save()
             ident = empleado.identificacion
+            correo = empleado.correo
             if ident:
-                user, created = User.objects.get_or_create(username=ident, defaults={'email': ident+'@empleado.com'})
+                email_asignar = correo if correo else f"{ident}@empleado.com"
+                user, created = User.objects.get_or_create(username=ident, defaults={'email': email_asignar})
                 user.set_password(ident)
                 user.save()
                 empleado.id_usuario = user
                 empleado.save()
                 
+                if correo:
+                    def enviar_correo_empleado(email_destino, nombre_usuario, cargo, ident_temporal):
+                        try:
+                            asunto = f"Bienvenido a IngAya - {cargo}"
+                            remitente = f"IngAya <{settings.EMAIL_HOST_USER}>"
+                            destinatario = [email_destino]
+
+                            contexto = {
+                                'nombre': nombre_usuario,
+                                'cargo': cargo,
+                                'correo': email_destino,
+                                'identificacion': ident_temporal
+                            }
+                            html_content = render_to_string('emails/bienvenida_empleado.html', contexto)
+                            text_content = render_to_string('emails/bienvenida_empleado.txt', contexto)
+
+                            msg = EmailMultiAlternatives(asunto, text_content, remitente, destinatario)
+                            msg.attach_alternative(html_content, "text/html")
+                            msg.send()
+                        except Exception as e:
+                            print(f"Error al enviar correo a empleado: {e}")
+
+                    hilo_correo = threading.Thread(target=enviar_correo_empleado, args=(correo, empleado.nombre, empleado.tipo_empleado, ident))
+                    hilo_correo.start()
+                
     def perform_destroy(self, instance):
+        correo = instance.correo
+        nombre = instance.nombre
+        cargo = instance.tipo_empleado
+        
+        if correo:
+            def enviar_correo_despedida(email_destino, nombre_usuario, cargo):
+                try:
+                    asunto = f"Gracias por tu tiempo en IngAya - {cargo}"
+                    remitente = f"IngAya <{settings.EMAIL_HOST_USER}>"
+                    destinatario = [email_destino]
+
+                    contexto = {
+                        'nombre': nombre_usuario,
+                        'cargo': cargo,
+                    }
+                    html_content = render_to_string('emails/despedida_empleado.html', contexto)
+                    text_content = render_to_string('emails/despedida_empleado.txt', contexto)
+
+                    msg = EmailMultiAlternatives(asunto, text_content, remitente, destinatario)
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
+                except Exception as e:
+                    print(f"Error al enviar correo de despedida a empleado: {e}")
+
+            hilo_correo = threading.Thread(target=enviar_correo_despedida, args=(correo, nombre, cargo))
+            hilo_correo.start()
+            
         with transaction.atomic():
             user = instance.id_usuario
             instance.delete()
@@ -308,6 +362,8 @@ class CustomAuthToken(ObtainAuthToken):
 
         if not user:
             empleado = Empleado.objects.filter(identificacion=username_or_id).first()
+            if not empleado:
+                empleado = Empleado.objects.filter(correo=username_or_id).first()
             if empleado and empleado.id_usuario:
                 user = authenticate(username=empleado.id_usuario.username, password=password)
             
@@ -337,11 +393,46 @@ class CustomAuthToken(ObtainAuthToken):
         if not rol:
             return Response({'error': 'Cuenta desactivada o sin permisos.'}, status=403)
 
+        requiere_cambio = False
+        if rol and rol != 'Cliente' and rol != 'Administrador':
+            if empleado and user.check_password(empleado.identificacion):
+                requiere_cambio = True
+
         return Response({
             'token': token.key,
             'is_admin': user.is_staff or user.is_superuser,
-            'rol': rol
+            'rol': rol,
+            'requiere_cambio': requiere_cambio
         })
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+class ActualizarCredencialesEmpleado(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        empleado = Empleado.objects.filter(id_usuario=user).first()
+        
+        if not empleado:
+            return Response({'error': 'No es un empleado'}, status=403)
+            
+        nuevo_correo = request.data.get('correo')
+        nueva_password = request.data.get('password')
+        
+        if not nuevo_correo or not nueva_password:
+            return Response({'error': 'Faltan datos'}, status=400)
+            
+        with transaction.atomic():
+            user.email = nuevo_correo
+            user.set_password(nueva_password)
+            user.save()
+            
+            empleado.correo = nuevo_correo
+            empleado.save()
+            
+        return Response({'success': True, 'message': 'Credenciales actualizadas correctamente'})
 
 from .models import Transaccion, Pago, Cita
 from .serializers import TransaccionSerializer, PagoSerializer, CitaSerializer
@@ -357,17 +448,34 @@ class TransaccionViewSet(viewsets.ModelViewSet):
         
         if transaccion.id_inmueble:
             inmueble = transaccion.id_inmueble
-            inmueble.estado = 'Reservado'
-            inmueble.save()
             
-            MovimientoInmueble.objects.create(
-                tipo_movimiento='Cambio Estado',
-                fecha=timezone.now(),
-                precio_momento=inmueble.precio,
-                estado_momento=inmueble.estado,
-                descripcion=f"El inmueble fue Reservado (Transacción #{transaccion.id_transaccion})",
-                id_inmueble=inmueble
-            )
+            if inmueble.tipo_operacion == 'Arriendo':
+                transaccion.estado = 'REVISION'
+                transaccion.save()
+                
+                inmueble.estado = 'En Revisión'
+                inmueble.save()
+                
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El inmueble está En Revisión (Transacción #{transaccion.id_transaccion})",
+                    id_inmueble=inmueble
+                )
+            else:
+                inmueble.estado = 'Reservado'
+                inmueble.save()
+                
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El inmueble fue Reservado (Transacción #{transaccion.id_transaccion})",
+                    id_inmueble=inmueble
+                )
 
     @action(detail=True, methods=['post'])
     def firmar_promesa(self, request, pk=None):
@@ -408,6 +516,45 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                 )
             return Response({"status": "Promesa rechazada. Transacción anulada."})
 
+    @action(detail=True, methods=['post'])
+    def firmar_contrato_arriendo(self, request, pk=None):
+        from django.utils import timezone
+        from .models import MovimientoInmueble
+        transaccion = self.get_object()
+        acepta = request.data.get('acepta', False)
+        inmueble = transaccion.id_inmueble
+        
+        if acepta:
+            transaccion.estado = 'CONTRATO'
+            transaccion.save()
+            if inmueble:
+                inmueble.estado = 'Arrendado'
+                inmueble.save()
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El cliente aceptó el contrato (Transacción #{transaccion.id_transaccion}). Pasa a Arrendado.",
+                    id_inmueble=inmueble
+                )
+            return Response({"status": "Contrato aceptado y arrendado."})
+        else:
+            transaccion.estado = 'ANULADA'
+            transaccion.save()
+            if inmueble:
+                inmueble.estado = 'Disponible'
+                inmueble.save()
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El cliente rechazó el contrato (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
+                    id_inmueble=inmueble
+                )
+            return Response({"status": "Contrato rechazado. Transacción anulada."})
+
     def perform_destroy(self, instance):
         from django.utils import timezone
         from .models import MovimientoInmueble
@@ -433,5 +580,198 @@ class PagoViewSet(viewsets.ModelViewSet):
     serializer_class = PagoSerializer
 
 class CitaViewSet(viewsets.ModelViewSet):
-    queryset = Cita.objects.all()
+    queryset = Cita.objects.all().order_by('-fecha_hora')
     serializer_class = CitaSerializer
+
+    def list(self, request, *args, **kwargs):
+        from django.utils import timezone
+        import datetime
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        import threading
+        
+        now = timezone.now()
+        limite_tiempo = now + datetime.timedelta(hours=2)
+        
+        citas_a_cancelar = Cita.objects.filter(
+            estado='PROGRAMADA',
+            id_empleado__isnull=True,
+            fecha_hora__lte=limite_tiempo
+        )
+        
+        for cita in citas_a_cancelar:
+            cita.estado = 'CANCELADA'
+            cita.descripcion = cita.descripcion + " (Cancelada automáticamente por falta de agente)"
+            cita.save()
+            
+            def send_cancel_email(cliente_email, nombre, fecha):
+                subject = "Aviso de Cancelación de Cita - IngAya"
+                context = {'cliente_nombre': nombre, 'fecha_hora': fecha}
+                html_content = render_to_string('emails/cita_cancelada_automatica.html', context)
+                text_content = render_to_string('emails/cita_cancelada_automatica.txt', context)
+                msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [cliente_email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+            if cita.id_cliente and cita.id_cliente.correo:
+                t = threading.Thread(target=send_cancel_email, args=(
+                    cita.id_cliente.correo,
+                    cita.id_cliente.nombre,
+                    timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
+                ))
+                t.start()
+                
+        return super().list(request, *args, **kwargs)
+
+    @action(detail=True, methods=['post'])
+    def asignar_agente(self, request, pk=None):
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        from django.utils import timezone
+        import threading
+        from .models import Empleado
+        
+        cita = self.get_object()
+        id_agente = request.data.get('id_empleado')
+        if not id_agente:
+            return Response({"error": "Debe proporcionar id_empleado"}, status=400)
+            
+        try:
+            agente = Empleado.objects.get(pk=id_agente)
+            cita.id_empleado = agente
+            cita.estado = 'CONFIRMADA'
+            cita.save()
+            
+            def send_assigned_email(agente_email, agente_nombre, cliente_nombre, fecha, desc):
+                subject = "Nueva Cita Asignada - IngAya"
+                context = {
+                    'agente_nombre': agente_nombre,
+                    'cliente_nombre': cliente_nombre,
+                    'fecha_hora': fecha,
+                    'descripcion': desc
+                }
+                html_content = render_to_string('emails/cita_asignada_agente.html', context)
+                text_content = render_to_string('emails/cita_asignada_agente.txt', context)
+                msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [agente_email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+            if agente.correo:
+                t = threading.Thread(target=send_assigned_email, args=(
+                    agente.correo,
+                    agente.nombre,
+                    cita.id_cliente.nombre if cita.id_cliente else "Desconocido",
+                    timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p'),
+                    cita.descripcion
+                ))
+                t.start()
+                
+            return Response({"status": "Agente asignado y notificado"})
+        except Empleado.DoesNotExist:
+            return Response({"error": "Agente no encontrado"}, status=404)
+
+    @action(detail=True, methods=['post'])
+    def finalizar_cita(self, request, pk=None):
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        from django.utils import timezone
+        import threading
+        
+        cita = self.get_object()
+        cita.estado = 'FINALIZADA'
+        cita.save()
+        
+        def send_final_email(cliente_email, cliente_nombre, agente_nombre, fecha):
+            subject = "Gracias por tu Visita - IngAya"
+            context = {
+                'cliente_nombre': cliente_nombre,
+                'agente_nombre': agente_nombre,
+                'fecha_hora': fecha
+            }
+            html_content = render_to_string('emails/cita_finalizada.html', context)
+            text_content = render_to_string('emails/cita_finalizada.txt', context)
+            msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [cliente_email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+        if cita.id_cliente and cita.id_cliente.correo:
+            t = threading.Thread(target=send_final_email, args=(
+                cita.id_cliente.correo,
+                cita.id_cliente.nombre,
+                cita.id_empleado.nombre if cita.id_empleado else "nuestro agente",
+                timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
+            ))
+            t.start()
+            
+        return Response({"status": "Cita finalizada y cliente notificado"})
+
+    @action(detail=True, methods=['post'])
+    def no_asistio(self, request, pk=None):
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        from django.utils import timezone
+        import threading
+        
+        cita = self.get_object()
+        cita.estado = 'NO_ASISTIO'
+        cita.save()
+        
+        def send_noshow_email(cliente_email, cliente_nombre, agente_nombre, fecha):
+            subject = "Inasistencia a tu Cita - IngAya"
+            context = {
+                'cliente_nombre': cliente_nombre,
+                'agente_nombre': agente_nombre,
+                'fecha_hora': fecha
+            }
+            html_content = render_to_string('emails/cita_no_asistio.html', context)
+            text_content = render_to_string('emails/cita_no_asistio.txt', context)
+            msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [cliente_email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
+        if cita.id_cliente and cita.id_cliente.correo:
+            t = threading.Thread(target=send_noshow_email, args=(
+                cita.id_cliente.correo,
+                cita.id_cliente.nombre,
+                cita.id_empleado.nombre if cita.id_empleado else "nuestro agente",
+                timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
+            ))
+            t.start()
+            
+        return Response({"status": "Incomparecencia registrada y cliente notificado"})
+
+    @action(detail=False, methods=['get'])
+    def fechas_ocupadas(self, request):
+        from django.db.models import Count
+        from django.db.models.functions import TruncDate
+        
+        ocupadas = Cita.objects.exclude(estado='CANCELADA').annotate(
+            fecha=TruncDate('fecha_hora')
+        ).values('fecha').annotate(
+            clientes_distintos=Count('id_cliente', distinct=True)
+        ).filter(clientes_distintos__gte=5)
+        
+        fechas = [obj['fecha'].strftime('%Y-%m-%d') for obj in ocupadas if obj['fecha']]
+        return Response(fechas)
+        
+    @action(detail=False, methods=['get'])
+    def horas_ocupadas(self, request):
+        from django.utils import timezone
+        import datetime
+        
+        fecha_str = request.query_params.get('fecha')
+        if not fecha_str:
+            return Response([])
+            
+        try:
+            fecha_obj = datetime.datetime.strptime(fecha_str, '%Y-%m-%d')
+            start_date = timezone.make_aware(fecha_obj)
+            end_date = start_date + datetime.timedelta(days=1)
+            
+            citas = Cita.objects.filter(fecha_hora__gte=start_date, fecha_hora__lt=end_date).exclude(estado='CANCELADA')
+            horas = [timezone.localtime(cita.fecha_hora).strftime('%H:%M') for cita in citas if cita.fecha_hora]
+            
+            return Response(horas)
+        except Exception as e:
+            print("Error en horas_ocupadas:", e)
+            return Response([])
