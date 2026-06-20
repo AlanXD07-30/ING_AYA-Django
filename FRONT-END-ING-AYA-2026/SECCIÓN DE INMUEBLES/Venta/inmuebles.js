@@ -193,7 +193,7 @@
             ${metraje ? `<span class="card-metraje">${escapeHtml(metraje)}</span>` : ""}
           </div>
         </div>
-                ${id ? `<a class="btn-ver" href="../detalle.html?id=${encodeURIComponent(id)}">Ver propiedad →</a>` : ""}
+                ${id ? `<a class="btn-ver" href="../detalle${window.location.protocol === 'file:' ? '.html' : ''}?id=${encodeURIComponent(id)}">Ver propiedad →</a>` : ""}
       `;
       fragment.appendChild(article);
     });
