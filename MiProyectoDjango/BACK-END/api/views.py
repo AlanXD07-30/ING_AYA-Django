@@ -99,6 +99,9 @@ class InmuebleViewSet(viewsets.ModelViewSet):
         imagenes = request.FILES.getlist('imagenes')
         if not imagenes:
             return Response({"error": "No se enviaron imágenes"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Delete old images to replace them
+        ImagenInmueble.objects.filter(id_inmueble=inmueble).delete()
         
         # Make sure media/inmuebles folder exists
         upload_dir = os.path.join(settings.MEDIA_ROOT, 'inmuebles')
