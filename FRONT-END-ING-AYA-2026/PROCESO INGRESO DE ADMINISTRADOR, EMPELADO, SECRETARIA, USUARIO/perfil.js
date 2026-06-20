@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     // 1. CARGAR DATOS DEL PERFIL
     // ==========================================
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/perfil/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
             method: "GET",
             headers: {
                 "Authorization": "Token " + token,
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 if (data.foto_perfil.startsWith("http")) {
                     urlAvatar = data.foto_perfil;
                 } else {
-                    urlAvatar = "http://127.0.0.1:8000" + data.foto_perfil;
+                    urlAvatar = "https://ingaya-django-production.up.railway.app" + data.foto_perfil;
                 }
                 if (btnQuitarFoto) btnQuitarFoto.style.display = "block";
             } else {
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             formData.append("foto_perfil", file);
 
             try {
-                const res = await fetch("http://127.0.0.1:8000/api/perfil/", {
+                const res = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
                     method: "POST",
                     headers: {
                         "Authorization": "Token " + token
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 if (res.ok) {
                     const json = await res.json();
                     let nuevaUrl = json.data.foto_perfil;
-                    if (!nuevaUrl.startsWith("http")) nuevaUrl = "http://127.0.0.1:8000" + nuevaUrl;
+                    if (!nuevaUrl.startsWith("http")) nuevaUrl = "https://ingaya-django-production.up.railway.app" + nuevaUrl;
                     
                     document.getElementById("perfil-avatar").src = nuevaUrl;
                     localStorage.setItem("mi_avatar", nuevaUrl);
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (btnQuitarFotoClick) {
         btnQuitarFotoClick.addEventListener("click", async function() {
             try {
-                const res = await fetch("http://127.0.0.1:8000/api/perfil/", {
+                const res = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
                     method: "DELETE",
                     headers: {
                         "Authorization": "Token " + token,
@@ -195,7 +195,7 @@ async function cargarFavoritos(token) {
     container.innerHTML = "<p id='msg-cargando'>Cargando tus favoritos...</p>";
     
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/favoritos/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/favoritos/", {
             method: "GET",
             headers: {
                 "Authorization": "Token " + token,
@@ -263,7 +263,7 @@ async function cargarFavoritos(token) {
 // Función expuesta globalmente para el botón de eliminar
 window.eliminarFavorito = async function(idInmueble, token) {
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/favoritos/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/favoritos/", {
             method: "DELETE",
             headers: {
                 "Authorization": "Token " + token,
@@ -346,7 +346,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/perfil/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -388,14 +388,14 @@ window.leerPromesa = async function(id_transaccion) {
     });
 
     try {
-        const resTx = await fetch(`http://127.0.0.1:8000/api/transacciones/${id_transaccion}/`, {
+        const resTx = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
             headers: { 'Authorization': 'Token ' + token }
         });
         const tx = await resTx.json();
         
         let inmueble = null;
         if (tx.id_inmueble) {
-            const resInm = await fetch(`http://127.0.0.1:8000/api/inmuebles/${tx.id_inmueble}/`);
+            const resInm = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${tx.id_inmueble}/`);
             if (resInm.ok) inmueble = await resInm.json();
         }
         
@@ -477,7 +477,7 @@ window.leerPromesa = async function(id_transaccion) {
             if (result.isConfirmed || result.dismiss === Swal.DismissReason.cancel) {
                 const acepta = result.isConfirmed;
                 try {
-                    const response = await fetch(`http://127.0.0.1:8000/api/transacciones/${id_transaccion}/firmar_promesa/`, {
+                    const response = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/firmar_promesa/`, {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Token ' + token,
@@ -519,14 +519,14 @@ window.leerContratoArriendo = async function(id_transaccion) {
     });
 
     try {
-        const resTx = await fetch(`http://127.0.0.1:8000/api/transacciones/${id_transaccion}/`, {
+        const resTx = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
             headers: { 'Authorization': 'Token ' + token }
         });
         const tx = await resTx.json();
         
         let inmueble = null;
         if (tx.id_inmueble) {
-            const resInm = await fetch(`http://127.0.0.1:8000/api/inmuebles/${tx.id_inmueble}/`);
+            const resInm = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${tx.id_inmueble}/`);
             if (resInm.ok) inmueble = await resInm.json();
         }
         
@@ -605,7 +605,7 @@ window.leerContratoArriendo = async function(id_transaccion) {
             if (result.isConfirmed || result.dismiss === Swal.DismissReason.cancel) {
                 const acepta = result.isConfirmed;
                 try {
-                    const response = await fetch(`http://127.0.0.1:8000/api/transacciones/${id_transaccion}/firmar_contrato_arriendo/`, {
+                    const response = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/firmar_contrato_arriendo/`, {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Token ' + token,
@@ -648,7 +648,7 @@ async function cargarTramitesPendientes(token, clienteData) {
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/transacciones/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/transacciones/", {
             method: "GET",
             headers: {
                 "Authorization": `Token ${token}`,
@@ -687,13 +687,13 @@ async function cargarTramitesPendientes(token, clienteData) {
                 let btnAction = "";
 
                 try {
-                    const resInm = await fetch(`http://127.0.0.1:8000/api/inmuebles/${t.id_inmueble}/`);
+                    const resInm = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${t.id_inmueble}/`);
                     if(resInm.ok) {
                         const inm = await resInm.json();
                         propertyInfo = `$${parseFloat(inm.precio).toLocaleString('es-CO')}`;
                         propertyTitle = `${inm.tipo_inmueble} en ${inm.barrio}`;
                         if (inm.imagen_principal) {
-                            propertyImg = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "http://127.0.0.1:8000" + inm.imagen_principal;
+                            propertyImg = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "https://ingaya-django-production.up.railway.app" + inm.imagen_principal;
                         }
                     }
                 } catch(e) {}

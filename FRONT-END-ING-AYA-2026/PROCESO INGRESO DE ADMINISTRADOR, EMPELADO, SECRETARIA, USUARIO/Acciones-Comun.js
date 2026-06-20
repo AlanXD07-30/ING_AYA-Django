@@ -111,7 +111,7 @@
     btn.disabled    = true;
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      const response = await fetch("https://ingaya-django-production.up.railway.app/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -155,7 +155,7 @@
         }).then(async function () {
           // Pre-cargar datos del perfil antes de redirigir para evitar la "U" temporal
           try {
-            const perfilRes = await fetch("http://127.0.0.1:8000/api/perfil/", {
+            const perfilRes = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
                 method: "GET",
                 headers: {
                     "Authorization": "Token " + data.token,
@@ -166,7 +166,7 @@
                 const perfilData = await perfilRes.json();
                 localStorage.setItem("mi_nombre", perfilData.nombre || "Usuario");
                 if (perfilData.foto) {
-                    localStorage.setItem("mi_avatar", "http://127.0.0.1:8000" + perfilData.foto);
+                    localStorage.setItem("mi_avatar", "https://ingaya-django-production.up.railway.app" + perfilData.foto);
                 }
             }
           } catch (e) {

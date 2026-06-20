@@ -65,7 +65,7 @@
 
         try {
             // Llamada a la API
-            const response = await fetch(`http://127.0.0.1:8000/api/inmuebles/${id}/`);
+            const response = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${id}/`);
             if (!response.ok) {
                 if (response.status === 404) {
                     throw new Error("El inmueble solicitado no existe o fue eliminado.");
@@ -332,7 +332,7 @@ async function obtenerPerfilCliente() {
     const token = localStorage.getItem("mi_token");
     if (!token) return null;
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/perfil/", {
+        const res = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
             method: "GET",
             headers: { "Authorization": "Token " + token, "Content-Type": "application/json" }
         });
@@ -380,7 +380,7 @@ async function solicitarReserva() {
                     id_inmueble: id_inmueble
                 };
 
-                const response = await fetch("http://127.0.0.1:8000/api/transacciones/", {
+                const response = await fetch("https://ingaya-django-production.up.railway.app/api/transacciones/", {
                     method: "POST",
                     headers: {
                         "Authorization": "Token " + localStorage.getItem("mi_token"),
@@ -417,7 +417,7 @@ async function agendarVisita() {
     }
 
     try {
-        const resFechas = await fetch("http://127.0.0.1:8000/api/citas/fechas_ocupadas/");
+        const resFechas = await fetch("https://ingaya-django-production.up.railway.app/api/citas/fechas_ocupadas/");
         let fechasOcupadas = [];
         if (resFechas.ok) {
             fechasOcupadas = await resFechas.json();
@@ -470,7 +470,7 @@ async function agendarVisita() {
                             
                             // Obtener horas ocupadas para este día
                             try {
-                                const resHoras = await fetch(`http://127.0.0.1:8000/api/citas/horas_ocupadas/?fecha=${dateString}`);
+                                const resHoras = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/horas_ocupadas/?fecha=${dateString}`);
                                 let horasOcupadas = [];
                                 if (resHoras.ok) {
                                     horasOcupadas = await resHoras.json(); // ["08:00", "14:00"]
@@ -547,7 +547,7 @@ async function agendarVisita() {
                     id_cliente: perfil.id_cliente
                 };
 
-                const response = await fetch("http://127.0.0.1:8000/api/citas/", {
+                const response = await fetch("https://ingaya-django-production.up.railway.app/api/citas/", {
                     method: "POST",
                     headers: {
                         "Authorization": "Token " + localStorage.getItem("mi_token"),

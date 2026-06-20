@@ -58,10 +58,10 @@ function verificarSesion() {
 // ==========================================
 async function cargarInmuebles(silent = false) {
     const tabla = document.getElementById("tabla-inmuebles");
-    if(silent) { try { const r = await fetch("http://127.0.0.1:8000/api/inmuebles/"); if(r.ok) inmueblesGlobal = await r.json(); }catch(e){} return; }
+    if(silent) { try { const r = await fetch("https://ingaya-django-production.up.railway.app/api/inmuebles/"); if(r.ok) inmueblesGlobal = await r.json(); }catch(e){} return; }
     
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/inmuebles/");
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/inmuebles/");
         if (!response.ok) throw new Error("Error en el servidor");
         
         const data = await response.json();
@@ -128,7 +128,7 @@ async function eliminarInmueble(id) {
     if (confirmacion.isConfirmed) {
         const token = localStorage.getItem("mi_token");
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/inmuebles/${id}/`, {
+            const response = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     "Authorization": `Token ${token}`
@@ -242,7 +242,7 @@ document.getElementById("form-inmueble").addEventListener("submit", async functi
     };
 
     try {
-        const url = isEdit ? `http://127.0.0.1:8000/api/inmuebles/${editId}/` : "http://127.0.0.1:8000/api/inmuebles/";
+        const url = isEdit ? `https://ingaya-django-production.up.railway.app/api/inmuebles/${editId}/` : "https://ingaya-django-production.up.railway.app/api/inmuebles/";
         const method = isEdit ? "PUT" : "POST";
 
         const response = await fetch(url, {
@@ -267,7 +267,7 @@ document.getElementById("form-inmueble").addEventListener("submit", async functi
                 }
                 
                 try {
-                    const imgRes = await fetch(`http://127.0.0.1:8000/api/inmuebles/${savedId}/upload_images/`, {
+                    const imgRes = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${savedId}/upload_images/`, {
                         method: 'POST',
                         headers: { "Authorization": `Token ${token}` },
                         body: formData
@@ -371,7 +371,7 @@ async function dibujarGraficosInmuebles() {
     document.getElementById("kpi-vendidos").innerText = countVend;
     
     // Total Clientes asíncrono
-    fetch("http://127.0.0.1:8000/api/clientes/")
+    fetch("https://ingaya-django-production.up.railway.app/api/clientes/")
         .then(res => res.json())
         .then(clientes => {
             document.getElementById("kpi-clientes").innerText = clientes.length || 0;
@@ -522,7 +522,7 @@ async function dibujarGraficosClientes() {
     const token = localStorage.getItem("mi_token");
     let totalClientes = 0;
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/clientes/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/clientes/", {
             headers: { "Authorization": `Token ${token}` }
         });
         if (response.ok) {
@@ -560,7 +560,7 @@ async function dibujarGraficosClientes() {
 async function cargarClientes() {
     const tabla = document.getElementById("tabla-clientes");
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/clientes/");
+        const res = await fetch("https://ingaya-django-production.up.railway.app/api/clientes/");
         if (!res.ok) throw new Error("Error");
         const data = await res.json();
         
@@ -625,7 +625,7 @@ document.getElementById("form-cliente")?.addEventListener("submit", async functi
 async function cargarEmpleados() {
     const tabla = document.getElementById("tabla-empleados");
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/empleados/");
+        const res = await fetch("https://ingaya-django-production.up.railway.app/api/empleados/");
         if (!res.ok) throw new Error("Error");
         const data = await res.json();
         
@@ -695,7 +695,7 @@ document.getElementById("form-empleado")?.addEventListener("submit", async funct
 async function cargarRoles() {
     const tabla = document.getElementById("tabla-roles");
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/roles/");
+        const res = await fetch("https://ingaya-django-production.up.railway.app/api/roles/");
         if (!res.ok) throw new Error("Error");
         const data = await res.json();
         
@@ -748,7 +748,7 @@ async function llenarSelectRoles(rolActivo = "") {
     const select = document.getElementById("emp-rol");
     select.innerHTML = '<option value="">Seleccione un rol...</option>';
     try {
-        const res = await fetch("http://127.0.0.1:8000/api/roles/");
+        const res = await fetch("https://ingaya-django-production.up.railway.app/api/roles/");
         if (res.ok) {
             const roles = await res.json();
             roles.forEach(rol => {
@@ -780,7 +780,7 @@ async function eliminarRegistro(endpoint, id, callbackCargar) {
 
     if (result.isConfirmed) {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/${endpoint}/${id}/`, {
+            const response = await fetch(`https://ingaya-django-production.up.railway.app/api/${endpoint}/${id}/`, {
                 method: "DELETE"
             });
             if (!response.ok) throw new Error("Error al eliminar");
@@ -793,7 +793,7 @@ async function eliminarRegistro(endpoint, id, callbackCargar) {
 }
 
 async function guardarRegistro(endpoint, id, data, callbackCargar, modalId) {
-    const url = id ? `http://127.0.0.1:8000/api/${endpoint}/${id}/` : `http://127.0.0.1:8000/api/${endpoint}/`;
+    const url = id ? `https://ingaya-django-production.up.railway.app/api/${endpoint}/${id}/` : `https://ingaya-django-production.up.railway.app/api/${endpoint}/`;
     const method = id ? "PUT" : "POST";
 
     try {

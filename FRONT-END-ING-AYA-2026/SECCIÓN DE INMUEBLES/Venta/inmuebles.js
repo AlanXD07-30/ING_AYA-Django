@@ -78,7 +78,7 @@
   // ============================================================
   // URL BASE DEL BACKEND
   // ============================================================
-  const BASE_API = "http://127.0.0.1:8000/api/inmuebles/";
+  const BASE_API = "https://ingaya-django-production.up.railway.app/api/inmuebles/";
 
   // ============================================================
   // ESTADO GLOBAL
@@ -366,7 +366,7 @@ window.guardarFavorito = async function(idInmueble) {
         return;
     }
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/favoritos/", {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/favoritos/", {
             method: "POST",
             headers: {
                 "Authorization": "Token " + token,
