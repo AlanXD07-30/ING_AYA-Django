@@ -212,8 +212,7 @@ class PerfilView(APIView):
                     except Exception as e:
                         print(f"Error al enviar correo de cambio de clave: {e}")
 
-                hilo_correo = threading.Thread(target=enviar_correo_cambio_clave, args=(user.email, cliente.nombre))
-                hilo_correo.start()
+                enviar_correo_cambio_clave(user.email, cliente.nombre)
 
             cliente.save()
             serializer = ClienteSerializer(cliente, context={'request': request})
@@ -309,8 +308,7 @@ class EmpleadoViewSet(viewsets.ModelViewSet):
                         except Exception as e:
                             print(f"Error al enviar correo a empleado: {e}")
 
-                    hilo_correo = threading.Thread(target=enviar_correo_empleado, args=(correo, empleado.nombre, empleado.tipo_empleado, ident))
-                    hilo_correo.start()
+                    enviar_correo_empleado(correo, empleado.nombre, empleado.tipo_empleado, ident)
                 
     def perform_destroy(self, instance):
         correo = instance.correo
@@ -337,8 +335,7 @@ class EmpleadoViewSet(viewsets.ModelViewSet):
                 except Exception as e:
                     print(f"Error al enviar correo de despedida a empleado: {e}")
 
-            hilo_correo = threading.Thread(target=enviar_correo_despedida, args=(correo, nombre, cargo))
-            hilo_correo.start()
+            enviar_correo_despedida(correo, nombre, cargo)
             
         with transaction.atomic():
             user = instance.id_usuario
@@ -617,12 +614,11 @@ class CitaViewSet(viewsets.ModelViewSet):
                 msg.send()
 
             if cita.id_cliente and cita.id_cliente.correo:
-                t = threading.Thread(target=send_cancel_email, args=(
+                send_cancel_email(
                     cita.id_cliente.correo,
                     cita.id_cliente.nombre,
                     timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
-                ))
-                t.start()
+                )
                 
         return super().list(request, *args, **kwargs)
 
@@ -660,14 +656,13 @@ class CitaViewSet(viewsets.ModelViewSet):
                 msg.send()
 
             if agente.correo:
-                t = threading.Thread(target=send_assigned_email, args=(
+                send_assigned_email(
                     agente.correo,
                     agente.nombre,
                     cita.id_cliente.nombre if cita.id_cliente else "Desconocido",
                     timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p'),
                     cita.descripcion
-                ))
-                t.start()
+                )
                 
             return Response({"status": "Agente asignado y notificado"})
         except Empleado.DoesNotExist:
@@ -698,13 +693,12 @@ class CitaViewSet(viewsets.ModelViewSet):
             msg.send()
 
         if cita.id_cliente and cita.id_cliente.correo:
-            t = threading.Thread(target=send_final_email, args=(
+            send_final_email(
                 cita.id_cliente.correo,
                 cita.id_cliente.nombre,
                 cita.id_empleado.nombre if cita.id_empleado else "nuestro agente",
                 timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
-            ))
-            t.start()
+            )
             
         return Response({"status": "Cita finalizada y cliente notificado"})
 
@@ -733,13 +727,12 @@ class CitaViewSet(viewsets.ModelViewSet):
             msg.send()
 
         if cita.id_cliente and cita.id_cliente.correo:
-            t = threading.Thread(target=send_noshow_email, args=(
+            send_noshow_email(
                 cita.id_cliente.correo,
                 cita.id_cliente.nombre,
                 cita.id_empleado.nombre if cita.id_empleado else "nuestro agente",
                 timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
-            ))
-            t.start()
+            )
             
         return Response({"status": "Incomparecencia registrada y cliente notificado"})
 
