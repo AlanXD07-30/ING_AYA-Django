@@ -1249,6 +1249,13 @@ function renderEmpleadosFiltered() {
 
 // LÓGICA DE IMPRESIÓN PRO
 function abrirModalImpresion(tipo) {
+    // IMPORTANTE: En celulares, los popups asíncronos (como el de Swal) bloquean el window.open().
+    // Por ende, si estamos en vista móvil, imprimimos de una vez de forma síncrona.
+    if (window.innerWidth <= 1000) {
+        imprimirReporte(tipo, 'filtrados');
+        return;
+    }
+
     Swal.fire({
         title: '🖨️ Opciones de Impresión',
         html: `
