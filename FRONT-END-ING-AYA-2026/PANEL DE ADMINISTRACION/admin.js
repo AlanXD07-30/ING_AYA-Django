@@ -1724,16 +1724,20 @@ async function abrirModalAsignarAgente(id_cita) {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/asignar_agente/`, {
-                        method: 'POST',
+                    // Usamos PATCH estándar para evitar fallos del servidor remoto (ej. fallo de correos SMTP)
+                    const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/`, {
+                        method: 'PATCH',
                         headers: {
                             "Authorization": "Token " + token,
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ id_empleado: result.value })
+                        body: JSON.stringify({ 
+                            id_empleado: result.value,
+                            estado: 'CONFIRMADA' 
+                        })
                     });
                     if (response.ok) {
-                        Swal.fire('Asignado', 'Agente notificado y cita confirmada.', 'success');
+                        Swal.fire('Asignado', 'Agente asignado y cita confirmada exitosamente.', 'success');
                         cargarCitas();
                     } else throw new Error("API Error");
                 } catch(e) {
@@ -1866,7 +1870,6 @@ async function abrirModalCita() {
     document.getElementById("modal-cita-titulo").innerText = "Agendar Nueva Cita";
     
     llenarSelectGenerico("cita-cliente", clientesGlobal, "id_cliente", "nombre", "Seleccione un cliente...");
-    llenarSelectGenerico("cita-empleado", empleadosGlobal, "id_empleado", "nombre", "Seleccione un empleado...");
     
     document.getElementById("modal-cita").style.display = "flex";
 }
@@ -1877,7 +1880,6 @@ async function abrirModalEditarCita(id) {
     if (!c) return;
     
     llenarSelectGenerico("cita-cliente", clientesGlobal, "id_cliente", "nombre", "Seleccione un cliente...");
-    llenarSelectGenerico("cita-empleado", empleadosGlobal, "id_empleado", "nombre", "Seleccione un empleado...");
 
     document.getElementById("cita-id").value = id;
     
@@ -1893,7 +1895,6 @@ async function abrirModalEditarCita(id) {
     document.getElementById("cita-estado").value = (c.estado || "").toUpperCase();
     document.getElementById("cita-descripcion").value = c.descripcion;
     document.getElementById("cita-cliente").value = c.id_cliente;
-    document.getElementById("cita-empleado").value = c.id_empleado || "";
     
     document.getElementById("modal-cita-titulo").innerText = "Editar Cita #" + id;
     document.getElementById("modal-cita").style.display = "flex";
@@ -1907,8 +1908,7 @@ document.getElementById("form-cita")?.addEventListener("submit", async function(
         fecha_hora: document.getElementById("cita-fecha").value,
         estado: document.getElementById("cita-estado").value,
         descripcion: document.getElementById("cita-descripcion").value,
-        id_cliente: document.getElementById("cita-cliente").value || null,
-        id_empleado: document.getElementById("cita-empleado").value || null
+        id_cliente: document.getElementById("cita-cliente").value || null
     };
     
     let url = "https://ingaya-django-production.up.railway.app/api/citas/";

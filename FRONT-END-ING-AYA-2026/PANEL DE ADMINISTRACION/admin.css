@@ -261,12 +261,14 @@ body {
 
 .data-table {
     width: 100%;
+    min-width: 1000px; /* Asegura que la tabla no se aplaste en pantallas normales */
     border-collapse: collapse;
 }
 
 .data-table th, .data-table td {
     padding: 15px;
     text-align: left;
+    white-space: nowrap; /* Evita que el contenido de las columnas se junte o baje de línea */
     border-bottom: 1px solid var(--border);
 }
 

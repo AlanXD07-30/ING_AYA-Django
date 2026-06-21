@@ -131,8 +131,7 @@
                         <h2 style="margin: 0 0 10px 0; font-size: 20px;">🗓️ Próximos Vencimientos</h2>
                         <p style="margin: 0; opacity: 0.9;">Control de cuotas iniciales y escrituración pendientes.</p>
                     </div>
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -149,7 +148,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
 
                 
@@ -202,8 +200,7 @@
                             <tr><td colspan="6" style="text-align: center;">Cargando inmuebles...</td></tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
+                        </div>
 
                 
                 <!-- SECCIÓN DE CLIENTES -->
@@ -222,8 +219,7 @@
                         <input type="text" id="filtro-cli-tel" placeholder="Filtrar por teléfono..." class="form-input" style="flex: 1; min-width: 150px;">
                     </div>
 
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -242,7 +238,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
 
                 <!-- SECCIÓN DE ADMINISTRADORES -->
@@ -258,8 +253,7 @@
                         <input type="text" id="filtro-adm-nombre" placeholder="Filtrar por nombre..." class="form-input" style="flex: 1; min-width: 150px;">
                     </div>
 
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -276,7 +270,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
 
                 <!-- SECCIÓN DE EMPLEADOS -->
@@ -300,8 +293,7 @@
                             </select>
                     </div>
 
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -319,7 +311,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
 
                 </div>
@@ -412,8 +403,7 @@
                         </div>
                     </div>
 
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -430,7 +420,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
 
                 <!-- SECCIÓN DE TRANSACCIONES -->
@@ -458,8 +447,7 @@
                         </select>
                     </div>
 
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -478,7 +466,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
 
                 <!-- SECCIÓN DE PAGOS -->
@@ -509,8 +496,7 @@
                         </select>
                     </div>
 
-                    <div class="card-box">
-                        <div class="table-responsive">
+                    <div class="table-container card-box">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -528,7 +514,6 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
                 </div>
             </div>
         </main>
@@ -684,12 +669,6 @@
                         <label for="cita-cliente">Cliente</label>
                         <select id="cita-cliente" required>
                             <option value="">Seleccione un cliente...</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="cita-empleado">Empleado</label>
-                        <select id="cita-empleado" required>
-                            <option value="">Seleccione un empleado...</option>
                         </select>
                     </div>
                 </div>
@@ -938,6 +917,7 @@ function toggleMenu() {
 </script>
 </body>
 </html>
+
 
 
 
