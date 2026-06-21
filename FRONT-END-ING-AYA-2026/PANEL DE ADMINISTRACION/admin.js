@@ -1699,7 +1699,7 @@ async function abrirModalAsignarAgente(id_cita) {
         const res = await fetch("https://ingaya-django-production.up.railway.app/api/empleados/", { headers: { "Authorization": "Token " + token } });
         if (!res.ok) return;
         const empleados = await res.json();
-        const agentes = empleados.filter(e => e.tipo_empleado === 'AGENTE');
+        const agentes = empleados.filter(e => e.tipo_empleado && e.tipo_empleado.toUpperCase() === 'AGENTE');
         
         let optionsHtml = agentes.map(a => `<option value="${a.id_empleado}">${a.nombre}</option>`).join('');
         
