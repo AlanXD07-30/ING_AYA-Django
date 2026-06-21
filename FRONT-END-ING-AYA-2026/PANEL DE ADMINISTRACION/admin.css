@@ -1017,12 +1017,13 @@ htmlhtml[data-theme="light"] .theme-toggle {
     .stats-grid, .filtros-container { grid-template-columns: 1fr; flex-direction: column; }
     .filtros-container form { display: flex; flex-direction: column; width: 100%; gap: 10px; }
     
-    .table-container { 
+    .table-container, .table-responsive { 
         overflow-x: auto; 
         width: 100%; 
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
         -webkit-overflow-scrolling: touch;
+        margin-bottom: 15px;
     }
     .data-table th, .data-table td {
         white-space: nowrap; /* Evita que el texto de las celdas se apachurre hacia abajo */
@@ -1030,6 +1031,9 @@ htmlhtml[data-theme="light"] .theme-toggle {
     }
     table { width: 100%; min-width: 800px; }
     
+    .charts-grid { display: flex; flex-direction: column; gap: 20px; }
+    .chart-container-inner { height: 250px !important; width: 100% !important; }
+
     .timeline-container { flex-direction: column; gap: 20px; }
     .timeline-line { width: 4px; height: 40px; top: 0; margin: 10px 0; }
     .card-box { padding: 15px; }
