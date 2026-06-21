@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
 <body>
 
     <!-- ===== ENCABEZADO ===== -->
-    <header>
+    <header>    <button class="hamburger-menu" aria-label="Abrir menÃº" onclick="toggleMenu()"><span></span><span></span><span></span></button>
         <nav class="Imagen_empresa">
             <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html">
                 <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
@@ -28,7 +28,7 @@
                 <li><a href="../CONTACTANOS/contactanos.html">Contactanos</a></li>
                 <li><a href="../SOBRE NOSOTROS/sobrenosotros.html">Sobre nosotros</a></li>
                 <li>
-                    <a href="Index.html">Inmuebles</a>
+                    <a href="../SECCIÃ“N DE INMUEBLES/Venta/inmuebles.html" onclick="if(window.innerWidth<=768){event.preventDefault(); this.parentElement.classList.toggle('mobile-open');}">Inmuebles <span class="mobile-arrow">&#9660;</span></a>
                     <ul class="Submenu_inmuebles">
                         <li><a href="../SECCIÓN DE INMUEBLES/Venta/inmuebles.html">En venta</a></li>
                         <li><a href="../SECCIÓN DE INMUEBLES/Arriendo/inmuebles.html">En Arriendo</a></li>
@@ -235,5 +235,19 @@
     <!-- Scripts al final para que el DOM esté disponible -->
     <script src="Acciones-Pag-Prin.js"></script>
 
+<script>
+function toggleMenu() {
+    var menus = document.querySelectorAll('.nav-links, .Menu_principal, .navegaciÃ³n_encabezado');
+    menus.forEach(function(el) {
+        el.classList.toggle('active');
+    });
+}
+</script>
 </body>
 </html>
+
+
+
+
+
+

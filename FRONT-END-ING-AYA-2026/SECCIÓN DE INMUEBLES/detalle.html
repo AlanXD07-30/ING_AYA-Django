@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -82,7 +82,7 @@
 <body>
 
     <!-- ===== HEADER ===== -->
-    <header>
+    <header>    <button class="hamburger-menu" aria-label="Abrir menÃº" onclick="toggleMenu()"><span></span><span></span><span></span></button>
         <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="logo-head">
             <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
         </a>
@@ -91,7 +91,7 @@
             <li><a href="../SOBRE NOSOTROS/sobrenosotros.html">Sobre nosotros</a></li>
             <li><a href="../CONTACTANOS/contactanos.html">Contáctanos</a></li>
             <li>
-                <a href="#">Inmuebles</a>
+                <a href="#">Inmuebles <span class="mobile-arrow">&#9660;</span></a>
                 <ul class="submenu">
                     <li><a href="Venta/inmuebles.html">En venta</a></li>
                     <li><a href="Arriendo/inmuebles.html">En arriendo</a></li>
@@ -299,5 +299,18 @@
     </footer>
 
     <script src="detalle.js?v=5" defer></script>
+<script>
+function toggleMenu() {
+    var menus = document.querySelectorAll('.nav-links, .Menu_principal, .navegaciÃ³n_encabezado');
+    menus.forEach(function(el) {
+        el.classList.toggle('active');
+    });
+}
+</script>
 </body>
 </html>
+
+
+
+
+

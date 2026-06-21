@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -37,7 +37,7 @@
             
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#" id="nav-inmuebles" onclick="toggleSubmenu(event, 'submenu-inmuebles')">🏠 Gestión de Inmuebles ▼</a>
+                    <a href="#" id="nav-inmuebles" onclick="toggleSubmenu(event, 'submenu-inmuebles')">🏠 Gestión de Inmuebles <span class="mobile-arrow">&#9660;</span></a>
                     <ul class="submenu" id="submenu-inmuebles">
                         <li><a href="#" class="active" onclick="mostrarSeccion('panel-inmuebles', this)">↳ Ver Tabla Registros</a></li>
                         <li><a href="#" onclick="mostrarSeccion('panel-graficos-inmuebles', this)">↳ Reportes y Gráficos</a></li>
@@ -898,5 +898,17 @@
         </div>
     </div>
 
+<script>
+function toggleMenu() {
+    var menus = document.querySelectorAll('.nav-links, .Menu_principal, .navegaciÃ³n_encabezado');
+    menus.forEach(function(el) {
+        el.classList.toggle('active');
+    });
+}
+</script>
 </body>
 </html>
+
+
+
+
