@@ -30,6 +30,19 @@
                     sidebarTitle.innerText = 'Secretaria panel';
                 }
             }
+
+            // Lógica de Sidebar Móvil
+            const hamburger = document.getElementById('admin-hamburger');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            };
+
+            hamburger.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
         });
     </script>
 </head>
@@ -37,6 +50,9 @@
 
     <div class="dashboard-container">
         
+        <!-- OVERLAY MÓVIL -->
+        <div id="mobile-overlay" class="mobile-overlay"></div>
+
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -92,7 +108,12 @@
         <!-- MAIN CONTENT -->
         <main class="main-content">
             <header class="topbar">
-                <button id="themeToggle" class="theme-toggle" title="Cambiar Tema">☀️</button>
+                <div class="topbar-left">
+                    <button id="admin-hamburger" class="admin-hamburger" aria-label="Abrir Menú">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <button id="themeToggle" class="theme-toggle" title="Cambiar Tema">☀️</button>
+                </div>
                 <div class="user-info">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin Avatar" class="avatar" id="admin-avatar">
                     <span id="admin-name">Cargando...</span>
