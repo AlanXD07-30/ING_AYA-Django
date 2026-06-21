@@ -685,8 +685,7 @@ footer {
 
     .filtros select { min-width: 100%; width: 100%; }
 }
-/* HAMBURGER MENU CSS */
-@media (max-width: 480px) {
+/* HAMBURGER MENU CSS */ @media (max-width: 1000px) {
     header {
         position: relative !important;
     }
@@ -798,3 +797,5 @@ footer {
 
 
 .mobile-arrow { display: none !important; } @media (max-width: 1000px) { .mobile-arrow { display: inline !important; } }
+
+

@@ -479,8 +479,7 @@ label[for="input-foto"]:hover .avatar-overlay {
         padding: 10px !important;
     }
 }
-/* HAMBURGER MENU CSS */
-@media (max-width: 480px) {
+/* HAMBURGER MENU CSS */ @media (max-width: 1000px) {
     header {
         position: relative !important;
     }
@@ -523,14 +522,13 @@ label[for="input-foto"]:hover .avatar-overlay {
         margin-left: 50px !important;
     }
 }
-@media (min-width: 481px) {
+@media (min-width: 1001px) {
     .hamburger-menu { display: none !important; }
 }
 
 
 /* SUBMENU MÃ“VIL */
-@media (max-width: 480px) {
-    .Submenu_inmuebles {
+@media (max-width: 1000px) { .Submenu_inmuebles {
         position: static !important;
         display: none !important;
         width: 100% !important;
@@ -556,7 +554,7 @@ label[for="input-foto"]:hover .avatar-overlay {
 }
 
 /* SUBMENU ESCRITORIO (para las paginas que no lo tenian) */
-@media (min-width: 481px) {
+@media (min-width: 1001px) {
     .Submenu_inmuebles {
         position: absolute;
         top: 100%;
@@ -587,6 +585,8 @@ label[for="input-foto"]:hover .avatar-overlay {
     .Submenu_inmuebles li a:hover { background: rgba(255,255,255,0.08); }
 }
 
-@media (max-width: 480px) { .Submenu_inmuebles li a { color: #353535 !important; font-weight: 600 !important; } }
+@media (max-width: 1000px) { .Submenu_inmuebles li a { color: #353535 !important; font-weight: 600 !important; } }
 
-.mobile-arrow { display: none !important; } @media (max-width: 480px) { .mobile-arrow { display: inline !important; } }
+.mobile-arrow { display: none !important; } @media (max-width: 1000px) { .mobile-arrow { display: inline !important; } }
+
+

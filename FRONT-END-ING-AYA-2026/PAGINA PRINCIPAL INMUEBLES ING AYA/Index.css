@@ -1019,8 +1019,7 @@ footer          { animation-delay: 0.52s; }
 /* ============================================================
    RESPONSIVE — MÓVILES (≤ 480px)
    ============================================================ */
-@media (max-width: 480px) {
-    /* Encabezado y Navegación Móvil */
+@media (max-width: 1000px) { /* Encabezado y Navegacion Móvil */
     header {
         align-items: center;
         padding: 10px 5%;
@@ -1101,8 +1100,7 @@ footer          { animation-delay: 0.52s; }
 
 }
 
-/* HAMBURGER MENU CSS */
-@media (max-width: 480px) {
+/* HAMBURGER MENU CSS */ @media (max-width: 1000px) {
     header {
         position: relative !important;
     }
@@ -1145,14 +1143,13 @@ footer          { animation-delay: 0.52s; }
         margin-left: 50px !important;
     }
 }
-@media (min-width: 481px) {
+@media (min-width: 1001px) {
     .hamburger-menu { display: none !important; }
 }
 
 
 /* SUBMENU MÃ“VIL */
-@media (max-width: 480px) {
-    .Submenu_inmuebles {
+@media (max-width: 1000px) { .Submenu_inmuebles {
         position: static !important;
         display: none !important;
         width: 100% !important;
@@ -1177,6 +1174,8 @@ footer          { animation-delay: 0.52s; }
     }
 }
 
-@media (max-width: 480px) { .Submenu_inmuebles li a { color: #353535 !important; font-weight: 600 !important; } }
+@media (max-width: 1000px) { .Submenu_inmuebles li a { color: #353535 !important; font-weight: 600 !important; } }
 
-.mobile-arrow { display: none !important; } @media (max-width: 480px) { .mobile-arrow { display: inline !important; } }
+.mobile-arrow { display: none !important; } @media (max-width: 1000px) { .mobile-arrow { display: inline !important; } }
+
+
