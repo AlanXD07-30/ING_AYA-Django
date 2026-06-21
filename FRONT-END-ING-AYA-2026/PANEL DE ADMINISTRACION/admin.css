@@ -996,16 +996,39 @@ htmlhtml[data-theme="light"] .theme-toggle {
     }
 
     /* CONTENEDORES Y TABLAS */
-    .dashboard-header { flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+    .dashboard-header, .section-header { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 15px; 
+        text-align: left; 
+    }
+    /* Para forzar que el div de botones se apile en celular */
+    .section-header > div {
+        width: 100%;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    .section-header > div > button {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+    }
+
     .stats-grid, .filtros-container { grid-template-columns: 1fr; flex-direction: column; }
     .filtros-container form { display: flex; flex-direction: column; width: 100%; gap: 10px; }
     
     .table-container { 
         overflow-x: auto; 
         width: 100%; 
-        box-shadow: inset -5px 0 10px -5px rgba(0,0,0,0.1); /* Indica que se puede scrollear */
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        -webkit-overflow-scrolling: touch;
     }
-    table { width: 100%; min-width: 700px; }
+    .data-table th, .data-table td {
+        white-space: nowrap; /* Evita que el texto de las celdas se apachurre hacia abajo */
+        padding: 15px;
+    }
+    table { width: 100%; min-width: 800px; }
     
     .timeline-container { flex-direction: column; gap: 20px; }
     .timeline-line { width: 4px; height: 40px; top: 0; margin: 10px 0; }
