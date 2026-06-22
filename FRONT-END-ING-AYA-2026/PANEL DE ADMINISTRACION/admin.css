@@ -1123,3 +1123,16 @@ htmlhtml[data-theme="light"] .theme-toggle {
 .btn-danger:hover {
     background-color: #dc2626;
 }
+
+.btn-success {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.btn-success:hover {
+    background-color: #059669;
+}

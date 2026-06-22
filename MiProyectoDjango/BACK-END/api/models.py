@@ -77,7 +77,7 @@ class AuthUserUserPermissions(models.Model):
 class Cita(models.Model):
     id_cita = models.BigAutoField(primary_key=True)
     fecha_hora = models.DateTimeField()
-    estado = models.CharField(max_length=12, blank=True, null=True)
+    estado = models.CharField(max_length=20, default='PENDIENTE')
     descripcion = models.TextField(blank=True, null=True)
     id_cliente = models.ForeignKey('Cliente', models.DO_NOTHING, db_column='id_cliente', blank=True, null=True)
     id_empleado = models.ForeignKey('Empleado', models.DO_NOTHING, db_column='id_empleado', blank=True, null=True)

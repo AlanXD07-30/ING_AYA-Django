@@ -651,6 +651,17 @@ class CitaViewSet(viewsets.ModelViewSet):
             cita.save()
             return Response({"status": "Cita confirmada"})
         except Exception as e:
+            if "1265" in str(e) or "Data truncated" in str(e) or "DataError" in str(e.__class__.__name__):
+                try:
+                    from django.db import connection
+                    with connection.cursor() as cursor:
+                        cursor.execute("ALTER TABLE cita MODIFY estado VARCHAR(20)")
+                    cita.save()
+                    return Response({"status": "Cita confirmada"})
+                except Exception as alter_e:
+                    import traceback
+                    return Response({"error": "No se pudo alterar la columna estado", "detalles": str(alter_e), "traceback": traceback.format_exc()}, status=500)
+            
             import traceback
             return Response({"error": "Excepción al confirmar", "detalles": str(e), "traceback": traceback.format_exc()}, status=500)
 
