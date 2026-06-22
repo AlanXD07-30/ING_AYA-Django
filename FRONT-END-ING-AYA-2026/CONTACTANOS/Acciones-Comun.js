@@ -58,30 +58,52 @@
   const contactForm = document.getElementById("contactForm");
 
   if (contactForm) {
-    contactForm.addEventListener("submit", function (event) {
+    contactForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       // Animación del botón mientras "envía"
       const btn = contactForm.querySelector("button[type='submit']");
       const textoOriginal = btn.textContent;
-      btn.textContent = "Enviando…";
+      btn.textContent = "Enviando...";
       btn.disabled = true;
 
-      // Simula delay de red
-      setTimeout(function () {
-        btn.textContent = textoOriginal;
-        btn.disabled = false;
+      const nombre = contactForm.querySelector("#nombre").value;
+      const email = contactForm.querySelector("#email").value;
+      const telefono = contactForm.querySelector("#telefono").value;
+      const mensaje = contactForm.querySelector("#mensaje").value;
 
-        Swal.fire({
-          icon:              "success",
-          title:             "¡Mensaje enviado!",
-          text:              "Te contactaremos en menos de 24 horas. ¡Gracias por escribirnos!",
-          confirmButtonColor: "#3b82f6",
-          confirmButtonText: "Cerrar"
+      try {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/contacto/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ nombre, email, telefono, mensaje })
         });
 
-        contactForm.reset();
-      }, 1000);
+        if (response.ok) {
+            Swal.fire({
+              icon:              "success",
+              title:             "¡Mensaje enviado!",
+              text:              "Te contactaremos en menos de 24 horas. ¡Gracias por escribirnos!",
+              confirmButtonColor: "#3b82f6",
+              confirmButtonText: "Cerrar"
+            });
+            contactForm.reset();
+        } else {
+            throw new Error("Error en el servidor");
+        }
+      } catch (error) {
+        Swal.fire({
+            icon: "error",
+            title: "Error al enviar",
+            text: "Hubo un problema enviando tu mensaje. Por favor intenta más tarde o contáctanos por teléfono.",
+            confirmButtonColor: "#3b82f6"
+        });
+      } finally {
+        btn.textContent = textoOriginal;
+        btn.disabled = false;
+      }
     });
   }
 
