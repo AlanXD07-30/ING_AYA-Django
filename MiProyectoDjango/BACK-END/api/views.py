@@ -584,6 +584,7 @@ class PagoViewSet(viewsets.ModelViewSet):
     serializer_class = PagoSerializer
 
 class CitaViewSet(viewsets.ModelViewSet):
+    queryset = Cita.objects.all()
     serializer_class = CitaSerializer
 
     def get_queryset(self):
