@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 cargarFavoritos(token);
                 // cargarHistorialCompras(token); // To Do: implement this
                 cargarTramitesPendientes(token, data);
+                cargarCitasCliente(token);
             }
             
         } else {
@@ -754,5 +755,69 @@ async function cargarTramitesPendientes(token, clienteData) {
     } catch (e) {
         fila.style.display = "flex";
         container.innerHTML = `<p style="color: red;">Ocurrió un error inesperado al cargar los trámites: ${e.message}</p>`;
+    }
+}
+
+// ==========================================
+// CARGAR CITAS DEL CLIENTE
+// ==========================================
+async function cargarCitasCliente(token) {
+    const container = document.getElementById("citas-container");
+    if (!container) return;
+
+    try {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/citas/", {
+            headers: {
+                "Authorization": "Token " + token,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            container.innerHTML = `<p style="color: red; text-align: center;">Error al cargar tus citas.</p>`;
+            return;
+        }
+
+        const data = await response.json();
+        
+        // Filtramos las citas para que no salgan canceladas en esta vista, o si las queremos todas:
+        let activas = data.filter(c => c.estado === 'PROGRAMADA' || c.estado === 'CONFIRMADA' || c.estado === 'PENDIENTE');
+
+        if (activas.length === 0) {
+            container.innerHTML = `
+                <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; text-align: center; border: 1px dashed rgba(255,255,255,0.1);">
+                    <p style="color: #94a3b8; font-size: 14px;">No tienes citas agendadas.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = "";
+        activas.forEach(c => {
+            const fechaStr = new Date(c.fecha_hora).toLocaleString('es-CO');
+            const estadoMayus = (c.estado || "").toUpperCase();
+            
+            let badgeHtml = "";
+            if (estadoMayus === "PROGRAMADA" || estadoMayus === "PENDIENTE") {
+                badgeHtml = `<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">En Espera</span>`;
+            } else if (estadoMayus === "CONFIRMADA") {
+                badgeHtml = `<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">Confirmada</span>`;
+            } else {
+                badgeHtml = `<span style="background: #64748b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">${c.estado}</span>`;
+            }
+
+            container.innerHTML += `
+                <div style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 10px;">
+                    <p style="margin: 0 0 5px 0; font-size: 14px; color: white;"><strong>Fecha:</strong> ${fechaStr}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 12px; color: #94a3b8;">${c.descripcion || "Sin descripción"}</span>
+                        ${badgeHtml}
+                    </div>
+                </div>
+            `;
+        });
+
+    } catch (e) {
+        container.innerHTML = `<p style="color: red; text-align: center;">Hubo un error de red.</p>`;
     }
 }

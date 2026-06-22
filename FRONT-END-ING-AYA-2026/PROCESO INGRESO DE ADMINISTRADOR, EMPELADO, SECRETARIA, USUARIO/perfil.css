@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    perfil.css — Diseño Premium para Mi Perfil
    Solo cards + layout. No toca header, footer ni body bg.
    ============================================================ */
@@ -17,7 +17,7 @@ main.perfil-container {
 /* ── FILA SUPERIOR: Avatar (izq) + Datos (der) ───────────── */
 .perfil-top-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 35px;
     margin-bottom: 35px;
     align-items: stretch;

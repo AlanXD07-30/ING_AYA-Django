@@ -590,9 +590,12 @@ class CitaViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = Cita.objects.all().order_by('-fecha_hora')
         user = self.request.user
-        if user.is_authenticated and hasattr(user, 'empleado'):
-            if user.empleado.tipo_empleado.lower() == 'agente':
-                qs = qs.filter(id_empleado=user.empleado)
+        if user.is_authenticated:
+            if hasattr(user, 'empleado'):
+                if user.empleado.tipo_empleado.lower() == 'agente':
+                    qs = qs.filter(id_empleado=user.empleado)
+            elif hasattr(user, 'cliente'):
+                qs = qs.filter(id_cliente=user.cliente)
         return qs
 
     @action(detail=True, methods=['post'])
