@@ -143,7 +143,7 @@
         }
 
         if(document.getElementById("det-direccion")) document.getElementById("det-direccion").textContent = direccion;
-        if(document.getElementById("det-ubicacion")) document.getElementById("det-ubicacion").textContent = `${barrio}, ${ciudad}`;
+        if(document.getElementById("det-ubicacion")) document.getElementById("det-ubicacion").textContent = `${direccion}, ${barrio}, ${ciudad}`;
         if(document.getElementById("det-precio")) document.getElementById("det-precio").textContent = precio;
         if(document.getElementById("det-metraje")) document.getElementById("det-metraje").textContent = metraje;
         if(document.getElementById("det-ciudad")) document.getElementById("det-ciudad").textContent = ciudad;
@@ -151,7 +151,7 @@
         if(document.getElementById("det-id")) document.getElementById("det-id").textContent = id;
         
         // Premium Fields
-        if(document.getElementById("det-titulo-main")) document.getElementById("det-titulo-main").textContent = `${tipoOp.charAt(0).toUpperCase() + tipoOp.slice(1).toLowerCase()} en ${barrio}, ${ciudad}`;
+        if(document.getElementById("det-titulo-main")) document.getElementById("det-titulo-main").textContent = `${tipoOp.charAt(0).toUpperCase() + tipoOp.slice(1).toLowerCase()} en ${direccion}`;
         
         if(document.getElementById("det-habitaciones")) document.getElementById("det-habitaciones").textContent = inmueble.habitaciones || "0";
         if(document.getElementById("det-banos")) document.getElementById("det-banos").textContent = inmueble.banos || "0";
@@ -165,6 +165,13 @@
         if(document.getElementById("det-caracteristicas")) {
             
         // Modificar botón de acción
+        // Configurar mapa de Google Maps dinmico
+        const mapContainer = document.querySelector(".map-placeholder");
+        if (mapContainer) {
+            const addressForMap = encodeURIComponent(`${direccion}, ${barrio}, ${ciudad}, Colombia`);
+            mapContainer.innerHTML = `<iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=${addressForMap}&t=&z=16&ie=UTF8&iwloc=&output=embed" style="border-radius: 8px;"></iframe>`;
+        }
+
         const btnTramite = document.getElementById("btn-tramite-main");
         if (btnTramite) {
             if (tipoOp.toUpperCase() === "ARRIENDO") {
