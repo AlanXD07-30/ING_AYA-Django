@@ -1810,8 +1810,7 @@ function renderCitasFiltered() {
         const rolActual = localStorage.getItem("rol") || '';
         const esAgente = rolActual.toUpperCase().includes('AGENTE');
         if (esAgente) {
-            matchRol = (c.id_empleado === perfil.id_empleado);
-            if (!verHistorial) matchRol = matchRol && (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA');
+            if (!verHistorial) matchRol = (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA');
         }
         
         return matchFecha && matchEstado && matchTab && matchRol;
