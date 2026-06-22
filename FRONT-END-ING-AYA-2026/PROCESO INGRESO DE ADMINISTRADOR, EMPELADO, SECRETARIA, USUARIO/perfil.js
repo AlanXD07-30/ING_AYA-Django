@@ -224,7 +224,10 @@ async function cargarFavoritos(token) {
                 if (!inmueble) return;
 
                 // Imagen del inmueble o por defecto si no tiene
-                const imagenTemp = inmueble.imagen_principal || "https://images.pexels.com/photos/101808/pexels-photo-101808.jpeg?auto=compress&cs=tinysrgb&w=400";
+                let imagenTemp = inmueble.imagen_principal || "https://images.pexels.com/photos/101808/pexels-photo-101808.jpeg?auto=compress&cs=tinysrgb&w=400";
+                if (imagenTemp.startsWith('/')) {
+                    imagenTemp = "https://ingaya-django-production.up.railway.app" + imagenTemp;
+                }
                 
                 // Formateamos el precio (que en Django está como JSON)
                 let precioTxt = "Consultar precio";
@@ -251,7 +254,7 @@ async function cargarFavoritos(token) {
                     <div class="inmueble-info">
                         <h3>${inmueble.direccion || "Dirección no disponible"}</h3>
                         <p>${inmueble.barrio || "Ciudad"} - ${inmueble.ciudad || ""}</p>
-                        <div class="precio-txt">${precioTxt}</div>
+                        <a href="../SECCIÓN DE INMUEBLES/detalle.html?id=${inmueble.id_inmueble}" class="precio-txt" style="text-decoration:none; cursor:pointer; color:#3b82f6; display:inline-block; margin-bottom:10px;">Consultar inmueble</a>
                         <button class="btn-eliminar-fav" onclick="eliminarFavorito(${inmueble.id_inmueble}, '${token}')">Quitar de Favoritos 💔</button>
                     </div>
                 `;
