@@ -103,15 +103,16 @@ class InmuebleViewSet(viewsets.ModelViewSet):
         # Delete old images to replace them
         ImagenInmueble.objects.filter(id_inmueble=inmueble).delete()
         
-        # Make sure media/inmuebles folder exists
-        upload_dir = os.path.join(settings.MEDIA_ROOT, 'inmuebles')
-        os.makedirs(upload_dir, exist_ok=True)
+        from django.core.files.storage import default_storage
+        import time
+        import uuid
         
-        fs = FileSystemStorage(location=upload_dir, base_url=settings.MEDIA_URL + 'inmuebles/')
         urls = []
         for index, img in enumerate(imagenes):
-            filename = fs.save(img.name, img)
-            url = fs.url(filename)
+            # Usamos default_storage para que guarde en Cloudinary (si esta configurado) o en Local
+            unique_name = f"inmuebles/{int(time.time())}_{uuid.uuid4().hex[:6]}_{img.name}"
+            filename = default_storage.save(unique_name, img)
+            url = default_storage.url(filename)
             # Create the ImagenInmueble entry
             try:
                 ImagenInmueble.objects.create(
