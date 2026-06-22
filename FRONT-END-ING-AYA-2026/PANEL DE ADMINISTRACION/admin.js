@@ -112,10 +112,21 @@ function verificarSesion() {
             document.head.appendChild(style);
         }
         
-        // Agente: Inmuebles, Clientes, Citas. Con permisos de edición/creación en Inmuebles y Clientes.
+        // Agente: Inmuebles, Clientes, Citas.
         if (rol && rol.toLowerCase().includes('agente')) {
             document.getElementById("nav-empleados").parentElement.style.display = 'none';
             document.getElementById("nav-financiera").parentElement.style.display = 'none';
+            
+            // Ocultar botones de crear, editar y eliminar para Agente en Inmuebles
+            const style = document.createElement('style');
+            style.innerHTML = `
+                #btn-nuevo-inmueble { display: none !important; }
+                #tabla-inmuebles .btn-action.edit, #tabla-inmuebles .btn-action.delete { display: none !important; }
+            `;
+            document.head.appendChild(style);
+            
+            const panelTitle = document.getElementById("panel-title");
+            if (panelTitle) panelTitle.innerText = "Panel de Agente";
         }
     }
     
@@ -1798,7 +1809,7 @@ function renderCitasFiltered() {
         let matchRol = true;
         if (esAgente) {
             matchRol = (c.id_empleado === perfil.id_empleado);
-            if (!verHistorial) matchRol = matchRol && cEstado === 'CONFIRMADA';
+            if (!verHistorial) matchRol = matchRol && (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA');
         }
         
         return matchFecha && matchEstado && matchTab && matchRol;
@@ -1814,10 +1825,10 @@ function renderCitasFiltered() {
         let cEstado = (c.estado || "").toUpperCase();
         
         let accionesHtml = '';
-        if (esAgente && cEstado === 'CONFIRMADA') {
+        if (esAgente && (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA')) {
             accionesHtml = `
                 <button class="btn-success" onclick="finalizarCita(${c.id_cita})" style="margin-right: 5px;">✅ Finalizada</button>
-                <button class="btn-danger" onclick="citaNoAsistio(${c.id_cita})">❌ No asistió</button>
+                <button class="btn-danger" onclick="cancelarCitaAgente(${c.id_cita})">❌ Cancelar</button>
             `;
         } else if (!esAgente && !verHistorial) {
             accionesHtml += `<div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-start; align-items: center; width: 100%;">`;
@@ -2408,6 +2419,54 @@ async function eliminarTransaccion(id) {
         } catch (error) {
             console.error('Error:', error);
             Swal.fire('Error', 'Ocurrió un error al intentar conectarse al servidor.', 'error');
+        }
+    }
+}
+
+
+// ==========================================
+// CANCELAR CITA (AGENTE)
+// ==========================================
+async function cancelarCitaAgente(id) {
+    const { value: motivo } = await Swal.fire({
+        title: 'Cancelar Cita',
+        input: 'textarea',
+        inputLabel: 'Motivo de la cancelación',
+        inputPlaceholder: 'Escribe el motivo aquí...',
+        inputAttributes: {
+            'aria-label': 'Motivo de la cancelación'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar Cancelación',
+        cancelButtonText: 'Atrás',
+        inputValidator: (value) => {
+            if (!value) {
+                return '¡Debes escribir un motivo!'
+            }
+        }
+    });
+
+    if (motivo) {
+        const token = localStorage.getItem('mi_token');
+        try {
+            const response = await fetch(https://ingaya-django-production.up.railway.app/api/citas//cancelar_agente/, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Token ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ motivo: motivo })
+            });
+
+            if (response.ok) {
+                Swal.fire('Cancelada', 'La cita fue cancelada y se notificó al cliente.', 'success');
+                cargarCitas();
+            } else {
+                const err = await response.text();
+                Swal.fire('Error', 'No se pudo cancelar la cita. ' + err, 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error', 'Hubo un error de red.', 'error');
         }
     }
 }

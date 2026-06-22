@@ -584,8 +584,62 @@ class PagoViewSet(viewsets.ModelViewSet):
     serializer_class = PagoSerializer
 
 class CitaViewSet(viewsets.ModelViewSet):
-    queryset = Cita.objects.all().order_by('-fecha_hora')
     serializer_class = CitaSerializer
+
+    def get_queryset(self):
+        qs = Cita.objects.all().order_by('-fecha_hora')
+        user = self.request.user
+        if user.is_authenticated and hasattr(user, 'empleado'):
+            if user.empleado.tipo_empleado.lower() == 'agente':
+                qs = qs.filter(id_empleado=user.empleado)
+        return qs
+
+    @action(detail=True, methods=['post'])
+    def cancelar_agente(self, request, pk=None):
+        try:
+            from django.core.mail import EmailMultiAlternatives
+            from django.utils import timezone
+            import threading
+            
+            cita = self.get_object()
+            motivo = request.data.get('motivo', 'Motivo no especificado')
+            
+            cita.estado = 'CANCELADA'
+            cita.save()
+            
+            def send_cancel_email(cliente_email, cliente_nombre, agente_nombre, fecha, motivo):
+                subject = "Cita Cancelada por el Agente - IngAya"
+                html_content = f"""
+                <div style='font-family: Arial, sans-serif; padding: 20px;'>
+                    <h2 style='color: #ef4444;'>Cita Cancelada</h2>
+                    <p>Hola <strong>{cliente_nombre}</strong>,</p>
+                    <p>Lamentamos informarte que tu cita programada para el <strong>{fecha}</strong> ha sido cancelada por nuestro agente <strong>{agente_nombre}</strong>.</p>
+                    <p><strong>Motivo de la cancelación:</strong></p>
+                    <blockquote style='border-left: 4px solid #ef4444; padding-left: 10px; color: #555;'>{motivo}</blockquote>
+                    <p>Por favor, ponte en contacto con nosotros o programa una nueva cita a través de nuestra plataforma.</p>
+                    <p>Saludos cordiales,<br>Equipo IngAya</p>
+                </div>
+                """
+                text_content = f"Hola {cliente_nombre}, tu cita para el {fecha} ha sido cancelada por el agente {agente_nombre}. Motivo: {motivo}."
+                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+            cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
+            if cliente_email:
+                fecha_str = timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
+                agente_nombre = cita.id_empleado.nombre if cita.id_empleado else "nuestro agente"
+                cliente_nombre = cita.id_cliente.nombre
+                
+                t = threading.Thread(target=send_cancel_email, args=(
+                    cliente_email, cliente_nombre, agente_nombre, fecha_str, motivo
+                ))
+                t.start()
+                
+            return Response({"status": "Cita cancelada y cliente notificado"})
+        except Exception as e:
+            import traceback
+            return Response({"error": "Excepción al cancelar", "detalles": str(e), "traceback": traceback.format_exc()}, status=500)
 
     @action(detail=True, methods=['post'])
     def asignar_agente(self, request, pk=None):
