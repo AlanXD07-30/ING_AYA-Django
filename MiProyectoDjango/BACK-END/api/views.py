@@ -589,77 +589,81 @@ class CitaViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def asignar_agente(self, request, pk=None):
-        from django.core.mail import EmailMultiAlternatives
-        from django.template.loader import render_to_string
-        from django.utils import timezone
-        import threading
-        from .models import Empleado
-        
-        cita = self.get_object()
-        id_agente = request.data.get('id_empleado')
-        if not id_agente:
-            return Response({"error": "Debe proporcionar id_empleado"}, status=400)
-            
         try:
-            agente = Empleado.objects.get(pk=id_agente)
-            cita.id_empleado = agente
-            cita.estado = 'CONFIRMADA'
-            cita.save()
+            from django.core.mail import EmailMultiAlternatives
+            from django.template.loader import render_to_string
+            from django.utils import timezone
+            import threading
+            from .models import Empleado
             
-            def send_assigned_email(agente_email, agente_nombre, cliente_nombre, fecha, desc):
-                subject = "Nueva Cita Asignada - IngAya"
-                context = {
-                    'agente_nombre': agente_nombre,
-                    'cliente_nombre': cliente_nombre,
-                    'fecha_hora': fecha,
-                    'descripcion': desc
-                }
-                html_content = render_to_string('emails/cita_asignada_agente.html', context)
-                text_content = render_to_string('emails/cita_asignada_agente.txt', context)
-                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [agente_email])
-                msg.attach_alternative(html_content, "text/html")
-                msg.send()
-
-            def send_assigned_email_client(cliente_email, agente_nombre, cliente_nombre, fecha, desc):
-                subject = "Su cita ha sido confirmada - IngAya"
-                context = {
-                    'agente_nombre': agente_nombre,
-                    'cliente_nombre': cliente_nombre,
-                    'fecha_hora': fecha,
-                    'descripcion': desc
-                }
-                html_content = render_to_string('emails/cita_confirmada_cliente.html', context)
-                text_content = render_to_string('emails/cita_confirmada_cliente.txt', context)
-                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
-                msg.attach_alternative(html_content, "text/html")
-                msg.send()
-
-            fecha_str = timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
-
-            if agente.correo:
-                t1 = threading.Thread(target=send_assigned_email, args=(
-                    agente.correo,
-                    agente.nombre,
-                    cita.id_cliente.nombre if cita.id_cliente else "Desconocido",
-                    fecha_str,
-                    cita.descripcion
-                ))
-                t1.start()
-
-            cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
-            if cliente_email:
-                t2 = threading.Thread(target=send_assigned_email_client, args=(
-                    cliente_email,
-                    agente.nombre,
-                    cita.id_cliente.nombre,
-                    fecha_str,
-                    cita.descripcion
-                ))
-                t2.start()
+            cita = self.get_object()
+            id_agente = request.data.get('id_empleado')
+            if not id_agente:
+                return Response({"error": "Debe proporcionar id_empleado"}, status=400)
                 
-            return Response({"status": "Agente asignado y notificado"})
-        except Empleado.DoesNotExist:
-            return Response({"error": "Agente no encontrado"}, status=404)
+            try:
+                agente = Empleado.objects.get(pk=id_agente)
+                cita.id_empleado = agente
+                cita.estado = 'CONFIRMADA'
+                cita.save()
+                
+                def send_assigned_email(agente_email, agente_nombre, cliente_nombre, fecha, desc):
+                    subject = "Nueva Cita Asignada - IngAya"
+                    context = {
+                        'agente_nombre': agente_nombre,
+                        'cliente_nombre': cliente_nombre,
+                        'fecha_hora': fecha,
+                        'descripcion': desc
+                    }
+                    html_content = render_to_string('emails/cita_asignada_agente.html', context)
+                    text_content = render_to_string('emails/cita_asignada_agente.txt', context)
+                    msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [agente_email])
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
+
+                def send_assigned_email_client(cliente_email, agente_nombre, cliente_nombre, fecha, desc):
+                    subject = "Su cita ha sido confirmada - IngAya"
+                    context = {
+                        'agente_nombre': agente_nombre,
+                        'cliente_nombre': cliente_nombre,
+                        'fecha_hora': fecha,
+                        'descripcion': desc
+                    }
+                    html_content = render_to_string('emails/cita_confirmada_cliente.html', context)
+                    text_content = render_to_string('emails/cita_confirmada_cliente.txt', context)
+                    msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
+
+                fecha_str = timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
+
+                if agente.correo:
+                    t1 = threading.Thread(target=send_assigned_email, args=(
+                        agente.correo,
+                        agente.nombre,
+                        cita.id_cliente.nombre if cita.id_cliente else "Desconocido",
+                        fecha_str,
+                        cita.descripcion
+                    ))
+                    t1.start()
+
+                cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
+                if cliente_email:
+                    t2 = threading.Thread(target=send_assigned_email_client, args=(
+                        cliente_email,
+                        agente.nombre,
+                        cita.id_cliente.nombre,
+                        fecha_str,
+                        cita.descripcion
+                    ))
+                    t2.start()
+                    
+                return Response({"status": "Agente asignado y notificado"})
+            except Empleado.DoesNotExist:
+                return Response({"error": "Agente no encontrado"}, status=404)
+        except Exception as e:
+            import traceback
+            return Response({"error": "Excepción en servidor", "detalles": str(e), "traceback": traceback.format_exc()}, status=500)
 
     @action(detail=True, methods=['post'])
     def finalizar_cita(self, request, pk=None):

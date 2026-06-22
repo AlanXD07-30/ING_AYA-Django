@@ -1743,9 +1743,12 @@ async function abrirModalAsignarAgente(id_cita) {
                     if (response.ok) {
                         Swal.fire('Asignado', 'Agente asignado y cita confirmada exitosamente.', 'success');
                         cargarCitas();
-                    } else throw new Error("API Error");
+                    } else {
+                        const errorData = await response.text();
+                        throw new Error(errorData || `Error HTTP ${response.status}`);
+                    }
                 } catch(e) {
-                    Swal.fire('Error', 'Error al asignar agente', 'error');
+                    Swal.fire('Error', `Error al asignar agente: ${e.message}`, 'error');
                 }
             }
         });
