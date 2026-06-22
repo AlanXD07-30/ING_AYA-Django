@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const liPerfil = document.createElement("li");
           liPerfil.innerHTML = `
             <a href="${hrefPerfil}" style="display: flex; align-items: center; gap: 8px; color: #3b82f6; font-weight: bold;">
-              <img src="${avatarUrl}" alt="Perfil" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+              <img src="${avatarUrl}" alt="Perfil" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + (typeof nombre !== 'undefined' ? nombre.replace(/ /g, '+') : 'U') + '&background=random';">
               Mi Perfil
             </a>
           `;

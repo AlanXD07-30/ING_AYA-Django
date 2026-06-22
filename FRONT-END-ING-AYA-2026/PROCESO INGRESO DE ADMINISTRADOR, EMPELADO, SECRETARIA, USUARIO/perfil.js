@@ -92,7 +92,13 @@ document.addEventListener("DOMContentLoaded", async function() {
                 urlAvatar = `https://ui-avatars.com/api/?name=${nombreParaAvatar}&background=random&size=128`;
                 if (btnQuitarFoto) btnQuitarFoto.style.display = "none";
             }
-            document.getElementById("perfil-avatar").src = urlAvatar;
+            const avatarImg = document.getElementById("perfil-avatar");
+            avatarImg.src = urlAvatar;
+            avatarImg.onerror = function() {
+                this.onerror = null;
+                const nombreFall = data.nombre ? data.nombre.replace(/ /g, "+") : "U";
+                this.src = `https://ui-avatars.com/api/?name=${nombreFall}&background=random&size=128`;
+            };
 
             // Guardamos el avatar en localStorage para que toda la app lo vea
             localStorage.setItem("mi_avatar", urlAvatar);
