@@ -169,6 +169,7 @@ if 'BREVO_API_KEY' in os.environ:
     }
     DEFAULT_FROM_EMAIL = os.environ.get('BREVO_EMAIL', 'tu-correo@gmail.com')
     SERVER_EMAIL = os.environ.get('BREVO_EMAIL', 'tu-correo@gmail.com')
+    EMAIL_HOST_USER = DEFAULT_FROM_EMAIL
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.gmail.com'

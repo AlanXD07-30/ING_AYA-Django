@@ -612,7 +612,7 @@ class CitaViewSet(viewsets.ModelViewSet):
                 context = {'cliente_nombre': nombre, 'fecha_hora': fecha}
                 html_content = render_to_string('emails/cita_cancelada_automatica.html', context)
                 text_content = render_to_string('emails/cita_cancelada_automatica.txt', context)
-                msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [cliente_email])
+                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
@@ -655,7 +655,7 @@ class CitaViewSet(viewsets.ModelViewSet):
                 }
                 html_content = render_to_string('emails/cita_asignada_agente.html', context)
                 text_content = render_to_string('emails/cita_asignada_agente.txt', context)
-                msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [agente_email])
+                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [agente_email])
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
@@ -693,7 +693,7 @@ class CitaViewSet(viewsets.ModelViewSet):
             }
             html_content = render_to_string('emails/cita_finalizada.html', context)
             text_content = render_to_string('emails/cita_finalizada.txt', context)
-            msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [cliente_email])
+            msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 
@@ -728,7 +728,7 @@ class CitaViewSet(viewsets.ModelViewSet):
             }
             html_content = render_to_string('emails/cita_no_asistio.html', context)
             text_content = render_to_string('emails/cita_no_asistio.txt', context)
-            msg = EmailMultiAlternatives(subject, text_content, 'admin@ingaya.com', [cliente_email])
+            msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 
