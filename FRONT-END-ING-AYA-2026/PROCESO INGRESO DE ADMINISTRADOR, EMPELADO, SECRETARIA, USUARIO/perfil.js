@@ -241,7 +241,7 @@ async function cargarFavoritos(token) {
                 const card = document.createElement("div");
                 card.className = "inmueble-card";
                 card.innerHTML = `
-                    <img src="${imagenTemp}" alt="Inmueble">
+                    <img src="${imagenTemp}" alt="Inmueble" onerror="this.src='../AAA.png'">
                     <div class="inmueble-info">
                         <h3>${inmueble.direccion || "Dirección no disponible"}</h3>
                         <p>${inmueble.barrio || "Ciudad"} - ${inmueble.ciudad || ""}</p>
@@ -709,7 +709,7 @@ async function cargarTramitesPendientes(token, clienteData) {
 
                 container.innerHTML += `
                     <div class="favorito-card" style="display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.05);">
-                        <img src="${propertyImg}" alt="Inmueble" style="height: 150px; width: 100%; object-fit: cover;">
+                        <img src="${propertyImg}" alt="Inmueble" style="height: 150px; width: 100%; object-fit: cover;" onerror="this.src='../AAA.png'">
                         <div class="fav-info" style="flex: 1; display: flex; flex-direction: column; padding: 15px;">
                             <h3 style="margin-bottom: 5px; font-size: 16px; color: #fff;">${propertyTitle || "Trámite #" + t.id_transaccion}</h3>
                             <p style="color: var(--primary-color); font-weight: bold; margin-bottom: 5px;">${propertyInfo}</p>

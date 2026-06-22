@@ -180,7 +180,7 @@
             src="${escapeHtml(imgUrl)}"
             alt="Imagen de ${escapeHtml(tipo)} en ${escapeHtml(ciudad)}"
             loading="lazy"
-            onerror="this.src='/img/no-image.png'">
+            onerror="this.src='../../AAA.png'">
           <span class="card-badge">${escapeHtml(tipo)}</span>
           ${id ? `<button style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; color: white; padding: 8px; font-size: 18px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='rgba(244,63,94,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onclick="guardarFavorito(${id})" title="Guardar en Favoritos">❤️</button>` : ""}
         </div>
