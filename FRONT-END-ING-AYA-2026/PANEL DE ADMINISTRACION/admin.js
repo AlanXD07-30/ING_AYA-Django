@@ -1790,16 +1790,16 @@ function renderCitasFiltered() {
     if (!tabla) return;
     
     const perfil = JSON.parse(localStorage.getItem("mi_perfil") || "{}");
-    const esAgente = perfil.tipo_empleado === 'AGENTE';
     
     const verHistorial = document.getElementById("filtro-cita-historial")?.checked;
     const filtroFecha = document.getElementById("filtro-cita-fecha").value;
     const filtroEstado = document.getElementById("filtro-cita-estado").value;
     
     let filtradas = citasGlobal.filter(c => {
-        let matchFecha = !filtroFecha || c.fecha_hora.startsWith(filtroFecha);
+        let matchFecha = (!filtroFecha) || c.fecha_hora.startsWith(filtroFecha);
+        
         let cEstado = (c.estado || "").toUpperCase();
-        let matchEstado = !filtroEstado || cEstado === filtroEstado;
+        let matchEstado = (!filtroEstado) || (cEstado === filtroEstado);
         
         let activa = cEstado === 'PROGRAMADA' || cEstado === 'CONFIRMADA';
         let historial = cEstado === 'FINALIZADA' || cEstado === 'NO_ASISTIO' || cEstado === 'CANCELADA';
@@ -1807,6 +1807,7 @@ function renderCitasFiltered() {
         let matchTab = verHistorial ? historial : activa;
         
         let matchRol = true;
+        const esAgente = (perfil.tipo_empleado || '').toUpperCase() === 'AGENTE';
         if (esAgente) {
             matchRol = (c.id_empleado === perfil.id_empleado);
             if (!verHistorial) matchRol = matchRol && (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA');
@@ -1825,10 +1826,15 @@ function renderCitasFiltered() {
         let cEstado = (c.estado || "").toUpperCase();
         
         let accionesHtml = '';
-        if (esAgente && (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA')) {
+        const esAgente = (perfil.tipo_empleado || '').toUpperCase() === 'AGENTE';
+        if (esAgente && cEstado === 'PROGRAMADA') {
             accionesHtml = `
-                <button class="btn-success" onclick="finalizarCita(${c.id_cita})" style="margin-right: 5px;">✅ Finalizada</button>
+                <button class="btn-success" onclick="confirmarCitaAgente(${c.id_cita})" style="margin-right: 5px;">✅ Confirmar</button>
                 <button class="btn-danger" onclick="cancelarCitaAgente(${c.id_cita})">❌ Cancelar</button>
+            `;
+        } else if (esAgente && cEstado === 'CONFIRMADA') {
+            accionesHtml = `
+                <span style="color: #10b981; font-weight: bold; margin-right: 10px;">Cita Confirmada</span>
             `;
         } else if (!esAgente && !verHistorial) {
             accionesHtml += `<div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-start; align-items: center; width: 100%;">`;
@@ -2468,5 +2474,31 @@ async function cancelarCitaAgente(id) {
         } catch (e) {
             Swal.fire('Error', 'Hubo un error de red.', 'error');
         }
+    }
+}
+
+// ==========================================
+// CONFIRMAR CITA (AGENTE)
+// ==========================================
+async function confirmarCitaAgente(id) {
+    const token = localStorage.getItem('mi_token');
+    try {
+        const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id}/confirmar_agente/`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Token ' + token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            Swal.fire('Confirmada', 'La cita fue confirmada.', 'success');
+            cargarCitas();
+        } else {
+            const err = await response.text();
+            Swal.fire('Error', 'No se pudo confirmar la cita. ' + err, 'error');
+        }
+    } catch (e) {
+        Swal.fire('Error', 'Hubo un error de red.', 'error');
     }
 }

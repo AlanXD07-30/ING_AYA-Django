@@ -605,7 +605,8 @@ class CitaViewSet(viewsets.ModelViewSet):
             cita = self.get_object()
             motivo = request.data.get('motivo', 'Motivo no especificado')
             
-            cita.estado = 'CANCELADA'
+            cita.estado = 'PROGRAMADA'
+            cita.id_empleado = None
             cita.save()
             
             def send_cancel_email(cliente_email, cliente_nombre, agente_nombre, fecha, motivo):
@@ -641,6 +642,17 @@ class CitaViewSet(viewsets.ModelViewSet):
         except Exception as e:
             import traceback
             return Response({"error": "Excepción al cancelar", "detalles": str(e), "traceback": traceback.format_exc()}, status=500)
+
+    @action(detail=True, methods=['post'])
+    def confirmar_agente(self, request, pk=None):
+        try:
+            cita = self.get_object()
+            cita.estado = 'CONFIRMADA'
+            cita.save()
+            return Response({"status": "Cita confirmada"})
+        except Exception as e:
+            import traceback
+            return Response({"error": "Excepción al confirmar", "detalles": str(e), "traceback": traceback.format_exc()}, status=500)
 
     @action(detail=True, methods=['post'])
     def asignar_agente(self, request, pk=None):
