@@ -1807,7 +1807,8 @@ function renderCitasFiltered() {
         let matchTab = verHistorial ? historial : activa;
         
         let matchRol = true;
-        const esAgente = (perfil.tipo_empleado || '').toUpperCase() === 'AGENTE';
+        const rolActual = localStorage.getItem("rol") || '';
+        const esAgente = rolActual.toUpperCase().includes('AGENTE');
         if (esAgente) {
             matchRol = (c.id_empleado === perfil.id_empleado);
             if (!verHistorial) matchRol = matchRol && (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA');
@@ -1826,7 +1827,8 @@ function renderCitasFiltered() {
         let cEstado = (c.estado || "").toUpperCase();
         
         let accionesHtml = '';
-        const esAgente = (perfil.tipo_empleado || '').toUpperCase() === 'AGENTE';
+        const rolActual = localStorage.getItem("rol") || '';
+        const esAgente = rolActual.toUpperCase().includes('AGENTE');
         if (esAgente && cEstado === 'PROGRAMADA') {
             accionesHtml = `
                 <button class="btn-success" onclick="confirmarCitaAgente(${c.id_cita})" style="margin-right: 5px;">✅ Confirmar</button>
