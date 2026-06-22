@@ -1706,12 +1706,17 @@ async function abrirModalAsignarAgente(id_cita) {
         Swal.fire({
             title: 'Asignar Agente a Cita #' + id_cita,
             html: `
-                <select id="swal-agente-id" class="swal2-input">
-                    <option value="">Seleccione un agente...</option>
-                    ${optionsHtml}
-                </select>
+                <div style="text-align: left; margin-bottom: 10px;">
+                      <label style="font-weight: bold; font-size: 14px; color: #475569;">Seleccione un Agente Inmobiliario:</label>
+                  </div>
+                  <select id="swal-agente-id" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; color: #1e293b; font-size: 15px; outline: none; cursor: pointer;">
+                      <option value="">-- Elija un agente --</option>
+                      ${optionsHtml}
+                  </select>
+                  <p style="font-size: 12px; color: #64748b; text-align: left; margin-top: 12px;">El agente recibirá un correo de notificación y el cliente también será informado de la asignación.</p>
             `,
-            confirmButtonText: 'Asignar',
+            confirmButtonText: 'Confirmar Asignación',
+              confirmButtonColor: '#3b82f6',
             showCancelButton: true,
             preConfirm: () => {
                 const selected = document.getElementById('swal-agente-id').value;
@@ -1813,11 +1818,11 @@ function renderCitasFiltered() {
             `;
         } else if (!esAgente && !verHistorial) {
             if (!c.id_empleado && cEstado === 'PROGRAMADA') {
-                accionesHtml += `<button class="btn-primary" onclick="abrirModalAsignarAgente(${c.id_cita})" style="margin-right: 5px;">👤 Asignar Agente</button>`;
+                accionesHtml += `<button class="btn-primary" onclick="abrirModalAsignarAgente(${c.id_cita})" style="padding: 6px 12px; font-size: 13px; width: 100%; margin-bottom: 5px;">👤 Asignar Agente</button>`;
             }
             accionesHtml += `
-                <button class="btn-secondary" onclick="abrirModalEditarCita(${c.id_cita})">✏️ Editar</button>
-                <button class="btn-danger" onclick="eliminarRegistro('citas', ${c.id_cita}, cargarCitas)">🗑️</button>
+                <button class="btn-secondary" onclick="abrirModalEditarCita(${c.id_cita})" style="padding: 6px 12px; font-size: 13px; flex: 1;">✏️ Editar</button>
+                <button class="btn-danger" onclick="eliminarRegistro('citas', ${c.id_cita}, cargarCitas)" style="padding: 6px 12px; font-size: 13px;">🗑️</button>
             `;
         }
         

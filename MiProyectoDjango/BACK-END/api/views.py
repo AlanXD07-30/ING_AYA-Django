@@ -646,9 +646,10 @@ class CitaViewSet(viewsets.ModelViewSet):
                 ))
                 t1.start()
 
-            if cita.id_cliente and cita.id_cliente.correo:
+            cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
+            if cliente_email:
                 t2 = threading.Thread(target=send_assigned_email_client, args=(
-                    cita.id_cliente.correo,
+                    cliente_email,
                     agente.nombre,
                     cita.id_cliente.nombre,
                     fecha_str,
@@ -684,9 +685,10 @@ class CitaViewSet(viewsets.ModelViewSet):
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 
-        if cita.id_cliente and cita.id_cliente.correo:
+        cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
+            if cliente_email:
             t = threading.Thread(target=send_final_email, args=(
-                cita.id_cliente.correo,
+                cliente_email,
                 cita.id_cliente.nombre,
                 cita.id_empleado.nombre if cita.id_empleado else "nuestro agente",
                 timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
@@ -719,9 +721,10 @@ class CitaViewSet(viewsets.ModelViewSet):
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 
-        if cita.id_cliente and cita.id_cliente.correo:
+        cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
+            if cliente_email:
             t = threading.Thread(target=send_noshow_email, args=(
-                cita.id_cliente.correo,
+                cliente_email,
                 cita.id_cliente.nombre,
                 cita.id_empleado.nombre if cita.id_empleado else "nuestro agente",
                 timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
