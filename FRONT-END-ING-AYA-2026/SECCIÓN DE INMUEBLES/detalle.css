@@ -603,7 +603,7 @@ body::before {
     background-position: center;
     background-attachment: fixed;
     z-index: -2;
-    opacity: 0.15;
+    opacity: 0.25; /* Aumentado para que la imagen se note ms en modo oscuro */
 }
 
 body::after {
@@ -612,7 +612,7 @@ body::after {
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: -1;
     background: var(--bg-body);
-    opacity: 0.85; /* Overlay para legibilidad del texto */
+    opacity: 0.75; /* Reducido para que la imagen sea ms visible */
 }
 
 /* Glassmorphism para el contenedor principal de contenido */
@@ -630,7 +630,7 @@ body::after {
 
 /* Ajustes adicionales para que los elementos internos destaquen y no parezcan planos */
 .content-section, .contact-card-premium, .action-card {
-    background: rgba(0, 0, 0, 0.2) !important;
+    background: rgba(0, 0, 0, 0.25) !important; /* Ligeramente ms oscuro el interior */
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
     backdrop-filter: blur(10px);
 }
@@ -638,8 +638,8 @@ body::after {
 /* MODO CLARO */
 [data-theme="light"] body::after, 
 body.light-theme::after {
-    background: #f8fafc;
-    opacity: 0.85;
+    background: #cbd5e1; /* Un tono un poco ms oscuro que el blanco para quitarle claridad */
+    opacity: 0.75; /* Transparencia para que destaque ms la imagen */
 }
 
 [data-theme="light"] .property-content, 
