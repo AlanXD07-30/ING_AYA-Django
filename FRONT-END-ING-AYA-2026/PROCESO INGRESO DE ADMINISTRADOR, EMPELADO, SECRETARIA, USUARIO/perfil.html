@@ -84,6 +84,14 @@
                 <button id="btn-admin-panel" class="btn-primary" style="display: none; width: 100%; margin-top: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);" onclick="window.location.href='../PANEL DE ADMINISTRACION/admin_dashboard.html'">⚙️ Ir a Panel Administrativo</button>
             </aside>
 
+            <!-- Card Citas Pendientes -->
+            <aside class="perfil-sidebar card-box" style="display: flex; flex-direction: column;">
+                <h2>Mis Citas 📅</h2>
+                <div class="favoritos-grid" id="citas-container" style="flex: 1; overflow-y: auto; max-height: 300px; display: block;">
+                    <p id="msg-cargando-citas" style="color: #94a3b8; font-size: 15px; text-align: center; margin-top: 20px;">Cargando tus citas...</p>
+                </div>
+            </aside>
+
         </div><!-- /perfil-top-row -->
 
         <!-- FILA INFERIOR: Favoritos + Historial -->
