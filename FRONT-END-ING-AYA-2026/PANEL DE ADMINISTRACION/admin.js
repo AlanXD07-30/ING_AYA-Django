@@ -2449,7 +2449,7 @@ async function cancelarCitaAgente(id) {
     if (motivo) {
         const token = localStorage.getItem('mi_token');
         try {
-            const response = await fetch(https://ingaya-django-production.up.railway.app/api/citas//cancelar_agente/, {
+            const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id}/cancelar_agente/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Token ' + token,
