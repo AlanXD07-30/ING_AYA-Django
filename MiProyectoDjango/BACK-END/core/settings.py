@@ -153,6 +153,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Configuración de Cloudinary (Se activa automáticamente si existe CLOUDINARY_URL en el entorno)
 if 'CLOUDINARY_URL' in os.environ:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {
+        'SECURE': True,
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
