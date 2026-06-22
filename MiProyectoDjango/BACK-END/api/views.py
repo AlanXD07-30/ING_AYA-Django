@@ -686,7 +686,7 @@ class CitaViewSet(viewsets.ModelViewSet):
             msg.send()
 
         cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
-            if cliente_email:
+        if cliente_email:
             t = threading.Thread(target=send_final_email, args=(
                 cliente_email,
                 cita.id_cliente.nombre,
@@ -722,7 +722,7 @@ class CitaViewSet(viewsets.ModelViewSet):
             msg.send()
 
         cliente_email = cita.id_cliente.id_usuario.email if cita.id_cliente and cita.id_cliente.id_usuario else None
-            if cliente_email:
+        if cliente_email:
             t = threading.Thread(target=send_noshow_email, args=(
                 cliente_email,
                 cita.id_cliente.nombre,
