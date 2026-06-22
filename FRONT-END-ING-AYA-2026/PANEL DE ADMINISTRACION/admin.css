@@ -1109,3 +1109,17 @@ htmlhtml[data-theme="light"] .theme-toggle {
 .mobile-arrow { display: none !important; } @media (max-width: 1000px) { .mobile-arrow { display: inline !important; } }
 
 
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-danger:hover {
+    background-color: #dc2626;
+}

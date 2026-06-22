@@ -1817,13 +1817,15 @@ function renderCitasFiltered() {
                 <button class="btn-danger" onclick="citaNoAsistio(${c.id_cita})">❌ No asistió</button>
             `;
         } else if (!esAgente && !verHistorial) {
+            accionesHtml += `<div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-start; align-items: center; width: 100%;">`;
             if (!c.id_empleado && cEstado === 'PROGRAMADA') {
                 accionesHtml += `<button class="btn-primary" onclick="abrirModalAsignarAgente(${c.id_cita})" style="padding: 6px 12px; font-size: 13px; width: 100%; margin-bottom: 5px;">👤 Asignar Agente</button>`;
             }
             accionesHtml += `
                 <button class="btn-secondary" onclick="abrirModalEditarCita(${c.id_cita})" style="padding: 6px 12px; font-size: 13px; flex: 1;">✏️ Editar</button>
-                <button class="btn-danger" onclick="eliminarRegistro('citas', ${c.id_cita}, cargarCitas)" style="padding: 6px 12px; font-size: 13px;">🗑️</button>
+                <button class="btn-danger" onclick="eliminarRegistro('citas', ${c.id_cita}, cargarCitas)" style="padding: 6px 12px; font-size: 13px; flex: 1;">❌ Eliminar</button>
             `;
+            accionesHtml += `</div>`;
         }
         
         let badgeColor = '';
