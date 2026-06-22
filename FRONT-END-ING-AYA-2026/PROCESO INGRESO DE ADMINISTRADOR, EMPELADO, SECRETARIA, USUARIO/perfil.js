@@ -1,3 +1,9 @@
+// Función expuesta globalmente para ir a detalle guardando el ID
+window.irADetalle = function(id) {
+    localStorage.setItem("ingaya_selected_inmueble_id", id);
+    window.location.href = "../SECCIÓN DE INMUEBLES/detalle.html?id=" + id;
+};
+
 document.addEventListener("DOMContentLoaded", async function() {
     const token = localStorage.getItem("mi_token");
 
@@ -270,7 +276,7 @@ async function cargarFavoritos(token) {
                     <div class="inmueble-info">
                         <h3>${inmueble.direccion || "Dirección no disponible"}</h3>
                         <p>${inmueble.barrio || "Ciudad"} - ${inmueble.ciudad || ""}</p>
-                        <a href="../SECCIÓN DE INMUEBLES/detalle.html?id=${inmueble.id_inmueble}" class="precio-txt" style="text-decoration:none; cursor:pointer; color:#3b82f6; display:inline-block; margin-bottom:10px;">Consultar inmueble</a>
+                        <a onclick="irADetalle(${inmueble.id_inmueble})" class="precio-txt" style="text-decoration:none; cursor:pointer; color:#3b82f6; display:inline-block; margin-bottom:10px;">Consultar inmueble</a>
                         <button class="btn-eliminar-fav" onclick="eliminarFavorito(${inmueble.id_inmueble}, '${token}')">Quitar de Favoritos 💔</button>
                     </div>
                 `;

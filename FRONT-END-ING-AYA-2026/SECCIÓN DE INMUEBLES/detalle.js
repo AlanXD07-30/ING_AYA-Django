@@ -56,7 +56,11 @@
     async function cargarDetalle() {
         // Extraer el ID de la URL
         const params = new URLSearchParams(window.location.search);
-        const id = params.get("id");
+        let id = params.get("id");
+
+        if (!id) {
+            id = localStorage.getItem("ingaya_selected_inmueble_id");
+        }
 
         if (!id) {
             mostrarError("No se especificó ningún inmueble en la URL.");
