@@ -604,7 +604,7 @@ class CitaViewSet(viewsets.ModelViewSet):
             try:
                 agente = Empleado.objects.get(pk=id_agente)
                 cita.id_empleado = agente
-                cita.estado = 'CONFIRMADA'
+                # Mantener el estado como estaba (PROGRAMADA)
                 cita.save()
                 
                 def send_assigned_email(agente_email, agente_nombre, cliente_nombre, fecha, desc):
