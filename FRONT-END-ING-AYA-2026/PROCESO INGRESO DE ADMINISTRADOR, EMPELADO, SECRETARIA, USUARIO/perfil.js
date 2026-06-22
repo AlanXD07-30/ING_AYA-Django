@@ -223,8 +223,21 @@ async function cargarFavoritos(token) {
                 const inmueble = fav.inmueble_detalle;
                 if (!inmueble) return;
 
-                // Imagen del inmueble o por defecto si no tiene
-                let imagenTemp = inmueble.imagen_principal || "https://images.pexels.com/photos/101808/pexels-photo-101808.jpeg?auto=compress&cs=tinysrgb&w=400";
+                // Lógica idéntica a inmuebles.js para obtener imagen
+                function obtenerPrimeraImagen(inm) {
+                    const fallback = "https://images.pexels.com/photos/101808/pexels-photo-101808.jpeg?auto=compress&cs=tinysrgb&w=400";
+                    if (!inm) return fallback;
+                    if (inm.imagen_principal) return inm.imagen_principal;
+                    const imgs = inm.imagenes;
+                    if (Array.isArray(imgs) && imgs.length > 0) {
+                        const first = imgs[0];
+                        if (first && typeof first === "object") return first.url_imagen || first.url || fallback;
+                        if (typeof first === "string") return first;
+                    }
+                    return fallback;
+                }
+
+                let imagenTemp = obtenerPrimeraImagen(inmueble);
                 if (imagenTemp.startsWith('/')) {
                     imagenTemp = "https://ingaya-django-production.up.railway.app" + imagenTemp;
                 }
