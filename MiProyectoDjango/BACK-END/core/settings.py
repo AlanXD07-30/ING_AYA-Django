@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'api',  # Agrega tu aplicación API
     'corsheaders', 
     'anymail',
-     'rest_framework.authtoken' # Agrega django-cors-headers para manejar CORS
+    'rest_framework.authtoken',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [

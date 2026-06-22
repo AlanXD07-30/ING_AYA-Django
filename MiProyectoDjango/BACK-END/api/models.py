@@ -81,6 +81,7 @@ class Cita(models.Model):
     descripcion = models.TextField(blank=True, null=True)
     id_cliente = models.ForeignKey('Cliente', models.DO_NOTHING, db_column='id_cliente', blank=True, null=True)
     id_empleado = models.ForeignKey('Empleado', models.DO_NOTHING, db_column='id_empleado', blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
         managed = False

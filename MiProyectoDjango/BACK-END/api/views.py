@@ -587,46 +587,6 @@ class CitaViewSet(viewsets.ModelViewSet):
     queryset = Cita.objects.all().order_by('-fecha_hora')
     serializer_class = CitaSerializer
 
-    def list(self, request, *args, **kwargs):
-        from django.utils import timezone
-        import datetime
-        from django.core.mail import EmailMultiAlternatives
-        from django.template.loader import render_to_string
-        import threading
-        
-        now = timezone.now()
-        limite_tiempo = now + datetime.timedelta(hours=2)
-        
-        citas_a_cancelar = Cita.objects.filter(
-            estado='PROGRAMADA',
-            id_empleado__isnull=True,
-            fecha_hora__lte=limite_tiempo
-        )
-        
-        for cita in citas_a_cancelar:
-            cita.estado = 'CANCELADA'
-            cita.descripcion = cita.descripcion + " (Cancelada automáticamente por falta de agente)"
-            cita.save()
-            
-            def send_cancel_email(cliente_email, nombre, fecha):
-                subject = "Aviso de Cancelación de Cita - IngAya"
-                context = {'cliente_nombre': nombre, 'fecha_hora': fecha}
-                html_content = render_to_string('emails/cita_cancelada_automatica.html', context)
-                text_content = render_to_string('emails/cita_cancelada_automatica.txt', context)
-                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
-                msg.attach_alternative(html_content, "text/html")
-                msg.send()
-
-            if cita.id_cliente and cita.id_cliente.correo:
-                t = threading.Thread(target=send_cancel_email, args=(
-                    cita.id_cliente.correo,
-                    cita.id_cliente.nombre,
-                    timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
-                ))
-                t.start()
-                
-        return super().list(request, *args, **kwargs)
-
     @action(detail=True, methods=['post'])
     def asignar_agente(self, request, pk=None):
         from django.core.mail import EmailMultiAlternatives
@@ -660,15 +620,41 @@ class CitaViewSet(viewsets.ModelViewSet):
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
+            def send_assigned_email_client(cliente_email, agente_nombre, cliente_nombre, fecha, desc):
+                subject = "Su cita ha sido confirmada - IngAya"
+                context = {
+                    'agente_nombre': agente_nombre,
+                    'cliente_nombre': cliente_nombre,
+                    'fecha_hora': fecha,
+                    'descripcion': desc
+                }
+                html_content = render_to_string('emails/cita_confirmada_cliente.html', context)
+                text_content = render_to_string('emails/cita_confirmada_cliente.txt', context)
+                msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [cliente_email])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+            fecha_str = timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p')
+
             if agente.correo:
-                t = threading.Thread(target=send_assigned_email, args=(
+                t1 = threading.Thread(target=send_assigned_email, args=(
                     agente.correo,
                     agente.nombre,
                     cita.id_cliente.nombre if cita.id_cliente else "Desconocido",
-                    timezone.localtime(cita.fecha_hora).strftime('%Y-%m-%d %I:%M %p'),
+                    fecha_str,
                     cita.descripcion
                 ))
-                t.start()
+                t1.start()
+
+            if cita.id_cliente and cita.id_cliente.correo:
+                t2 = threading.Thread(target=send_assigned_email_client, args=(
+                    cita.id_cliente.correo,
+                    agente.nombre,
+                    cita.id_cliente.nombre,
+                    fecha_str,
+                    cita.descripcion
+                ))
+                t2.start()
                 
             return Response({"status": "Agente asignado y notificado"})
         except Empleado.DoesNotExist:

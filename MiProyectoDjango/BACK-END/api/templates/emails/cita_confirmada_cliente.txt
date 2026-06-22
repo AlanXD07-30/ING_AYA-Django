@@ -1,0 +1,15 @@
+Hola {{ cliente_nombre }},
+
+¡Buenas noticias! Tu cita ha sido aceptada y confirmada.
+
+Se te ha asignado el agente {{ agente_nombre }}, quien te atenderá en la fecha y hora acordada:
+
+Fecha y Hora: {{ fecha_hora }}
+Descripción de la Cita: {{ descripcion }}
+
+Si tienes alguna duda o necesitas cancelar, por favor comunícate con nosotros.
+
+¡Te esperamos!
+
+---
+Este es un mensaje automático del sistema de Inmobiliaria IngAya, por favor no respondas a este correo.

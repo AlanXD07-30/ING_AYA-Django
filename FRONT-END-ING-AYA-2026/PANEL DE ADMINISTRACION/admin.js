@@ -1725,15 +1725,14 @@ async function abrirModalAsignarAgente(id_cita) {
             if (result.isConfirmed) {
                 try {
                     // Usamos PATCH estándar para evitar fallos del servidor remoto (ej. fallo de correos SMTP)
-                    const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/`, {
-                        method: 'PATCH',
+                      const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/asignar_agente/`, {
+                        method: 'POST',
                         headers: {
                             "Authorization": "Token " + token,
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({ 
-                            id_empleado: result.value,
-                            estado: 'CONFIRMADA' 
+                            id_empleado: result.value 
                         })
                     });
                     if (response.ok) {
