@@ -238,8 +238,11 @@ async function cargarFavoritos(token) {
                 }
 
                 let imagenTemp = obtenerPrimeraImagen(inmueble);
-                if (imagenTemp.startsWith('/')) {
-                    imagenTemp = "https://ingaya-django-production.up.railway.app" + imagenTemp;
+                if (typeof imagenTemp === 'string') {
+                    imagenTemp = imagenTemp.replace("http://127.0.0.1:8000", "https://ingaya-django-production.up.railway.app");
+                    if (imagenTemp.startsWith('/')) {
+                        imagenTemp = "https://ingaya-django-production.up.railway.app" + imagenTemp;
+                    }
                 }
                 
                 // Formateamos el precio (que en Django está como JSON)
@@ -267,7 +270,7 @@ async function cargarFavoritos(token) {
                     <div class="inmueble-info">
                         <h3>${inmueble.direccion || "Dirección no disponible"}</h3>
                         <p>${inmueble.barrio || "Ciudad"} - ${inmueble.ciudad || ""}</p>
-                        <a href="../SECCIÓN DE INMUEBLES/detalle.html?id=${inmueble.id_inmueble}" class="precio-txt" style="text-decoration:none; cursor:pointer; color:#3b82f6; display:inline-block; margin-bottom:10px;">Consultar inmueble</a>
+                        <a href="../SECCI%C3%93N%20DE%20INMUEBLES/detalle.html?id=${inmueble.id_inmueble}" class="precio-txt" style="text-decoration:none; cursor:pointer; color:#3b82f6; display:inline-block; margin-bottom:10px;">Consultar inmueble</a>
                         <button class="btn-eliminar-fav" onclick="eliminarFavorito(${inmueble.id_inmueble}, '${token}')">Quitar de Favoritos 💔</button>
                     </div>
                 `;
