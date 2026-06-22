@@ -28,10 +28,13 @@ class InmuebleSerializer(serializers.ModelSerializer):
             if not img:
                 img = ImagenInmueble.objects.filter(id_inmueble=obj).first()
             if img:
+                url_str = str(img.url_imagen)
+                if url_str.startswith('http'):
+                    return url_str
                 request = self.context.get('request')
                 if request:
-                    return request.build_absolute_uri(img.url_imagen)
-                return 'http://127.0.0.1:8000' + img.url_imagen
+                    return request.build_absolute_uri(url_str)
+                return 'https://ingaya-django-production.up.railway.app' + url_str
         except Exception:
             pass
         return None
