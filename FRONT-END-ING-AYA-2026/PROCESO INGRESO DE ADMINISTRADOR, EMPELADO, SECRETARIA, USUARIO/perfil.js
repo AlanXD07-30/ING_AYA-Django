@@ -706,7 +706,7 @@ async function cargarTramitesPendientes(token, clienteData) {
 
             if (tramites.length === 0) {
                 fila.style.display = "flex";
-                container.innerHTML = `<p style="color: gray;">No hay trámites en curso. (Debug: Cliente ID esperado: ${clienteData.id_cliente}, Transacciones totales revisadas: ${transaccionesAll.length})</p>`;
+                container.innerHTML = `<p style="color: gray;">No hay trámites en curso.</p>`;
                 return;
             }
 

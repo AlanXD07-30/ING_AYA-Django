@@ -572,26 +572,31 @@ class TransaccionViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def cancelar_tramite(self, request, pk=None):
-        from django.utils import timezone
-        from .models import MovimientoInmueble
-        transaccion = self.get_object()
-        inmueble = transaccion.id_inmueble
-        
-        transaccion.estado = 'ANULADA'
-        transaccion.save()
-        
-        if inmueble:
-            inmueble.estado = 'Disponible'
-            inmueble.save()
-            MovimientoInmueble.objects.create(
-                tipo_movimiento='Cambio Estado',
-                fecha=timezone.now(),
-                precio_momento=inmueble.precio,
-                estado_momento=inmueble.estado,
-                descripcion=f"El cliente canceló el trámite (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
-                id_inmueble=inmueble
-            )
-        return Response({"status": "Trámite cancelado."})
+        try:
+            from django.utils import timezone
+            from .models import MovimientoInmueble
+            transaccion = self.get_object()
+            inmueble = transaccion.id_inmueble
+            
+            transaccion.estado = 'ANULADA'
+            transaccion.save()
+            
+            if inmueble:
+                inmueble.estado = 'Disponible'
+                inmueble.save()
+                MovimientoInmueble.objects.create(
+                    tipo_movimiento='Cambio Estado',
+                    fecha=timezone.now(),
+                    precio_momento=inmueble.precio,
+                    estado_momento=inmueble.estado,
+                    descripcion=f"El cliente canceló el trámite (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
+                    id_inmueble=inmueble
+                )
+            return Response({"status": "Trámite cancelado."})
+        except Exception as e:
+            import traceback
+            print("Error en cancelar_tramite:", e)
+            return Response({"error": "Excepción al cancelar", "detalles": str(e), "traceback": traceback.format_exc()}, status=500)
 
     def perform_destroy(self, instance):
         from django.utils import timezone
