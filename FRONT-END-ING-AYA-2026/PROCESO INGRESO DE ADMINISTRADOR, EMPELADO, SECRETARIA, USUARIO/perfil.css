@@ -25,8 +25,8 @@ main.perfil-container {
     flex-direction: unset !important;
     align-items: unset !important;
     max-width: 1400px;
-    margin: 30px auto 0;
-    padding: 0 3% 30px;
+    margin: 24px auto 0;
+    padding: 0 3% 0;
     position: relative;
     z-index: 1;
 }
