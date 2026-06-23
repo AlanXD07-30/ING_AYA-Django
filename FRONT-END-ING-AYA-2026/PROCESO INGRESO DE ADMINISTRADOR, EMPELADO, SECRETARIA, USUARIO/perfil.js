@@ -1012,7 +1012,7 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
 
 async function avanzarEstadoTransaccion(id_transaccion, newState) {
     try {
-        const token = localStorage.getItem("token_cliente");
+        const token = localStorage.getItem("mi_token");
         const getRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
             headers: { "Authorization": `Token ${token}` }
         });
@@ -1057,7 +1057,7 @@ window.procesarSubidaDocs = function() {
         form.reportValidity();
         return;
     }
-    cerrarModalDocs();
+    window.cerrarModalDocs();
     Swal.fire({
         title: 'Simulando subida...',
         text: 'Enviando documentos ficticios',
@@ -1102,7 +1102,7 @@ window.limpiarFirma = function() {
     if(ctxFirma) ctxFirma.clearRect(0, 0, canvasFirma.width, canvasFirma.height);
 };
 window.procesarFirma = function() {
-    cerrarModalFirma();
+    window.cerrarModalFirma();
     Swal.fire({
         title: 'Firmando documento...',
         text: 'Generando firma digital ficticia',
@@ -1130,7 +1130,7 @@ window.procesarPagoSimulado = function() {
         form.reportValidity();
         return;
     }
-    cerrarModalSimularPago();
+    window.cerrarModalSimularPago();
     Swal.fire({
         title: 'Procesando Pago...',
         text: 'Simulando transacción con tarjeta',
