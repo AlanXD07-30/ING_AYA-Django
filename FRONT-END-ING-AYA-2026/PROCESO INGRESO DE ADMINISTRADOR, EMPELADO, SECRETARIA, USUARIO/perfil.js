@@ -1,3 +1,12 @@
+window.hideLoader = function() {
+    const loaderOverlay = document.getElementById("loader-overlay");
+    if (loaderOverlay) {
+        loaderOverlay.classList.add("hidden");
+        setTimeout(() => loaderOverlay.style.display = "none", 600);
+        if (window.loaderInterval) clearInterval(window.loaderInterval);
+    }
+};
+
 // Función expuesta globalmente para ir a detalle guardando el ID
 window.irADetalle = function(id) {
     localStorage.setItem("ingaya_selected_inmueble_id", id);
@@ -12,6 +21,25 @@ document.addEventListener("DOMContentLoaded", async function() {
         window.location.href = "login.html";
         return;
     }
+
+    const loaderTexts = [
+        "Acomodando información...",
+        "Buscando tus inmuebles favoritos...",
+        "Revisando tus citas pendientes...",
+        "Preparando tu perfil..."
+    ];
+    let textIndex = 0;
+    const loaderText = document.getElementById("loader-text");
+    window.loaderInterval = setInterval(() => {
+        textIndex = (textIndex + 1) % loaderTexts.length;
+        if (loaderText) {
+            loaderText.style.opacity = 0;
+            setTimeout(() => {
+                loaderText.textContent = loaderTexts[textIndex];
+                loaderText.style.opacity = 1;
+            }, 300);
+        }
+    }, 1500);
 
     // Mostrar botón de Admin si el usuario tiene la credencial
     if (localStorage.getItem("is_admin") === "true") {
@@ -112,17 +140,20 @@ document.addEventListener("DOMContentLoaded", async function() {
             
             // Cargar datos adicionales del cliente si no es empleado o admin
             if (!data.es_admin_sin_perfil && !data.es_empleado) {
-                cargarFavoritos(token);
-                // cargarHistorialCompras(token); // To Do: implement this
-                cargarTramitesPendientes(token, data);
-                cargarCitasCliente(token);
+                await Promise.all([
+                    cargarFavoritos(token),
+                    cargarTramitesPendientes(token, data),
+                    cargarCitasCliente(token)
+                ]);
             }
-            
+            window.hideLoader();
         } else {
+            window.hideLoader();
             console.error("Error al cargar el perfil");
             Swal.fire("Error", "No se pudo cargar tu información", "error");
         }
     } catch (err) {
+        window.hideLoader();
         console.error("Error de red", err);
     }
 
