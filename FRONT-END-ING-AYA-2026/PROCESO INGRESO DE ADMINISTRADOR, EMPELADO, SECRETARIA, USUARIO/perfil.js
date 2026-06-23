@@ -834,7 +834,6 @@ async function cargarTramitesPendientes(token, clienteData) {
                 `;
             }
         }
-        }
     } catch (e) {
         fila.style.display = "flex";
         container.innerHTML = `<p style="color: red;">Ocurrió un error inesperado al cargar los trámites: ${e.message}</p>`;
