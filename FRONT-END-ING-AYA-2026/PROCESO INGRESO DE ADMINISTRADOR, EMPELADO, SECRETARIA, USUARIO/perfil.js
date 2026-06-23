@@ -1027,6 +1027,201 @@ async function avanzarEstadoTransaccion(id_transaccion, newState) {
             headers: { 
                 "Authorization": `Token ${token}`,
                 "Content-Type": "application/json"
+            }
+        }
+    } catch (e) {
+        fila.style.display = "flex";
+        container.innerHTML = `<p style="color: red;">Ocurrió un error inesperado al cargar los trámites: ${e.message}</p>`;
+    }
+}
+
+// ==========================================
+// CARGAR CITAS DEL CLIENTE
+// ==========================================
+async function cargarCitasCliente(token) {
+    const container = document.getElementById("citas-container");
+    const tarjeta = document.getElementById("tarjeta-mis-citas");
+    if (!container || !tarjeta) return;
+
+    tarjeta.style.display = "flex";
+
+    try {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/citas/", {
+            headers: {
+                "Authorization": "Token " + token,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            container.innerHTML = `<p style="color: red; text-align: center;">Error al cargar tus citas.</p>`;
+            return;
+        }
+
+        const data = await response.json();
+        
+        // Filtramos las citas para que no salgan canceladas en esta vista, o si las queremos todas:
+        let activas = data.filter(c => c.estado === 'PROGRAMADA' || c.estado === 'CONFIRMADA' || c.estado === 'PENDIENTE');
+
+        if (activas.length === 0) {
+            container.innerHTML = `
+                <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; text-align: center; border: 1px dashed rgba(255,255,255,0.1);">
+                    <p style="color: #94a3b8; font-size: 14px;">No tienes citas agendadas.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = "";
+        for (let c of activas) {
+            const fechaStr = new Date(c.fecha_hora).toLocaleString('es-CO');
+            const estadoMayus = (c.estado || "").toUpperCase();
+            
+            let direccionInfo = c.descripcion || "Sin descripción";
+            let imgHtml = `<div style="width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 8px; margin-right: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🏠</div>`;
+            
+            // Extract ID from description
+            const match = (c.descripcion || "").match(/inmueble ID:\s*(\d+)/i);
+            if (match) {
+                const id_inmueble = match[1];
+                try {
+                    const resInm = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${id_inmueble}/`);
+                    if(resInm.ok) {
+                        const inm = await resInm.json();
+                        direccionInfo = `📍 ${inm.direccion || "Dirección no disponible"} - ${inm.barrio || ""}`;
+                        if (inm.imagen_principal) {
+                            let propertyImg = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "https://ingaya-django-production.up.railway.app" + inm.imagen_principal;
+                            imgHtml = `<img src="${propertyImg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 10px;" onerror="this.src='../AAA.png'">`;
+                        }
+                    }
+                } catch(e) {}
+            }
+            
+            let badgeHtml = "";
+            let cancelBtnHtml = `<button onclick="cancelarCitaCliente(${c.id_cita})" style="background: transparent; border: 1px solid #ef4444; color: #ef4444; border-radius: 6px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-right: 10px; transition: 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">Cancelar</button>`;
+
+            if (estadoMayus === "PROGRAMADA" || estadoMayus === "PENDIENTE") {
+                badgeHtml = `<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">En Espera</span>`;
+            } else if (estadoMayus === "CONFIRMADA") {
+                badgeHtml = `<span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">Confirmada</span>`;
+            } else {
+                badgeHtml = `<span style="background: #64748b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">${c.estado}</span>`;
+            }
+
+            container.innerHTML += `
+                <div style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        ${imgHtml}
+                        <div style="flex: 1;">
+                            <p style="margin: 0 0 3px 0; font-size: 13px; color: #e2e8f0; font-weight: bold;">${direccionInfo}</p>
+                            <p style="margin: 0; font-size: 12px; color: #94a3b8;">📅 ${fechaStr}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; align-items: center;">
+                        ${cancelBtnHtml}
+                        ${badgeHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+    } catch (e) {
+        container.innerHTML = `<p style="color: red; text-align: center;">Hubo un error de red.</p>`;
+    }
+}
+
+window.cancelarCitaCliente = async function(id_cita) {
+    Swal.fire({
+        title: '¿Cancelar esta cita?',
+        text: "La cita será cancelada y ya no será atendida por nuestros agentes.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#3b82f6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'Volver'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const token = localStorage.getItem("mi_token");
+                const res = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Token ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ estado: "CANCELADA" })
+                });
+
+                if (res.ok) {
+                    Swal.fire('Cancelada', 'Tu cita ha sido cancelada exitosamente.', 'success').then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'No se pudo cancelar la cita. Intenta de nuevo.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un error de conexión.', 'error');
+            }
+        }
+    });
+};
+
+window.cancelarTramiteCliente = async function(id_transaccion) {
+    Swal.fire({
+        title: '¿Cancelar este trámite?',
+        text: "Al cancelar, el inmueble volverá a estar disponible y perderás la reserva o revisión actual.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#3b82f6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'Volver'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const token = localStorage.getItem("mi_token");
+                const res = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/cancelar_tramite/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Token ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+
+                if (res.ok) {
+                    Swal.fire('Trámite Cancelado', 'El trámite fue cancelado exitosamente y el inmueble está disponible.', 'success').then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'No se pudo cancelar el trámite. Intenta de nuevo.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un error de conexión.', 'error');
+            }
+        }
+    });
+};
+
+// Modals Handlers for Interactive Timeline
+
+async function avanzarEstadoTransaccion(id_transaccion, newState) {
+    try {
+        const token = localStorage.getItem("token_cliente");
+        const getRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
+            headers: { "Authorization": `Token ${token}` }
+        });
+        if(!getRes.ok) throw new Error("No se pudo obtener la tx");
+        const txData = await getRes.json();
+
+        txData.estado = newState;
+        
+        const putRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
+            method: "PUT",
+            headers: { 
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(txData)
         });
@@ -1037,6 +1232,101 @@ async function avanzarEstadoTransaccion(id_transaccion, newState) {
             });
         } else {
             throw new Error();
+        }
+    } catch(err) {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo avanzar el trámite.', 'error');
+    }
+}
+
+window.abrirModalDocs = function(id_transaccion, nextState) {
+    document.getElementById("docs-trans-id").value = id_transaccion;
+    document.getElementById("docs-next-state").value = nextState;
+    document.getElementById("modal-subir-docs").style.display = "flex";
+};
+window.cerrarModalDocs = function() {
+    document.getElementById("modal-subir-docs").style.display = "none";
+};
+window.procesarSubidaDocs = function() {
+    const form = document.getElementById("form-subir-docs");
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    cerrarModalDocs();
+    Swal.fire({
+        title: 'Simulando subida...',
+        text: 'Enviando documentos ficticios',
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: () => { Swal.showLoading(); }
+    }).then(() => {
+        let id_transaccion = document.getElementById("docs-trans-id").value;
+        let newState = document.getElementById("docs-next-state").value;
+        avanzarEstadoTransaccion(id_transaccion, newState);
+    });
+};
+
+let canvasFirma, ctxFirma, isDrawing = false;
+window.abrirModalFirma = function(id_transaccion, nextState) {
+    document.getElementById("firma-trans-id").value = id_transaccion;
+    document.getElementById("firma-next-state").value = nextState;
+    document.getElementById("modal-firma-digital").style.display = "flex";
+    
+    setTimeout(() => {
+        canvasFirma = document.getElementById("canvas-firma");
+        ctxFirma = canvasFirma.getContext("2d");
+        ctxFirma.lineWidth = 2;
+        ctxFirma.lineCap = "round";
+        ctxFirma.strokeStyle = "#ffffff";
+        window.limpiarFirma();
+
+        canvasFirma.onmousedown = (e) => { isDrawing = true; ctxFirma.beginPath(); ctxFirma.moveTo(e.offsetX, e.offsetY); };
+        canvasFirma.onmousemove = (e) => { if(isDrawing) { ctxFirma.lineTo(e.offsetX, e.offsetY); ctxFirma.stroke(); } };
+        canvasFirma.onmouseup = () => { isDrawing = false; };
+        
+        // Touch support
+        canvasFirma.ontouchstart = (e) => { isDrawing = true; let rect = canvasFirma.getBoundingClientRect(); ctxFirma.beginPath(); ctxFirma.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top); };
+        canvasFirma.ontouchmove = (e) => { if(isDrawing) { let rect = canvasFirma.getBoundingClientRect(); ctxFirma.lineTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top); ctxFirma.stroke(); } };
+        canvasFirma.ontouchend = () => { isDrawing = false; };
+    }, 100);
+};
+window.cerrarModalFirma = function() {
+    document.getElementById("modal-firma-digital").style.display = "none";
+};
+window.limpiarFirma = function() {
+    if(ctxFirma) ctxFirma.clearRect(0, 0, canvasFirma.width, canvasFirma.height);
+};
+window.procesarFirma = function() {
+    cerrarModalFirma();
+    Swal.fire({
+        title: 'Firmando documento...',
+        text: 'Generando firma digital ficticia',
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: () => { Swal.showLoading(); }
+    }).then(() => {
+        let id_transaccion = document.getElementById("firma-trans-id").value;
+        let newState = document.getElementById("firma-next-state").value;
+        avanzarEstadoTransaccion(id_transaccion, newState);
+    });
+};
+
+window.abrirModalSimularPago = function(id_transaccion, nextState) {
+    document.getElementById("pago-sim-trans-id").value = id_transaccion;
+    document.getElementById("pago-sim-next-state").value = nextState;
+    document.getElementById("modal-simular-pago").style.display = "flex";
+};
+window.cerrarModalSimularPago = function() {
+    document.getElementById("modal-simular-pago").style.display = "none";
+};
+window.procesarPagoSimulado = function() {
+    const form = document.getElementById("form-simular-pago");
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    cerrarModalSimularPago();
     Swal.fire({
         title: 'Procesando Pago...',
         text: 'Simulando transacción con tarjeta',
@@ -1048,4 +1338,4 @@ async function avanzarEstadoTransaccion(id_transaccion, newState) {
         let newState = document.getElementById("pago-sim-next-state").value;
         avanzarEstadoTransaccion(id_transaccion, newState);
     });
-}
+};
