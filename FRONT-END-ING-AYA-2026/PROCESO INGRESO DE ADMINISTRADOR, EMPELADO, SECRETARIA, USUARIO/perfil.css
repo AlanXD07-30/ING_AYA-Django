@@ -208,14 +208,15 @@ label[for="input-foto"]:hover .avatar-overlay {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 24px;
-    align-items: start;
+    align-items: stretch;
 }
 .dashboard-sidebar {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    position: sticky;
-    top: 24px;
+}
+.dashboard-sidebar .card-box:last-child {
+    flex: 1;
 }
 .dashboard-main {
     display: flex;
