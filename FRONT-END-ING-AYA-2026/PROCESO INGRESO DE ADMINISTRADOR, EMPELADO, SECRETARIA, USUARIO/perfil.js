@@ -713,6 +713,7 @@ async function cargarTramitesPendientes(token, clienteData) {
                 let propertyImg = "https://ui-avatars.com/api/?name=Inmueble&background=1e3a8a&color=fff";
                 let propertyTitle = "";
                 let btnAction = "";
+                let cancelTramiteBtn = `<button class="btn-secondary" style="width:100%; margin-top: 10px; background: transparent; border: 1px solid #ef4444; color: #ef4444;" onclick="window.cancelarTramiteCliente(${t.id_transaccion})">Cancelar Trámite</button>`;
                 let isArriendo = t.tipo_operacion && t.tipo_operacion.toUpperCase() === "ARRIENDO";
                 let estadoTramite = (t.estado || "").toUpperCase();
                 let pasoActual = 1;
@@ -732,8 +733,8 @@ async function cargarTramitesPendientes(token, clienteData) {
                 } catch(e) {}
 
                 if (isArriendo) {
-                    if (estadoTramite === "CONTRATO_PENDIENTE" || estadoTramite === "CONTRATO") pasoActual = 2;
-                    else if (estadoTramite === "PAGO_PENDIENTE") pasoActual = 3;
+                    if (estadoTramite === "CONTRATO" || estadoTramite === "CONTRATO_P") pasoActual = 2;
+                    else if (estadoTramite === "PAGO_PEND" || estadoTramite === "PAGO_PENDIENTE") pasoActual = 3;
                     else if (estadoTramite === "ARRENDADO") pasoActual = 4;
                     else pasoActual = 1; // DOCS_PENDIENTES o default
 
@@ -759,9 +760,9 @@ async function cargarTramitesPendientes(token, clienteData) {
                     `;
 
                     if (pasoActual === 1) {
-                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalDocs(${t.id_transaccion}, 'CONTRATO_PENDIENTE')">Subir Documentos</button>`;
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalDocs(${t.id_transaccion}, 'CONTRATO')">Subir Documentos</button>`;
                     } else if (pasoActual === 2) {
-                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'PAGO_PENDIENTE')">Firmar Contrato Digital</button>`;
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'PAGO_PEND')">Firmar Contrato Digital</button>`;
                     } else if (pasoActual === 3) {
                         btnAction = `<button class="btn-primary" style="width:100%; background: linear-gradient(135deg, #10b981, #059669);" onclick="abrirModalSimularPago(${t.id_transaccion}, 'ARRENDADO')">Realizar Pago Inicial</button>`;
                     } else if (pasoActual === 4) {
@@ -771,7 +772,7 @@ async function cargarTramitesPendientes(token, clienteData) {
                     // VENTA
                     if (estadoTramite === "PROMESA") pasoActual = 2;
                     else if (estadoTramite === "TRAMITE") pasoActual = 3;
-                    else if (estadoTramite === "ESCRITURACION") pasoActual = 4;
+                    else if (estadoTramite === "ESCRITURAS" || estadoTramite === "ESCRITURACION") pasoActual = 4;
                     else if (estadoTramite === "COMPLETADA") pasoActual = 5;
                     else pasoActual = 1; // SEPARACION o default
 
@@ -805,7 +806,7 @@ async function cargarTramitesPendientes(token, clienteData) {
                     } else if (pasoActual === 2) {
                         btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'TRAMITE')">Firmar Promesa de Compra</button>`;
                     } else if (pasoActual === 3) {
-                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalDocs(${t.id_transaccion}, 'ESCRITURACION')">Subir Pre-Aprobado Bancario</button>`;
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalDocs(${t.id_transaccion}, 'ESCRITURAS')">Subir Pre-Aprobado Bancario</button>`;
                     } else if (pasoActual === 4) {
                         btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'COMPLETADA')">Firmar Escrituras</button>`;
                     } else if (pasoActual === 5) {
@@ -827,6 +828,7 @@ async function cargarTramitesPendientes(token, clienteData) {
 
                             <div class="tramite-action-area">
                                 ${btnAction}
+                                ${cancelTramiteBtn}
                                 ${msgExtra}
                             </div>
                         </div>
@@ -1013,29 +1015,24 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
 async function avanzarEstadoTransaccion(id_transaccion, newState) {
     try {
         const token = localStorage.getItem("mi_token");
-        const getRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
-            headers: { "Authorization": `Token ${token}` }
-        });
-        if(!getRes.ok) throw new Error("No se pudo obtener la tx");
-        const txData = await getRes.json();
-
-        txData.estado = newState;
         
-        const putRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
-            method: "PUT",
+        const patchRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
+            method: "PATCH",
             headers: { 
                 "Authorization": `Token ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(txData)
+            body: JSON.stringify({ estado: newState })
         });
 
-        if (putRes.ok) {
+        if (patchRes.ok) {
             Swal.fire('¡Éxito!', 'Trámite avanzado al siguiente paso.', 'success').then(() => {
                 window.location.reload();
             });
         } else {
-            throw new Error();
+            const errData = await patchRes.json().catch(() => ({}));
+            console.error("Error backend:", errData);
+            throw new Error(JSON.stringify(errData));
         }
     } catch(err) {
         console.error(err);
