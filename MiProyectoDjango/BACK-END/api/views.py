@@ -447,11 +447,22 @@ class TransaccionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         from django.utils import timezone
-        from .models import MovimientoInmueble
+        from .models import MovimientoInmueble, Cita
         transaccion = serializer.save()
         
         if transaccion.id_inmueble:
             inmueble = transaccion.id_inmueble
+            
+            # Cancelar citas de otros clientes para este inmueble
+            try:
+                citas_pendientes = Cita.objects.filter(
+                    descripcion__icontains=f"inmueble ID: {inmueble.id_inmueble}"
+                ).exclude(estado='CANCELADA')
+                for c in citas_pendientes:
+                    c.estado = 'CANCELADA'
+                    c.save()
+            except Exception as e:
+                print("Error cancelando citas:", e)
             
             if inmueble.tipo_operacion == 'Arriendo':
                 transaccion.estado = 'REVISION'
@@ -558,6 +569,29 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                     id_inmueble=inmueble
                 )
             return Response({"status": "Contrato rechazado. Transacción anulada."})
+
+    @action(detail=True, methods=['post'])
+    def cancelar_tramite(self, request, pk=None):
+        from django.utils import timezone
+        from .models import MovimientoInmueble
+        transaccion = self.get_object()
+        inmueble = transaccion.id_inmueble
+        
+        transaccion.estado = 'ANULADA'
+        transaccion.save()
+        
+        if inmueble:
+            inmueble.estado = 'Disponible'
+            inmueble.save()
+            MovimientoInmueble.objects.create(
+                tipo_movimiento='Cambio Estado',
+                fecha=timezone.now(),
+                precio_momento=inmueble.precio,
+                estado_momento=inmueble.estado,
+                descripcion=f"El cliente canceló el trámite (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
+                id_inmueble=inmueble
+            )
+        return Response({"status": "Trámite cancelado."})
 
     def perform_destroy(self, instance):
         from django.utils import timezone

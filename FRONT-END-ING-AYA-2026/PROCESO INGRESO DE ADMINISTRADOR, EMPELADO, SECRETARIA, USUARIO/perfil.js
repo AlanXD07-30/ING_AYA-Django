@@ -731,10 +731,12 @@ async function cargarTramitesPendientes(token, clienteData) {
                 } catch(e) {}
 
                 let estadoTramite = (t.estado || "").toUpperCase();
+                let cancelBtn = `<button class="btn-danger" style="width: 100%; margin-top: 5px; font-size: 14px; background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px; border-radius: 4px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';" onclick="cancelarTramiteCliente(${t.id_transaccion})">Cancelar Trámite</button>`;
+
                 if (estadoTramite === "SEPARACION" || estadoTramite === "RESERVADO") {
-                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #3b82f6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerPromesa(${t.id_transaccion})">Leer Promesa</button>`;
+                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #3b82f6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerPromesa(${t.id_transaccion})">Leer Promesa</button>` + cancelBtn;
                 } else if (estadoTramite === "REVISION") {
-                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #8b5cf6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerContratoArriendo(${t.id_transaccion})">Firmar Contrato Arriendo</button>`;
+                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #8b5cf6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerContratoArriendo(${t.id_transaccion})">Firmar Contrato Arriendo</button>` + cancelBtn;
                 } else if (estadoTramite === "PROMESA") {
                     btnAction = `<button class="btn-secondary" style="width: 100%; margin-top: 10px; font-size: 14px; cursor: not-allowed; padding: 8px; border-radius: 4px;" disabled>En trámite avanzado...</button>`;
                 }
@@ -882,6 +884,42 @@ window.cancelarCitaCliente = async function(id_cita) {
                     });
                 } else {
                     Swal.fire('Error', 'No se pudo cancelar la cita. Intenta de nuevo.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un error de conexión.', 'error');
+            }
+        }
+    });
+};
+
+window.cancelarTramiteCliente = async function(id_transaccion) {
+    Swal.fire({
+        title: '¿Cancelar este trámite?',
+        text: "Al cancelar, el inmueble volverá a estar disponible y perderás la reserva o revisión actual.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#3b82f6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'Volver'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const token = localStorage.getItem("mi_token");
+                const res = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/cancelar_tramite/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Token ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (res.ok) {
+                    Swal.fire('Trámite Cancelado', 'El trámite fue cancelado exitosamente y el inmueble está disponible.', 'success').then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'No se pudo cancelar el trámite. Intenta de nuevo.', 'error');
                 }
             } catch (error) {
                 Swal.fire('Error', 'Hubo un error de conexión.', 'error');
