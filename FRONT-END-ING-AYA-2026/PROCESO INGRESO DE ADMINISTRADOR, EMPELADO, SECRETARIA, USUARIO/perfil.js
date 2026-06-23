@@ -911,7 +911,8 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
                     headers: {
                         'Authorization': 'Token ' + token,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({})
                 });
 
                 if (res.ok) {
