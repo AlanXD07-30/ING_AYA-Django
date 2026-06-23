@@ -821,6 +821,8 @@ async function cargarCitasCliente(token) {
             }
             
             let badgeHtml = "";
+            let cancelBtnHtml = `<button onclick="cancelarCitaCliente(${c.id_cita})" style="background: transparent; border: 1px solid #ef4444; color: #ef4444; border-radius: 6px; padding: 2px 8px; font-size: 11px; cursor: pointer; margin-right: 10px; transition: 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">Cancelar</button>`;
+
             if (estadoMayus === "PROGRAMADA" || estadoMayus === "PENDIENTE") {
                 badgeHtml = `<span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;">En Espera</span>`;
             } else if (estadoMayus === "CONFIRMADA") {
@@ -839,6 +841,7 @@ async function cargarCitasCliente(token) {
                         </div>
                     </div>
                     <div style="display: flex; justify-content: flex-end; align-items: center;">
+                        ${cancelBtnHtml}
                         ${badgeHtml}
                     </div>
                 </div>
@@ -849,3 +852,40 @@ async function cargarCitasCliente(token) {
         container.innerHTML = `<p style="color: red; text-align: center;">Hubo un error de red.</p>`;
     }
 }
+
+window.cancelarCitaCliente = async function(id_cita) {
+    Swal.fire({
+        title: '¿Cancelar esta cita?',
+        text: "La cita será cancelada y ya no será atendida por nuestros agentes.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#3b82f6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'Volver'
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const token = localStorage.getItem("mi_token");
+                const res = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Token ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ estado: "CANCELADA" })
+                });
+
+                if (res.ok) {
+                    Swal.fire('Cancelada', 'Tu cita ha sido cancelada exitosamente.', 'success').then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', 'No se pudo cancelar la cita. Intenta de nuevo.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un error de conexión.', 'error');
+            }
+        }
+    });
+};
