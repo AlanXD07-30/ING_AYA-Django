@@ -1,10 +1,17 @@
+window.loaderStartTime = Date.now();
 window.hideLoader = function() {
     const loaderOverlay = document.getElementById("loader-overlay");
-    if (loaderOverlay) {
+    if (!loaderOverlay) return;
+    
+    const minLoadTime = 2800; // Force 2.8 seconds minimum display
+    const elapsedTime = Date.now() - window.loaderStartTime;
+    const timeToWait = Math.max(0, minLoadTime - elapsedTime);
+
+    setTimeout(() => {
         loaderOverlay.classList.add("hidden");
         setTimeout(() => loaderOverlay.style.display = "none", 600);
         if (window.loaderInterval) clearInterval(window.loaderInterval);
-    }
+    }, timeToWait);
 };
 
 // Función expuesta globalmente para ir a detalle guardando el ID
@@ -39,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 loaderText.style.opacity = 1;
             }, 300);
         }
-    }, 1500);
+    }, 800);
 
     // Mostrar botón de Admin si el usuario tiene la credencial
     if (localStorage.getItem("is_admin") === "true") {
