@@ -735,4 +735,104 @@ label[for="input-foto"]:hover .avatar-overlay {
     transition: opacity 0.3s ease;
 }
 
+/* ── MODO CLARO (LIGHT THEME) ───────────────────────────── */
+html[data-theme='light'] .card-box {
+    background: linear-gradient(145deg, rgba(241, 245, 249, 0.85) 0%, rgba(226, 232, 240, 0.95) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+html[data-theme='light'] .card-box::after {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+html[data-theme='light'] .card-box:hover {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 40px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+html[data-theme='light'] .perfil-info h1 {
+    color: #1e293b;
+}
+
+html[data-theme='light'] .perfil-info p {
+    color: #475569;
+}
+
+html[data-theme='light'] .perfil-sidebar h2, 
+html[data-theme='light'] .perfil-main h2 {
+    color: #0f172a;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme='light'] .datos-lista li {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.05);
+    color: #334155;
+}
+
+html[data-theme='light'] .datos-lista li strong {
+    color: #0f172a;
+}
+
+html[data-theme='light'] .datos-lista li:hover {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), transparent);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+html[data-theme='light'] .favoritos-desc {
+    color: #475569;
+}
+
+html[data-theme='light'] .inmueble-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(241, 245, 249, 0.95));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme='light'] .inmueble-info h3 {
+    color: #0f172a;
+}
+
+html[data-theme='light'] .inmueble-info p {
+    color: #475569;
+}
+
+html[data-theme='light'] .modal-content {
+    background: rgba(248, 250, 252, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme='light'] .modal-content h2 {
+    color: #0f172a;
+}
+
+html[data-theme='light'] .modal-content h3 {
+    color: #334155;
+}
+
+html[data-theme='light'] .input-group label {
+    color: #475569;
+}
+
+html[data-theme='light'] .input-group input {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #0f172a;
+}
+
+html[data-theme='light'] .loader-overlay {
+    background: rgba(248, 250, 252, 0.95);
+}
+
+html[data-theme='light'] .loader-content h2 {
+    color: #0f172a;
+    text-shadow: none;
+}
+
+html[data-theme='light'] .loader-content p {
+    color: #475569;
+}
+
 
