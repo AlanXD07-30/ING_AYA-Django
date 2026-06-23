@@ -763,7 +763,10 @@ async function cargarTramitesPendientes(token, clienteData) {
 // ==========================================
 async function cargarCitasCliente(token) {
     const container = document.getElementById("citas-container");
-    if (!container) return;
+    const tarjeta = document.getElementById("tarjeta-mis-citas");
+    if (!container || !tarjeta) return;
+
+    tarjeta.style.display = "flex";
 
     try {
         const response = await fetch("https://ingaya-django-production.up.railway.app/api/citas/", {
@@ -793,9 +796,29 @@ async function cargarCitasCliente(token) {
         }
 
         container.innerHTML = "";
-        activas.forEach(c => {
+        for (let c of activas) {
             const fechaStr = new Date(c.fecha_hora).toLocaleString('es-CO');
             const estadoMayus = (c.estado || "").toUpperCase();
+            
+            let direccionInfo = c.descripcion || "Sin descripción";
+            let imgHtml = `<div style="width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 8px; margin-right: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🏠</div>`;
+            
+            // Extract ID from description
+            const match = (c.descripcion || "").match(/inmueble ID:\s*(\d+)/i);
+            if (match) {
+                const id_inmueble = match[1];
+                try {
+                    const resInm = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${id_inmueble}/`);
+                    if(resInm.ok) {
+                        const inm = await resInm.json();
+                        direccionInfo = `📍 ${inm.direccion || "Dirección no disponible"} - ${inm.barrio || ""}`;
+                        if (inm.imagen_principal) {
+                            let propertyImg = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "https://ingaya-django-production.up.railway.app" + inm.imagen_principal;
+                            imgHtml = `<img src="${propertyImg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; margin-right: 10px;" onerror="this.src='../AAA.png'">`;
+                        }
+                    }
+                } catch(e) {}
+            }
             
             let badgeHtml = "";
             if (estadoMayus === "PROGRAMADA" || estadoMayus === "PENDIENTE") {
@@ -808,14 +831,19 @@ async function cargarCitasCliente(token) {
 
             container.innerHTML += `
                 <div style="padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 10px;">
-                    <p style="margin: 0 0 5px 0; font-size: 14px; color: white;"><strong>Fecha:</strong> ${fechaStr}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 12px; color: #94a3b8;">${c.descripcion || "Sin descripción"}</span>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        ${imgHtml}
+                        <div style="flex: 1;">
+                            <p style="margin: 0 0 3px 0; font-size: 13px; color: #e2e8f0; font-weight: bold;">${direccionInfo}</p>
+                            <p style="margin: 0; font-size: 12px; color: #94a3b8;">📅 ${fechaStr}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; align-items: center;">
                         ${badgeHtml}
                     </div>
                 </div>
             `;
-        });
+        }
 
     } catch (e) {
         container.innerHTML = `<p style="color: red; text-align: center;">Hubo un error de red.</p>`;
