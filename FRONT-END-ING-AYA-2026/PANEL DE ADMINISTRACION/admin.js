@@ -2028,8 +2028,9 @@ function verTimelineTransaccion(id) {
     let isArriendo = t.tipo_operacion && t.tipo_operacion.toUpperCase() === "ARRIENDO";
     
     if (isArriendo) {
-        if (t.estado === "CONTRATO") pasoActual = 2;
-        if (t.estado === "ARRENDADO") pasoActual = 3;
+        if (t.estado === "CONTRATO_PENDIENTE" || t.estado === "CONTRATO") pasoActual = 2;
+        if (t.estado === "PAGO_PENDIENTE") pasoActual = 3;
+        if (t.estado === "ARRENDADO") pasoActual = 4;
     } else {
         if (t.estado === "PROMESA") pasoActual = 2;
         if (t.estado === "TRAMITE") pasoActual = 3;
@@ -2043,7 +2044,7 @@ function verTimelineTransaccion(id) {
             <div class="timeline-container">
                 <div class="timeline-step ${pasoActual >= 1 ? 'active' : ''}">
                     <div class="timeline-icon">1</div>
-                    <div class="timeline-text">En Revisión</div>
+                    <div class="timeline-text">Verificación Docs</div>
                 </div>
                 <div class="timeline-line ${pasoActual >= 2 ? 'active' : ''}"></div>
                 <div class="timeline-step ${pasoActual >= 2 ? 'active' : ''}">
@@ -2053,6 +2054,11 @@ function verTimelineTransaccion(id) {
                 <div class="timeline-line ${pasoActual >= 3 ? 'active' : ''}"></div>
                 <div class="timeline-step ${pasoActual >= 3 ? 'active' : ''}">
                     <div class="timeline-icon">3</div>
+                    <div class="timeline-text">Pago Inicial</div>
+                </div>
+                <div class="timeline-line ${pasoActual >= 4 ? 'active' : ''}"></div>
+                <div class="timeline-step ${pasoActual >= 4 ? 'active' : ''}">
+                    <div class="timeline-icon">4</div>
                     <div class="timeline-text">Arrendado</div>
                 </div>
             </div>`;
@@ -2078,6 +2084,11 @@ function verTimelineTransaccion(id) {
                     <div class="timeline-icon">4</div>
                     <div class="timeline-text">Escrituración</div>
                 </div>
+                <div class="timeline-line ${pasoActual >= 5 ? 'active' : ''}"></div>
+                <div class="timeline-step ${pasoActual >= 5 ? 'active' : ''}">
+                    <div class="timeline-icon">5</div>
+                    <div class="timeline-text">Completada</div>
+                </div>
             </div>`;
     }
 
@@ -2088,15 +2099,22 @@ function verTimelineTransaccion(id) {
             ${timelineHtml}
             
             <div style="margin-top: 30px; text-align: left; padding: 15px; background: #f8fafc; border-radius: 8px;">
-                <h3 style="margin-top:0; color: #1e3a8a;">Plan de Pagos Actual</h3>
+                <h3 style="margin-top:0; color: #1e3a8a;">Información de Progreso</h3>
                 <p><strong>Valor Total:</strong> $${formatearPrecio(t.valor_total)}</p>
                 <p><strong>Estado Actual:</strong> ${t.estado}</p>
-                <p style="color: #64748b; font-size: 13px;">*Para avanzar al siguiente paso, debes registrar el pago correspondiente en la pestaña "Control de Pagos".</p>
+                ${(!isArriendo && pasoActual === 5) ? `<p><strong>Día de Entrega Programado:</strong> <span style="color:#10b981; font-weight:bold;">${calcularDiaEntrega(t.fecha_transaccion)}</span></p>` : ''}
+                <p style="color: #64748b; font-size: 13px; margin-top: 10px;">*El cliente ahora puede avanzar el trámite de manera interactiva desde su perfil (subir documentos, firmar, pagar).</p>
             </div>
         `,
         confirmButtonText: 'Cerrar',
         confirmButtonColor: '#1e3a8a'
     });
+}
+
+function calcularDiaEntrega(fechaTx) {
+    let base = fechaTx ? new Date(fechaTx) : new Date();
+    base.setDate(base.getDate() + 15);
+    return base.toLocaleDateString();
 }
 
 

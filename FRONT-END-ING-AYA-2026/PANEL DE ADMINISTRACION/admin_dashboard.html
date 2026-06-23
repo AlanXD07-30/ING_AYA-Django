@@ -439,10 +439,17 @@
                         </select>
                         <select id="filtro-trans-estado" class="form-input" style="flex: 1; min-width: 150px;">
                             <option value="">Todos los estados</option>
-                            <option value="PROCESANDO">Procesando</option>
-                            <option value="COMPLETADA">Completada</option>
                             <option value="RECHAZADA">Rechazada</option>
                             <option value="ANULADA">Anulada</option>
+                            <option value="DOCS_PENDIENTES">Docs Pendientes</option>
+                            <option value="CONTRATO_PENDIENTE">Contrato Pendiente</option>
+                            <option value="PAGO_PENDIENTE">Pago Pendiente</option>
+                            <option value="ARRENDADO">Arrendado</option>
+                            <option value="SEPARACION">Separación</option>
+                            <option value="PROMESA">Promesa</option>
+                            <option value="TRAMITE">Trámite Banco</option>
+                            <option value="ESCRITURACION">Escrituración</option>
+                            <option value="COMPLETADA">Completada</option>
                         </select>
                     </div>
 
@@ -704,10 +711,20 @@
                     <div class="input-group">
                         <label for="trans-estado">Estado</label>
                         <select id="trans-estado" required>
-                            <option value="PROCESANDO">Procesando</option>
-                            <option value="COMPLETADA">Completada</option>
+                            <!-- Estados Generales -->
                             <option value="RECHAZADA">Rechazada</option>
                             <option value="ANULADA">Anulada</option>
+                            <!-- Estados Arriendo -->
+                            <option value="DOCS_PENDIENTES">Docs Pendientes (Arriendo)</option>
+                            <option value="CONTRATO_PENDIENTE">Contrato Pendiente (Arriendo)</option>
+                            <option value="PAGO_PENDIENTE">Pago Pendiente (Arriendo)</option>
+                            <option value="ARRENDADO">Arrendado (Arriendo)</option>
+                            <!-- Estados Venta -->
+                            <option value="SEPARACION">Separación (Venta)</option>
+                            <option value="PROMESA">Promesa (Venta)</option>
+                            <option value="TRAMITE">Trámite Banco (Venta)</option>
+                            <option value="ESCRITURACION">Escrituración (Venta)</option>
+                            <option value="COMPLETADA">Completada (Venta)</option>
                         </select>
                     </div>
                     <div class="input-group">

@@ -697,10 +697,7 @@ async function cargarTramitesPendientes(token, clienteData) {
             const transaccionesAll = await response.json();
             const tramites = transaccionesAll.filter(t => 
                 t.id_cliente == clienteData.id_cliente && 
-                ((t.estado || "").toUpperCase() === "SEPARACION" || 
-                 (t.estado || "").toUpperCase() === "PROMESA" || 
-                 (t.estado || "").toUpperCase() === "RESERVADO" || 
-                 (t.estado || "").toUpperCase() === "REVISION")
+                t.estado !== "RECHAZADA" && t.estado !== "ANULADA"
             );
 
             if (tramites.length === 0) {
@@ -716,6 +713,11 @@ async function cargarTramitesPendientes(token, clienteData) {
                 let propertyImg = "https://ui-avatars.com/api/?name=Inmueble&background=1e3a8a&color=fff";
                 let propertyTitle = "";
                 let btnAction = "";
+                let isArriendo = t.tipo_operacion && t.tipo_operacion.toUpperCase() === "ARRIENDO";
+                let estadoTramite = (t.estado || "").toUpperCase();
+                let pasoActual = 1;
+                let timelineHtml = "";
+                let msgExtra = "";
 
                 try {
                     const resInm = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${t.id_inmueble}/`);
@@ -729,29 +731,109 @@ async function cargarTramitesPendientes(token, clienteData) {
                     }
                 } catch(e) {}
 
-                let estadoTramite = (t.estado || "").toUpperCase();
-                let cancelBtn = `<button class="btn-danger" style="width: 100%; margin-top: 5px; font-size: 14px; background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px; border-radius: 4px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';" onclick="cancelarTramiteCliente(${t.id_transaccion})">Cancelar Trámite</button>`;
+                if (isArriendo) {
+                    if (estadoTramite === "CONTRATO_PENDIENTE" || estadoTramite === "CONTRATO") pasoActual = 2;
+                    else if (estadoTramite === "PAGO_PENDIENTE") pasoActual = 3;
+                    else if (estadoTramite === "ARRENDADO") pasoActual = 4;
+                    else pasoActual = 1; // DOCS_PENDIENTES o default
 
-                if (estadoTramite === "SEPARACION" || estadoTramite === "RESERVADO") {
-                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #3b82f6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerPromesa(${t.id_transaccion})">Leer Promesa</button>` + cancelBtn;
-                } else if (estadoTramite === "REVISION") {
-                    btnAction = `<button class="btn-primary" style="width: 100%; margin-top: 10px; font-size: 14px; background: #8b5cf6; border: none; color: white; padding: 8px; border-radius: 4px; cursor: pointer;" onclick="leerContratoArriendo(${t.id_transaccion})">Firmar Contrato Arriendo</button>` + cancelBtn;
-                } else if (estadoTramite === "PROMESA") {
-                    btnAction = `<button class="btn-secondary" style="width: 100%; margin-top: 10px; font-size: 14px; cursor: not-allowed; padding: 8px; border-radius: 4px;" disabled>En trámite avanzado...</button>`;
+                    timelineHtml = `
+                        <div class="client-timeline">
+                            <div class="client-timeline-step ${pasoActual >= 1 ? (pasoActual > 1 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">1</div>
+                                <div class="client-timeline-text">Docs</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 2 ? (pasoActual > 2 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">2</div>
+                                <div class="client-timeline-text">Firma</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 3 ? (pasoActual > 3 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">3</div>
+                                <div class="client-timeline-text">Pago</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 4 ? 'completed' : ''}">
+                                <div class="client-timeline-icon">4</div>
+                                <div class="client-timeline-text">Listo</div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (pasoActual === 1) {
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalDocs(${t.id_transaccion}, 'CONTRATO_PENDIENTE')">Subir Documentos</button>`;
+                    } else if (pasoActual === 2) {
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'PAGO_PENDIENTE')">Firmar Contrato Digital</button>`;
+                    } else if (pasoActual === 3) {
+                        btnAction = `<button class="btn-primary" style="width:100%; background: linear-gradient(135deg, #10b981, #059669);" onclick="abrirModalSimularPago(${t.id_transaccion}, 'ARRENDADO')">Realizar Pago Inicial</button>`;
+                    } else if (pasoActual === 4) {
+                        msgExtra = `<p style="color:#10b981; font-weight:bold; font-size:13px; text-align:center;">¡Inmueble Arrendado con Éxito!</p>`;
+                    }
+                } else {
+                    // VENTA
+                    if (estadoTramite === "PROMESA") pasoActual = 2;
+                    else if (estadoTramite === "TRAMITE") pasoActual = 3;
+                    else if (estadoTramite === "ESCRITURACION") pasoActual = 4;
+                    else if (estadoTramite === "COMPLETADA") pasoActual = 5;
+                    else pasoActual = 1; // SEPARACION o default
+
+                    timelineHtml = `
+                        <div class="client-timeline">
+                            <div class="client-timeline-step ${pasoActual >= 1 ? (pasoActual > 1 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">1</div>
+                                <div class="client-timeline-text">Separa</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 2 ? (pasoActual > 2 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">2</div>
+                                <div class="client-timeline-text">Promesa</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 3 ? (pasoActual > 3 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">3</div>
+                                <div class="client-timeline-text">Banco</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 4 ? (pasoActual > 4 ? 'completed' : 'active') : ''}">
+                                <div class="client-timeline-icon">4</div>
+                                <div class="client-timeline-text">Firma</div>
+                            </div>
+                            <div class="client-timeline-step ${pasoActual >= 5 ? 'completed' : ''}">
+                                <div class="client-timeline-icon">5</div>
+                                <div class="client-timeline-text">Listo</div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (pasoActual === 1) {
+                        btnAction = `<button class="btn-primary" style="width:100%; background: linear-gradient(135deg, #10b981, #059669);" onclick="abrirModalSimularPago(${t.id_transaccion}, 'PROMESA')">Pagar Separación</button>`;
+                    } else if (pasoActual === 2) {
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'TRAMITE')">Firmar Promesa de Compra</button>`;
+                    } else if (pasoActual === 3) {
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalDocs(${t.id_transaccion}, 'ESCRITURACION')">Subir Pre-Aprobado Bancario</button>`;
+                    } else if (pasoActual === 4) {
+                        btnAction = `<button class="btn-primary" style="width:100%;" onclick="abrirModalFirma(${t.id_transaccion}, 'COMPLETADA')">Firmar Escrituras</button>`;
+                    } else if (pasoActual === 5) {
+                        let baseDate = t.fecha_transaccion ? new Date(t.fecha_transaccion) : new Date();
+                        baseDate.setDate(baseDate.getDate() + 15);
+                        let fechaEntrega = baseDate.toLocaleDateString();
+                        msgExtra = `<p style="color:#10b981; font-size:14px; text-align:center;">¡Trámite Completado!<br><strong>Día de Entrega Programado:</strong> ${fechaEntrega}</p>`;
+                    }
                 }
 
                 container.innerHTML += `
-                    <div class="favorito-card" style="display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.05);">
-                        <img src="${propertyImg}" alt="Inmueble" style="height: 150px; width: 100%; object-fit: cover;" onerror="this.src='../AAA.png'">
-                        <div class="fav-info" style="flex: 1; display: flex; flex-direction: column; padding: 15px;">
-                            <h3 style="margin-bottom: 5px; font-size: 16px; color: #fff;">${propertyTitle || "Trámite #" + t.id_transaccion}</h3>
-                            <p style="color: var(--primary-color); font-weight: bold; margin-bottom: 5px;">${propertyInfo}</p>
-                            <p style="font-size: 12px; color: #94a3b8; margin-bottom: auto;">Estado Trámite: <strong style="color: #3b82f6;">${t.estado}</strong></p>
-                            ${btnAction}
+                    <div class="inmueble-card" style="display: flex; flex-direction: column;">
+                        <img src="${propertyImg}" alt="Inmueble" style="height: 140px; width: 100%; object-fit: cover;" onerror="this.src='../AAA.png'">
+                        <div class="inmueble-info" style="flex: 1; display: flex; flex-direction: column;">
+                            <h3 style="margin-bottom: 5px; font-size: 15px; color: #fff;">${propertyTitle || "Trámite #" + t.id_transaccion}</h3>
+                            <p style="color: #3b82f6; font-weight: bold; margin-bottom: 5px;">${propertyInfo}</p>
+                            
+                            ${timelineHtml}
+
+                            <div class="tramite-action-area">
+                                ${btnAction}
+                                ${msgExtra}
+                            </div>
                         </div>
                     </div>
                 `;
             }
+        }
         }
     } catch (e) {
         fila.style.display = "flex";
@@ -927,3 +1009,139 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
         }
     });
 };
+
+// Modals Handlers for Interactive Timeline
+
+async function avanzarEstadoTransaccion(id_transaccion, newState) {
+    try {
+        const token = localStorage.getItem("token_cliente");
+        const getRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
+            headers: { "Authorization": `Token ${token}` }
+        });
+        if(!getRes.ok) throw new Error("No se pudo obtener la tx");
+        const txData = await getRes.json();
+
+        txData.estado = newState;
+        
+        const putRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
+            method: "PUT",
+            headers: { 
+                "Authorization": `Token ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(txData)
+        });
+
+        if (putRes.ok) {
+            Swal.fire('¡Éxito!', 'Trámite avanzado al siguiente paso.', 'success').then(() => {
+                window.location.reload();
+            });
+        } else {
+            throw new Error();
+        }
+    } catch(err) {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo avanzar el trámite.', 'error');
+    }
+}
+
+function abrirModalDocs(id_transaccion, nextState) {
+    document.getElementById("docs-trans-id").value = id_transaccion;
+    document.getElementById("docs-next-state").value = nextState;
+    document.getElementById("modal-subir-docs").style.display = "flex";
+}
+function cerrarModalDocs() {
+    document.getElementById("modal-subir-docs").style.display = "none";
+}
+function procesarSubidaDocs() {
+    const form = document.getElementById("form-subir-docs");
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    cerrarModalDocs();
+    Swal.fire({
+        title: 'Simulando subida...',
+        text: 'Enviando documentos ficticios',
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: () => { Swal.showLoading(); }
+    }).then(() => {
+        let id_transaccion = document.getElementById("docs-trans-id").value;
+        let newState = document.getElementById("docs-next-state").value;
+        avanzarEstadoTransaccion(id_transaccion, newState);
+    });
+}
+
+let canvasFirma, ctxFirma, isDrawing = false;
+function abrirModalFirma(id_transaccion, nextState) {
+    document.getElementById("firma-trans-id").value = id_transaccion;
+    document.getElementById("firma-next-state").value = nextState;
+    document.getElementById("modal-firma-digital").style.display = "flex";
+    
+    setTimeout(() => {
+        canvasFirma = document.getElementById("canvas-firma");
+        ctxFirma = canvasFirma.getContext("2d");
+        ctxFirma.lineWidth = 2;
+        ctxFirma.lineCap = "round";
+        ctxFirma.strokeStyle = "#ffffff";
+        limpiarFirma();
+
+        canvasFirma.onmousedown = (e) => { isDrawing = true; ctxFirma.beginPath(); ctxFirma.moveTo(e.offsetX, e.offsetY); };
+        canvasFirma.onmousemove = (e) => { if(isDrawing) { ctxFirma.lineTo(e.offsetX, e.offsetY); ctxFirma.stroke(); } };
+        canvasFirma.onmouseup = () => { isDrawing = false; };
+        
+        // Touch support
+        canvasFirma.ontouchstart = (e) => { isDrawing = true; let rect = canvasFirma.getBoundingClientRect(); ctxFirma.beginPath(); ctxFirma.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top); };
+        canvasFirma.ontouchmove = (e) => { if(isDrawing) { let rect = canvasFirma.getBoundingClientRect(); ctxFirma.lineTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top); ctxFirma.stroke(); } };
+        canvasFirma.ontouchend = () => { isDrawing = false; };
+    }, 100);
+}
+function cerrarModalFirma() {
+    document.getElementById("modal-firma-digital").style.display = "none";
+}
+function limpiarFirma() {
+    if(ctxFirma) ctxFirma.clearRect(0, 0, canvasFirma.width, canvasFirma.height);
+}
+function procesarFirma() {
+    cerrarModalFirma();
+    Swal.fire({
+        title: 'Firmando documento...',
+        text: 'Generando firma digital ficticia',
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: () => { Swal.showLoading(); }
+    }).then(() => {
+        let id_transaccion = document.getElementById("firma-trans-id").value;
+        let newState = document.getElementById("firma-next-state").value;
+        avanzarEstadoTransaccion(id_transaccion, newState);
+    });
+}
+
+function abrirModalSimularPago(id_transaccion, nextState) {
+    document.getElementById("pago-sim-trans-id").value = id_transaccion;
+    document.getElementById("pago-sim-next-state").value = nextState;
+    document.getElementById("modal-simular-pago").style.display = "flex";
+}
+function cerrarModalSimularPago() {
+    document.getElementById("modal-simular-pago").style.display = "none";
+}
+function procesarPagoSimulado() {
+    const form = document.getElementById("form-simular-pago");
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    cerrarModalSimularPago();
+    Swal.fire({
+        title: 'Procesando Pago...',
+        text: 'Simulando transacción con tarjeta',
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => { Swal.showLoading(); }
+    }).then(() => {
+        let id_transaccion = document.getElementById("pago-sim-trans-id").value;
+        let newState = document.getElementById("pago-sim-next-state").value;
+        avanzarEstadoTransaccion(id_transaccion, newState);
+    });
+}
