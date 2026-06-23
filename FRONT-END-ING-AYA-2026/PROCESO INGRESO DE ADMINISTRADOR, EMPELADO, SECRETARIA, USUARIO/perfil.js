@@ -988,13 +988,11 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
         if (result.isConfirmed) {
             try {
                 const token = localStorage.getItem("mi_token");
-                const res = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/cancelar_tramite/`, {
-                    method: 'POST',
+                const res = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
+                    method: 'DELETE',
                     headers: {
-                        'Authorization': 'Token ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
+                        'Authorization': 'Token ' + token
+                    }
                 });
 
                 if (res.ok) {
