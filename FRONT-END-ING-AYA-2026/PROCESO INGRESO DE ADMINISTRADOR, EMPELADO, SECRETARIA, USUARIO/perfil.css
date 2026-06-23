@@ -57,16 +57,7 @@ main.perfil-container::after {
     100% { transform: translate(-40px, 80px) scale(0.96); }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 7px; height: 7px; }
-::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.25); border-radius: 6px; }
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.45), rgba(99, 102, 241, 0.45));
-    border-radius: 6px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.7), rgba(99, 102, 241, 0.7));
-}
+/* Scrollbar styles removed for better native usability */
 
 /* ══════════════════════════════════════════════════════════════
    CARD BASE (glassmorphism)
