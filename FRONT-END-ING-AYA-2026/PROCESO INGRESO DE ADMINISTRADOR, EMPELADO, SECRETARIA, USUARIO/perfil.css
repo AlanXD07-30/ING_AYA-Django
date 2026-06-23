@@ -835,4 +835,24 @@ html[data-theme='light'] .loader-content p {
     color: #475569;
 }
 
+/* FIX FOR MOBILE OVERFLOW AND PADDING */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+@media (max-width: 480px) {
+    .card-box { 
+        padding: 24px; 
+    }
+    main.perfil-container::before, 
+    main.perfil-container::after { 
+        display: none !important; 
+    }
+    header { 
+        width: 100vw; 
+        box-sizing: border-box; 
+    }
+}
+
 

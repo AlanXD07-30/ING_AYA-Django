@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    RESET & BASE
    ============================================================ */
 *, *::before, *::after {
@@ -527,7 +527,11 @@ footer {
     main { padding: 40px 16px; }
     .login-card { padding: 36px 24px; width: 100%; }
     .footer-top input,
-    .footer-top button { width: 100%; margin-bottom: 10px; }
+    .footer-top button { 
+        width: 100%; 
+        margin-bottom: 10px; 
+        box-sizing: border-box;
+    }
 }
 /* HAMBURGER MENU CSS */ @media (max-width: 1000px) {
     header {
