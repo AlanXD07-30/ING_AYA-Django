@@ -1998,11 +1998,17 @@ function renderTransaccionesFiltered() {
         return;
     }
 
-    tabla.innerHTML = filtradas.map(t => `
+    tabla.innerHTML = filtradas.map(t => {
+        let realTipo = t.tipo_operacion;
+        const inm = inmueblesGlobal.find(i => (i.id_inmueble || i.id) == t.id_inmueble);
+        if (inm && inm.tipo_operacion) {
+            realTipo = inm.tipo_operacion;
+        }
+        return `
         <tr>
             <td>${t.id_transaccion}</td>
             <td>${t.fecha.replace('T', ' ')}</td>
-            <td>${t.tipo_operacion}</td>
+            <td>${realTipo}</td>
             <td>$${formatearPrecio(t.valor_total)}</td>
             <td><span class="badge badge-${t.estado.toLowerCase()}">${t.estado}</span></td>
             <td>Cliente ID: ${t.id_cliente}</td>
@@ -2024,8 +2030,14 @@ function verTimelineTransaccion(id) {
     const t = transaccionesGlobal.find(x => x.id_transaccion == id);
     if (!t) return;
     
+    let realTipo = t.tipo_operacion;
+    const inm = inmueblesGlobal.find(i => (i.id_inmueble || i.id) == t.id_inmueble);
+    if (inm && inm.tipo_operacion) {
+        realTipo = inm.tipo_operacion;
+    }
+    
     let pasoActual = 1;
-    let isArriendo = t.tipo_operacion && t.tipo_operacion.toUpperCase() === "ARRIENDO";
+    let isArriendo = realTipo && realTipo.toUpperCase() === "ARRIENDO";
     
     if (isArriendo) {
         if (t.estado === "CONTRATO_PENDIENTE" || t.estado === "CONTRATO") pasoActual = 2;

@@ -459,6 +459,9 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                 if transaccion.id_inmueble:
                     inmueble = transaccion.id_inmueble
                     
+                    transaccion.tipo_operacion = inmueble.tipo_operacion
+                    transaccion.save(update_fields=['tipo_operacion'])
+                    
                     # Cancelar citas de otros clientes para este inmueble
                     try:
                         citas_pendientes = Cita.objects.filter(
