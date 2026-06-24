@@ -53,9 +53,12 @@ document.addEventListener("DOMContentLoaded", async function() {
                 document.getElementById("perfil-email").textContent = data.email;
                 document.querySelector(".perfil-sidebar").innerHTML = `
                     <h2>Aviso</h2>
-                    <p>Eres un superadministrador sin perfil de cliente. Las funciones de perfil están limitadas.</p>
-                    <a href="../PANEL DE ADMINISTRACION/admin_dashboard.html" class="btn-primary" style="display:block; text-align:center; margin-top:20px; text-decoration:none;">Ir al Panel de Administración</a>
+                    <p style="color: var(--text-muted); margin-bottom: 10px;">Eres un superadministrador sin perfil de cliente. Las funciones de perfil están limitadas y no puedes guardar favoritos ni hacer trámites.</p>
                 `;
+                const mainDash = document.querySelector(".dashboard-main");
+                if(mainDash) mainDash.style.display = "none";
+                const citasDash = document.getElementById("tarjeta-mis-citas");
+                if(citasDash) citasDash.style.display = "none";
             } else if (data.es_empleado) {
                 // Caso: Empleado logueado
                 document.getElementById("perfil-nombre").textContent = data.nombre + " (" + data.rol + ")";

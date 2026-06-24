@@ -366,6 +366,10 @@ window.guardarFavorito = async function(idInmueble) {
         Swal.fire('Atención', 'Debes iniciar sesión para guardar favoritos.', 'warning');
         return;
     }
+    if (localStorage.getItem("is_admin") === "true") {
+        Swal.fire('Acción Restringida', 'Los administradores no pueden guardar inmuebles en favoritos.', 'warning');
+        return;
+    }
     try {
         const response = await fetch("https://ingaya-django-production.up.railway.app/api/favoritos/", {
             method: "POST",

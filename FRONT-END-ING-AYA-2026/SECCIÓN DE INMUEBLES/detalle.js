@@ -354,8 +354,8 @@ async function obtenerPerfilCliente() {
 
 async function solicitarReserva() {
     const perfil = await obtenerPerfilCliente();
-    if (!perfil || perfil.es_empleado) {
-        Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden iniciar trámites. Si eres empleado, usa el panel de administración.', 'warning');
+    if (!perfil || perfil.es_empleado || perfil.es_admin_sin_perfil || localStorage.getItem("is_admin") === "true") {
+        Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden iniciar trámites.', 'warning');
         return;
     }
 
@@ -422,7 +422,7 @@ async function solicitarReserva() {
 
 async function agendarVisita() {
     const perfil = await obtenerPerfilCliente();
-    if (!perfil || perfil.es_empleado) {
+    if (!perfil || perfil.es_empleado || perfil.es_admin_sin_perfil || localStorage.getItem("is_admin") === "true") {
         Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden agendar visitas.', 'warning');
         return;
     }
