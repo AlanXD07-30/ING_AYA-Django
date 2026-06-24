@@ -448,52 +448,60 @@ class TransaccionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         from django.utils import timezone
         from django.db import transaction
+        from rest_framework.exceptions import ValidationError
+        import traceback
         from .models import MovimientoInmueble, Cita
         
-        with transaction.atomic():
-            transaccion = serializer.save()
-            
-            if transaccion.id_inmueble:
-                inmueble = transaccion.id_inmueble
+        try:
+            with transaction.atomic():
+                transaccion = serializer.save()
                 
-                # Cancelar citas de otros clientes para este inmueble
-                try:
-                    citas_pendientes = Cita.objects.filter(
-                        descripcion__icontains=f"inmueble ID: {inmueble.id_inmueble}"
-                    ).exclude(estado='CANCELADA')
-                    for c in citas_pendientes:
-                        c.estado = 'CANCELADA'
-                        c.save()
-                except Exception as e:
-                    print("Error cancelando citas:", e)
-                
-                if inmueble.tipo_operacion == 'Arriendo':
-                    transaccion.estado = 'REVISION'
-                    transaccion.save()
+                if transaccion.id_inmueble:
+                    inmueble = transaccion.id_inmueble
                     
-                    inmueble.estado = 'En Revisión'
-                    inmueble.save()
+                    # Cancelar citas de otros clientes para este inmueble
+                    try:
+                        citas_pendientes = Cita.objects.filter(
+                            descripcion__icontains=f"inmueble ID: {inmueble.id_inmueble}"
+                        ).exclude(estado='CANCELADA')
+                        for c in citas_pendientes:
+                            c.estado = 'CANCELADA'
+                            c.save()
+                    except Exception as e:
+                        print("Error cancelando citas:", e)
                     
-                    MovimientoInmueble.objects.create(
-                        tipo_movimiento='Cambio Estado',
-                        fecha=timezone.now(),
-                        precio_momento=inmueble.precio,
-                        estado_momento=inmueble.estado[:8] if inmueble.estado else None,
-                        descripcion=f"El inmueble está En Revisión (Transacción #{transaccion.id_transaccion})",
-                        id_inmueble=inmueble
-                    )
-                else:
-                    inmueble.estado = 'Reservado'
-                    inmueble.save()
-                    
-                    MovimientoInmueble.objects.create(
-                        tipo_movimiento='Cambio Estado',
-                        fecha=timezone.now(),
-                        precio_momento=inmueble.precio,
-                        estado_momento=inmueble.estado[:8] if inmueble.estado else None,
-                        descripcion=f"El inmueble fue Reservado (Transacción #{transaccion.id_transaccion})",
-                        id_inmueble=inmueble
-                    )
+                    if inmueble.tipo_operacion == 'Arriendo':
+                        transaccion.estado = 'REVISION'
+                        transaccion.save()
+                        
+                        inmueble.estado = 'En Revisión'
+                        inmueble.save()
+                        
+                        MovimientoInmueble.objects.create(
+                            tipo_movimiento='Cambio Estado',
+                            fecha=timezone.now(),
+                            precio_momento=inmueble.precio,
+                            estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                            descripcion=f"El inmueble está En Revisión (Transacción #{transaccion.id_transaccion})",
+                            id_inmueble=inmueble
+                        )
+                    else:
+                        inmueble.estado = 'Reservado'
+                        inmueble.save()
+                        
+                        MovimientoInmueble.objects.create(
+                            tipo_movimiento='Cambio Estado',
+                            fecha=timezone.now(),
+                            precio_momento=inmueble.precio,
+                            estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                            descripcion=f"El inmueble fue Reservado (Transacción #{transaccion.id_transaccion})",
+                            id_inmueble=inmueble
+                        )
+        except Exception as e:
+            error_msg = f"Error: {str(e)}"
+            print(error_msg)
+            print(traceback.format_exc())
+            raise ValidationError({"detail": error_msg})
 
     @action(detail=True, methods=['post'])
     def firmar_promesa(self, request, pk=None):
