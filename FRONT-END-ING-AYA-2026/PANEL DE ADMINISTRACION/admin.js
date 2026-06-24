@@ -2040,14 +2040,14 @@ function verTimelineTransaccion(id) {
     let isArriendo = realTipo && realTipo.toUpperCase() === "ARRIENDO";
     
     if (isArriendo) {
-        if (t.estado === "CONTRATO_PENDIENTE" || t.estado === "CONTRATO") pasoActual = 2;
-        if (t.estado === "PAGO_PENDIENTE") pasoActual = 3;
+        if (t.estado === "CONTRATO_PENDIENTE" || t.estado === "CONTRATO" || t.estado === "CONTRATO_P") pasoActual = 2;
+        if (t.estado === "PAGO_PENDIENTE" || t.estado === "PAGO_PEND") pasoActual = 3;
         if (t.estado === "ARRENDADO") pasoActual = 4;
     } else {
         if (t.estado === "PROMESA") pasoActual = 2;
-        if (t.estado === "TRAMITE") pasoActual = 3;
-        if (t.estado === "ESCRITURACION") pasoActual = 4;
-        if (t.estado === "COMPLETADA") pasoActual = 5;
+        if (t.estado === "TRAMITE" || t.estado === "EN_TRAMITE") pasoActual = 3;
+        if (t.estado === "ESCRITURACION" || t.estado === "ESCRITURAS") pasoActual = 4;
+        if (t.estado === "COMPLETADA" || t.estado === "FINALIZADA") pasoActual = 5;
     }
 
     let timelineHtml = '';
