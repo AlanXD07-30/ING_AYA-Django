@@ -732,6 +732,9 @@ async function cargarTramitesPendientes(token, clienteData) {
                         if (inm.imagen_principal) {
                             propertyImg = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "https://ingaya-django-production.up.railway.app" + inm.imagen_principal;
                         }
+                        if (inm.tipo_operacion && inm.tipo_operacion.toUpperCase() === "ARRIENDO") {
+                            isArriendo = true;
+                        }
                     }
                 } catch(e) {}
 
