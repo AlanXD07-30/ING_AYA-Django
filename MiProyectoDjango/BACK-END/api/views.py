@@ -75,7 +75,7 @@ class InmuebleViewSet(viewsets.ModelViewSet):
                 tipo_movimiento='Cambio Precio',
                 fecha=timezone.now(),
                 precio_momento=new_instance.precio,
-                estado_momento=new_instance.estado[:8] if new_instance.estado else None,
+                estado_momento=None,
                 descripcion=f"El precio cambió de {old_precio} a {new_instance.precio}",
                 id_inmueble=new_instance
             )
@@ -88,7 +88,7 @@ class InmuebleViewSet(viewsets.ModelViewSet):
                 tipo_movimiento='Cambio Estado',
                 fecha=timezone.now(),
                 precio_momento=new_instance.precio,
-                estado_momento=new_instance.estado[:8] if new_instance.estado else None,
+                estado_momento=None,
                 descripcion=f"El estado cambió de '{old_estado}' a '{new_instance.estado}'",
                 id_inmueble=new_instance
             )
@@ -481,7 +481,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                             tipo_movimiento='Cambio Estado',
                             fecha=timezone.now(),
                             precio_momento=inmueble.precio,
-                            estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                            estado_momento=None,
                             descripcion=f"El inmueble está En Revisión (Transacción #{transaccion.id_transaccion})",
                             id_inmueble=inmueble
                         )
@@ -493,7 +493,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                             tipo_movimiento='Cambio Estado',
                             fecha=timezone.now(),
                             precio_momento=inmueble.precio,
-                            estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                            estado_momento=None,
                             descripcion=f"El inmueble fue Reservado (Transacción #{transaccion.id_transaccion})",
                             id_inmueble=inmueble
                         )
@@ -521,7 +521,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                     tipo_movimiento='Cambio Estado',
                     fecha=timezone.now(),
                     precio_momento=inmueble.precio,
-                    estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                    estado_momento=None,
                     descripcion=f"El cliente aceptó la promesa (Transacción #{transaccion.id_transaccion}). Pasa a En trámite.",
                     id_inmueble=inmueble
                 )
@@ -536,7 +536,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                     tipo_movimiento='Cambio Estado',
                     fecha=timezone.now(),
                     precio_momento=inmueble.precio,
-                    estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                    estado_momento=None,
                     descripcion=f"El cliente rechazó la promesa (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
                     id_inmueble=inmueble
                 )
@@ -560,7 +560,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                     tipo_movimiento='Cambio Estado',
                     fecha=timezone.now(),
                     precio_momento=inmueble.precio,
-                    estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                    estado_momento=None,
                     descripcion=f"El cliente aceptó el contrato (Transacción #{transaccion.id_transaccion}). Pasa a Arrendado.",
                     id_inmueble=inmueble
                 )
@@ -575,7 +575,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                     tipo_movimiento='Cambio Estado',
                     fecha=timezone.now(),
                     precio_momento=inmueble.precio,
-                    estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                    estado_momento=None,
                     descripcion=f"El cliente rechazó el contrato (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
                     id_inmueble=inmueble
                 )
@@ -599,7 +599,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                     tipo_movimiento='Cambio Estado',
                     fecha=timezone.now(),
                     precio_momento=inmueble.precio,
-                    estado_momento=inmueble.estado[:8] if inmueble.estado else None,
+                    estado_momento=None,
                     descripcion=f"El cliente canceló el trámite (Transacción #{transaccion.id_transaccion}). Vuelve a Disponible.",
                     id_inmueble=inmueble
                 )
@@ -622,7 +622,7 @@ class TransaccionViewSet(viewsets.ModelViewSet):
                 tipo_movimiento='Cambio Estado',
                 fecha=timezone.now(),
                 precio_momento=inmueble.precio,
-                estado_momento=inmueble.estado,
+                estado_momento=None,
                 descripcion=f"Transacción #{instance.id_transaccion} eliminada. Inmueble liberado.",
                 id_inmueble=inmueble
             )
