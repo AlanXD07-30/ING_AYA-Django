@@ -644,3 +644,7 @@ footer {
 .mobile-arrow { display: none !important; } @media (max-width: 1000px) { .mobile-arrow { display: inline !important; } }
 
 
+
+/* FIX SWEETALERT HEIGHT */
+.swal2-popup { height: auto !important; min-height: fit-content !important; margin: auto !important; flex: none !important; align-self: center !important; }
+
