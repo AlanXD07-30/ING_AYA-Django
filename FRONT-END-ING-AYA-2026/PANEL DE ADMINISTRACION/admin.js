@@ -2021,7 +2021,7 @@ function renderTransaccionesFiltered() {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `}).join('');
     
     cargarVencimientos();
 }
