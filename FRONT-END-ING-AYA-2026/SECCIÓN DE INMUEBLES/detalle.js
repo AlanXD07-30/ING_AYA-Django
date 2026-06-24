@@ -401,11 +401,19 @@ async function solicitarReserva() {
                 });
                 
                 if (!response.ok) {
-                    throw new Error(await response.text());
+                    const textResp = await response.text();
+                    let errMessage = "Error en el servidor al procesar la solicitud.";
+                    try {
+                        const errData = JSON.parse(textResp);
+                        errMessage = errData.detail || JSON.stringify(errData);
+                    } catch (e) {
+                        console.error("Error del servidor:", textResp);
+                    }
+                    throw new Error(errMessage);
                 }
                 return await response.json();
             } catch (error) {
-                Swal.showValidationMessage(`Fallo en la solicitud: ${error}`);
+                Swal.showValidationMessage(`Fallo en la solicitud: ${error.message || error}`);
             }
         },
         allowOutsideClick: () => !Swal.isLoading()
@@ -568,11 +576,19 @@ async function agendarVisita() {
                 });
                 
                 if (!response.ok) {
-                    throw new Error(await response.text());
+                    const textResp = await response.text();
+                    let errMessage = "Error en el servidor al procesar la solicitud.";
+                    try {
+                        const errData = JSON.parse(textResp);
+                        errMessage = errData.detail || JSON.stringify(errData);
+                    } catch (e) {
+                        console.error("Error del servidor:", textResp);
+                    }
+                    throw new Error(errMessage);
                 }
                 return await response.json();
             } catch (error) {
-                Swal.showValidationMessage(`Error: ${error}`);
+                Swal.showValidationMessage(`Error: ${error.message || error}`);
             }
         }
     }).then((result) => {
