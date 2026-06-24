@@ -503,6 +503,43 @@ class TransaccionViewSet(viewsets.ModelViewSet):
             print(traceback.format_exc())
             raise ValidationError({"detail": error_msg})
 
+    def perform_update(self, serializer):
+        from django.utils import timezone
+        from django.db import transaction
+        from rest_framework.exceptions import ValidationError
+        import traceback
+        from .models import MovimientoInmueble
+        
+        try:
+            with transaction.atomic():
+                transaccion = serializer.save()
+                
+                if transaccion.id_inmueble:
+                    inmueble = transaccion.id_inmueble
+                    
+                    if transaccion.estado == 'PROMESA':
+                        inmueble.estado = 'Reservado'
+                    elif transaccion.estado == 'TRAMITE' or transaccion.estado == 'EN_TRAMITE':
+                        inmueble.estado = 'En Trámite'
+                    elif transaccion.estado == 'FINALIZADA' or transaccion.estado == 'COMPLETADA':
+                        inmueble.estado = 'Vendido' if inmueble.tipo_operacion == 'Venta' else 'Arrendado'
+                        
+                    inmueble.save()
+                    
+                    MovimientoInmueble.objects.create(
+                        tipo_movimiento='Cambio Estado',
+                        fecha=timezone.now(),
+                        precio_momento=inmueble.precio,
+                        estado_momento=None,
+                        descripcion=f"Avance de trámite a {transaccion.estado} (Transacción #{transaccion.id_transaccion})",
+                        id_inmueble=inmueble
+                    )
+        except Exception as e:
+            error_msg = f"Error en update: {str(e)}"
+            print(error_msg)
+            print(traceback.format_exc())
+            raise ValidationError({"detail": error_msg})
+
     @action(detail=True, methods=['post'])
     def firmar_promesa(self, request, pk=None):
         from django.utils import timezone
