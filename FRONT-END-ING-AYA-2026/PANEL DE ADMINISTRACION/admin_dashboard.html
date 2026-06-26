@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -62,34 +63,34 @@
             
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#" id="nav-inmuebles" onclick="toggleSubmenu(event, 'submenu-inmuebles')">🏠 Gestión de Inmuebles <span class="mobile-arrow">&#9660;</span></a>
+                    <a href="#" id="nav-inmuebles" onclick="toggleSubmenu(event, 'submenu-inmuebles')"><i class="bi bi-house-door" style="margin-right: 8px; font-size: 1.1em;"></i> Inmuebles <span class="mobile-arrow">&#9660;</span></a>
                     <ul class="submenu" id="submenu-inmuebles">
                         <li><a href="#" class="active" onclick="mostrarSeccion('panel-inmuebles', this)">↳ Ver Tabla Registros</a></li>
                         <li><a href="#" onclick="mostrarSeccion('panel-graficos-inmuebles', this)">↳ Reportes y Gráficos</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" id="nav-clientes" onclick="toggleSubmenu(event, 'submenu-clientes')">👥 Gestión de Clientes ▼</a>
+                    <a href="#" id="nav-clientes" onclick="toggleSubmenu(event, 'submenu-clientes')"><i class="bi bi-people" style="margin-right: 8px; font-size: 1.1em;"></i> Clientes ▼</a>
                     <ul class="submenu" id="submenu-clientes" style="display: none;">
                         <li><a href="#" onclick="mostrarSeccion('panel-clientes', this)">↳ Ver Tabla Registros</a></li>
                         <li><a href="#" onclick="mostrarSeccion('panel-graficos-clientes', this)">↳ Reportes y Gráficos</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" id="nav-empleados" onclick="toggleSubmenu(event, 'submenu-empleados')">💼 Gestión de Personal ▼</a>
+                    <a href="#" id="nav-empleados" onclick="toggleSubmenu(event, 'submenu-empleados')"><i class="bi bi-briefcase" style="margin-right: 8px; font-size: 1.1em;"></i> Personal ▼</a>
                     <ul class="submenu" id="submenu-empleados" style="display: none;">
                         <li><a href="#" onclick="mostrarSeccion('panel-administradores', this)">↳ Lista de Administradores</a></li>
                         <li><a href="#" onclick="mostrarSeccion('panel-empleados', this)">↳ Lista de Empleados</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" id="nav-citas" onclick="toggleSubmenu(event, 'submenu-citas')">🗓️ Gestión de Citas ▼</a>
+                    <a href="#" id="nav-citas" onclick="toggleSubmenu(event, 'submenu-citas')"><i class="bi bi-calendar-event" style="margin-right: 8px; font-size: 1.1em;"></i> Citas ▼</a>
                     <ul class="submenu" id="submenu-citas" style="display: none;">
                         <li><a href="#" onclick="mostrarSeccion('panel-citas', this)">↳ Lista de Citas</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" id="nav-financiera" onclick="toggleSubmenu(event, 'submenu-financiera')">💰 Gestión Financiera ▼</a>
+                    <a href="#" id="nav-financiera" onclick="toggleSubmenu(event, 'submenu-financiera')"><i class="bi bi-wallet2" style="margin-right: 8px; font-size: 1.1em;"></i> Finanzas ▼</a>
                     <ul class="submenu" id="submenu-financiera" style="display: none;">
                         <li><a href="#" onclick="mostrarSeccion('panel-transacciones', this)">↳ Transacciones (Ventas/Arriendos)</a></li>
                         <li><a href="#" onclick="mostrarSeccion('panel-pagos', this)">↳ Control de Pagos</a></li>
