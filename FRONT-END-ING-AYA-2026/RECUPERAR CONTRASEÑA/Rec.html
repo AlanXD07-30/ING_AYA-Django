@@ -1,48 +1,123 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Iniciar Sesión - Ing Aya</title>
-  <link rel="stylesheet" href="Rec.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ING AYA | Recuperar contraseña</title>
+    <link rel="stylesheet" href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.css">
+    <link rel="icon" href="../posible logo Ing aya 2026.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-   <header class="header-login">
-    <a href="#" class="logo-head">
-      <img src="../logo_INGAYA_gris-sin fondo.png" alt="Logo ING AYA">
-      <h2 class="nom_emp">Ing aya</h2>
-    </a>
-    <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="volver-inicio">VOLVER A INICIO</a>
-  </header>
 
- <main class="login-container">
-    <form class="form-login">
-      <h2>Recuperar Contraseña</h2>
-      <input type="email" id="usuario" placeholder="Dirección de correo" required />
-      
-      <button type="submit" id="btn-recuperar">Enviar</button>
-      <div class="registro">
-        <br>
-    
-      </div>
-    </form>
-  </main>
+    <!-- ===== HEADER ===== -->
+    <header>    
+        <button class="hamburger-menu" aria-label="Abrir menú" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+        <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="logo-head">
+            <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
+        </a>
 
+        <ul class="nav-links">
+            <li><a href="../SOBRE NOSOTROS/sobrenosotros.html">Sobre nosotros</a></li>
+            <li>
+                <a href="#" onclick="if(window.innerWidth<=1000){event.preventDefault(); this.parentElement.classList.toggle('mobile-open');}">Inmuebles <span class="mobile-arrow">&#9660;</span></a>
+                <ul class="Submenu_inmuebles">
+                    <li><a href="../SECCIÓN DE INMUEBLES/Venta/inmuebles.html">En venta</a></li>
+                    <li><a href="../SECCIÓN DE INMUEBLES/Arriendo/inmuebles.html">En Arriendo</a></li>
+                </ul>
+            </li>
+            <li><a href="../CONTACTANOS/contactanos.html">Contáctanos</a></li>
+            <li><a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html" class="nav-link-ingresar">Iniciar sesión</a></li>
+            <li><a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/registro.html" class="nav-link-registrar">Crear cuenta</a></li>
+            <li>
+                <a href="../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html" class="nav-link-home" title="Inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li>
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo de color" title="Cambiar modo">
+                    <span id="themeIcon">☀️</span>
+                </button>
+            </li>
+        </ul>
+    </header>
 
+    <!-- ===== MAIN — Card de recuperación centrado ===== -->
+    <main>
+        <div class="login-card">
 
-  
- <footer class="footer-login">
-    <img src="../logo_INGAYA_gris-sin fondo.png " alt="Logo pequeño">
-    <p>Todos los derechos reservados</p>
-  </footer>
+            <!-- Logo + nombre dentro del card -->
+            <div class="login-logo">
+                <img src="../posible logo Ing aya 2026.png" alt="Logo Ing Aya">
+                <span>Ing. Aya</span>
+                <small>Tu hogar de confianza</small>
+            </div>
 
-  
+            <h2>Recuperar Contraseña</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 24px; font-size: 14px;">
+                Ingresa tu correo electrónico y te enviaremos una contraseña temporal.
+            </p>
+
+            <form class="form-login">
+                <div class="form-group">
+                    <label for="usuario" class="form-label">Correo electrónico</label>
+                    <input type="email" id="usuario" class="form-input" placeholder="tu@correo.com" required>
+                </div>
+
+                <button type="submit" id="btn-recuperar" class="btn-primary">Enviar</button>
+            </form>
+
+            <div class="divider">o</div>
+
+            <p class="login-footer-text">
+                ¿Recordaste tu contraseña?
+                <a href="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html">Inicia sesión</a>
+            </p>
+
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-top">
+            <div class="social">
+                <p>Síguenos</p>
+                <span title="Web">🌐</span>
+                <span title="Twitter/X">🐦</span>
+                <span title="Instagram">📸</span>
+                <span title="Instagram">🎥</span>
+            </div>
+            <div class="contacto">
+                <p>CONTÁCTANOS</p>
+                <form onsubmit="return false;">
+                    <input type="email" placeholder="Tu dirección de correo electrónico" aria-label="Correo electrónico">
+                    <button type="button">Enviar</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <nav aria-label="Footer">
+                <a href="#">Características</a>
+                <a href="#">About</a>
+                <a href="#">Testimonios</a>
+                <a href="#">Contacto</a>
+            </nav>
+            <p>Bogotá 2025</p>
+            <small>© 2025 Ing Aya – Tu hogar de confianza</small>
+        </div>
+    </footer>
+
+    <script src="../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/Acciones-Comun.js"></script>
 
 <script>
 function toggleMenu() {
-    var menus = document.querySelectorAll('.nav-links, .Menu_principal, .navegaciÃ³n_encabezado');
+    var menus = document.querySelectorAll('.nav-links, .Menu_principal, .navegación_encabezado');
     menus.forEach(function(el) {
         el.classList.toggle('active');
     });
@@ -97,7 +172,3 @@ document.querySelector('.form-login').addEventListener('submit', async function(
 </script>
 </body>
 </html>
-
-
-
-
