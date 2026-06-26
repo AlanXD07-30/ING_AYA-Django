@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
 
@@ -48,7 +49,7 @@
             </li>
             <li>
                 <button class="theme-toggle" id="themeToggle" aria-label="Cambiar modo de color" title="Cambiar modo">
-                    <span id="themeIcon">☀️</span>
+                    <span id="themeIcon"><i class="bi bi-brightness-high-fill"></i></span>
                 </button>
             </li>
         </ul>
@@ -56,7 +57,7 @@
 
     <!-- ===== HERO ===== -->
     <section class="hero">
-        <span class="hero-eyebrow">🏠 Arriendo</span>
+        <span class="hero-eyebrow"><i class="bi bi-house"></i> Arriendo</span>
         <h2>Encuentra el espacio ideal para rentar</h2>
         <p>Explora nuestra selección de propiedades en arriendo. Filtra por ciudad o tipo de inmueble y encuentra tu próximo hogar.</p>
     </section>
@@ -103,7 +104,7 @@
 
         <!-- Estado vacío -->
         <div class="empty-state" id="emptyState" hidden>
-            <div class="empty-state-icon">🏘️</div>
+            <div class="empty-state-icon"><i class="bi bi-houses"></i></div>
             <h3>No hay propiedades disponibles</h3>
             <p>
                 Prueba cambiando los filtros, o conecta tu base de datos usando<br>

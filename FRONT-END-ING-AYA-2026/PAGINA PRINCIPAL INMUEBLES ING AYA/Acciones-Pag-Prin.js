@@ -29,7 +29,7 @@
 
   function applyTheme(theme) {
     html.setAttribute("data-theme", theme);
-    if (themeIcon)  themeIcon.textContent  = theme === "dark" ? "☀️" : "🌙";
+    if (themeIcon)  themeIcon.textContent  = theme === "dark" ? "<i class="bi bi-brightness-high-fill"></i>" : "<i class="bi bi-moon-stars-fill"></i>";
     if (themeLabel) themeLabel.textContent = theme === "dark" ? "" : "";
   }
 
