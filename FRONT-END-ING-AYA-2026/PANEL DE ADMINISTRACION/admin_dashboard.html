@@ -14,8 +14,8 @@
 
     <!-- GUARDIA DE SEGURIDAD PARA ADMIN -->
     <script>
-        const isAdmin = localStorage.getItem('is_admin') === 'true';
-        const rol = localStorage.getItem('rol');
+        const isAdmin = sessionStorage.getItem('is_admin') === 'true';
+        const rol = sessionStorage.getItem('rol');
         
         // Si no hay sesión, o es un cliente, lo sacamos.
         // Empleados (rol != 'Cliente') y Admins pueden entrar.
@@ -179,28 +179,9 @@
                     <input type="number" id="filtro-inm-precio-max" placeholder="Precio Máximo..." class="form-input" style="flex: 1; min-width: 150px;">
                 </div>
 
-                <div class="table-container card-box">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Foto</th>
-                                <th>ID</th>
-                                <th>Dirección</th>
-                                <th>Barrio</th>
-                                <th>Tipo</th>
-                                <th>Operación</th>
-                                <th>Ciudad</th>
-                                <th>Precio</th>
-                                <th>Metraje</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-inmuebles">
-                            <tr><td colspan="6" style="text-align: center;">Cargando inmuebles...</td></tr>
-                        </tbody>
-                    </table>
-                        </div>
+                <div class="grid-inmuebles" id="tabla-inmuebles" style="margin-top: 20px;">
+                    <!-- Cargando inmuebles... -->
+                </div>
                 </div>
 
                 

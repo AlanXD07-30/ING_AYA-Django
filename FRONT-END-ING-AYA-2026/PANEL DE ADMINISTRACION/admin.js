@@ -1031,15 +1031,17 @@ async function guardarRegistro(endpoint, id, data, callbackCargar, modalId) {
 
 // FILTRO Y RENDER INMUEBLES
 function renderInmueblesFiltered() {
-    const tabla = document.getElementById("tabla-inmuebles");
-    tabla.innerHTML = "";
+    const contenedor = document.getElementById("tabla-inmuebles");
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
     
     let fCiudad = (document.getElementById("filtro-inm-ciudad")?.value || "").toLowerCase();
     let fOperacion = document.getElementById("filtro-inm-operacion")?.value || "";
     let fEstado = document.getElementById("filtro-inm-estado")?.value || "";
     let fPrecioMax = document.getElementById("filtro-inm-precio-max")?.value;
     
-    let filtered = inmueblesGlobal.filter(inm => {
+    let listToFilter = typeof inmueblesGlobal !== 'undefined' ? inmueblesGlobal : [];
+    let filtered = listToFilter.filter(inm => {
         let matchCiudad = (inm.ciudad || "").toLowerCase().includes(fCiudad);
         let matchOp = fOperacion === "" || (inm.tipo_operacion || "").toUpperCase() === fOperacion;
         let matchEstado = fEstado === "" || (inm.estado || "").toUpperCase() === fEstado;
@@ -1051,7 +1053,7 @@ function renderInmueblesFiltered() {
     });
     
     if(filtered.length === 0) {
-        tabla.innerHTML = '<tr><td colspan="10" style="text-align: center;">No hay coincidencias con los filtros.</td></tr>';
+        contenedor.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">No hay coincidencias con los filtros.</div>';
         return;
     }
     
@@ -1064,7 +1066,6 @@ function renderInmueblesFiltered() {
         const operacion = inm.tipo_operacion ? inm.tipo_operacion.toUpperCase() : "N/A";
         const estado = inm.estado ? inm.estado.toUpperCase() : "N/A";
         
-        let colorOp = operacion === "VENTA" ? "venta" : "arriendo";
         let badgeEstado = "estado-mantenimiento";
         if(estado === "DISPONIBLE") badgeEstado = "estado-disponible";
         if(estado === "VENDIDO") badgeEstado = "estado-vendido";
@@ -1078,102 +1079,35 @@ function renderInmueblesFiltered() {
             imgSrc = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "https://ingaya-django-production.up.railway.app" + inm.imagen_principal;
         }
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td><img src="${imgSrc}" alt="Inmueble" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"></td>
-            <td>#${inm.id_inmueble}</td>
-            <td><strong>${inm.direccion || 'N/A'}</strong></td>
-            <td>${inm.barrio || 'N/A'}</td>
-            <td><strong>${inm.tipo_inmueble || 'N/A'}</strong></td>
-            <td><span class="badge ${colorOp}">${operacion}</span></td>
-            <td>${inm.ciudad || "N/A"}</td>
-            <td>${precioStr}</td>
-            <td>${inm.metraje ? inm.metraje + " m²" : "N/A"}</td>
-            <td><span class="badge ${badgeEstado}">${estado}</span></td>
-            <td>
-                <button class="btn-icon view" title="Ver/Imágenes" onclick="verInmueble(${inm.id_inmueble})">👁️</button>
-                <button class="btn-icon history" title="Historial" onclick="verHistorialInmueble(${inm.id_inmueble})">📜</button>
-                <button class="btn-icon edit" title="Editar" onclick="abrirModalEditar(${inm.id_inmueble})">✏️</button>
-                <button class="btn-icon delete" title="Eliminar" onclick="eliminarInmueble(${inm.id_inmueble})">🗑️</button>
-            </td>
+        const idInm = inm.id_inmueble || inm.id;
+
+        const card = document.createElement("div");
+        card.className = "card-inmueble";
+        card.innerHTML = `
+            <div class="card-media">
+                <img src="${imgSrc}" alt="Inmueble ${idInm}" loading="lazy">
+                <span class="card-badge" style="background: var(--accent);">${operacion}</span>
+                <span class="card-badge-status ${badgeEstado}" style="position:absolute; top:14px; right:14px; padding:4px 10px; border-radius:99px; font-size:11px; font-weight:700; color:#fff; text-transform:uppercase;">${estado}</span>
+            </div>
+            <div class="card-body">
+                <div style="font-size: 12px; color: var(--text-muted);">ID: #${idInm}</div>
+                <h3 class="card-title">${inm.tipo_inmueble || 'Inmueble'} en ${inm.barrio || 'N/A'}</h3>
+                <div class="card-address">📍 ${inm.direccion || 'N/A'}, ${inm.ciudad || 'N/A'}</div>
+                <div class="card-meta-row" style="display:flex; gap:10px; margin-top:8px; font-size:13px; color:var(--text-secondary);">
+                    <span>📏 ${inm.metraje ? parseFloat(inm.metraje).toFixed(2) + ' m²' : 'N/A'}</span>
+                    <span>🛏️ ${inm.habitaciones || 0}</span>
+                    <span>🛁 ${inm.banos || 0}</span>
+                </div>
+                <div class="card-price" style="font-size:18px; font-weight:700; color:var(--text-primary); margin-top:10px;">${precioStr}</div>
+            </div>
+            <div class="admin-card-actions">
+                <button class="btn-action view" title="Ver Info" onclick="verInmueble(${idInm})">👁️ Ver</button>
+                <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${idInm})">📜 Historial</button>
+                <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${idInm})">✏️ Editar</button>
+                <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${idInm})">🗑️ Eliminar</button>
+            </div>
         `;
-        tabla.appendChild(tr);
-    });
-}
-
-
-let clientesGlobal = [];
-let empleadosGlobal = [];
-
-function renderInmueblesFiltered() {
-    const tabla = document.getElementById("tabla-inmuebles");
-    if (!tabla) return;
-    tabla.innerHTML = "";
-    
-    let fCiudad = (document.getElementById("filtro-inm-ciudad")?.value || "").toLowerCase();
-    let fOperacion = document.getElementById("filtro-inm-operacion")?.value || "";
-    let fEstado = document.getElementById("filtro-inm-estado")?.value || "";
-    let fPrecioMax = document.getElementById("filtro-inm-precio-max")?.value;
-    
-    let filtered = (typeof inmueblesGlobal !== 'undefined' ? inmueblesGlobal : []).filter(inm => {
-        let matchCiudad = (inm.ciudad || "").toLowerCase().includes(fCiudad);
-        let matchOp = fOperacion === "" || (inm.tipo_operacion || "").toUpperCase() === fOperacion;
-        let matchEstado = fEstado === "" || (inm.estado || "").toUpperCase() === fEstado;
-        let matchPrecio = true;
-        if(fPrecioMax && parseFloat(fPrecioMax) > 0) {
-            matchPrecio = parseFloat(inm.precio) <= parseFloat(fPrecioMax);
-        }
-        return matchCiudad && matchOp && matchEstado && matchPrecio;
-    });
-    
-    if(filtered.length === 0) {
-        tabla.innerHTML = '<tr><td colspan="10" style="text-align: center;">No hay coincidencias con los filtros.</td></tr>';
-        return;
-    }
-    
-    filtered.forEach(inm => {
-        let precioStr = "Consultar";
-        if (inm.precio != null) {
-            precioStr = "$ " + parseInt(inm.precio).toLocaleString("es-CO");
-        }
-        
-        const operacion = inm.tipo_operacion ? inm.tipo_operacion.toUpperCase() : "N/A";
-        const estado = inm.estado ? inm.estado.toUpperCase() : "N/A";
-        
-        let colorOp = operacion === "VENTA" ? "venta" : "arriendo";
-        let badgeEstado = "estado-mantenimiento";
-        if(estado === "DISPONIBLE") badgeEstado = "estado-disponible";
-        if(estado === "VENDIDO") badgeEstado = "estado-vendido";
-        if(estado === "ARRENDADO") badgeEstado = "estado-arrendado";
-        if(estado === "RESERVADO") badgeEstado = "estado-reservado";
-        if(estado === "EN TRAMITE") badgeEstado = "estado-entramite";
-        if(estado === "NO DISPONIBLE") badgeEstado = "estado-nodisponible";
-        
-        let imgSrc = "../PAGINA WEB INMOBILIARIA/img/no-image.png";
-        if (inm.imagen_principal) {
-            imgSrc = inm.imagen_principal.startsWith("http") ? inm.imagen_principal : "https://ingaya-django-production.up.railway.app" + inm.imagen_principal;
-        }
-
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td><img src="${imgSrc}" alt="Inmueble" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
-            <td>#${inm.id_inmueble || inm.id || ""}</td>
-            <td><strong>${inm.direccion || 'N/A'}</strong></td>
-            <td>${inm.barrio || 'N/A'}</td>
-            <td><strong>${inm.tipo_inmueble || 'N/A'}</strong></td>
-            <td><span class="badge ${colorOp}">${operacion}</span></td>
-            <td>${inm.ciudad || "N/A"}</td>
-            <td>${precioStr}</td>
-            <td>${inm.metraje ? parseFloat(inm.metraje).toFixed(2) + " m²" : "N/A"}</td>
-            <td><span class="badge ${badgeEstado}">${estado}</span></td>
-            <td>
-                <button class="btn-action view" title="Ver" onclick="verInmueble(${inm.id_inmueble || inm.id})">👁️</button>
-                <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${inm.id_inmueble || inm.id})">📜</button>
-                <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${inm.id_inmueble || inm.id})">✏️</button>
-                <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${inm.id_inmueble || inm.id})">🗑️</button>
-            </td>
-        `;
-        tabla.appendChild(tr);
+        contenedor.appendChild(card);
     });
 }
 
