@@ -984,4 +984,55 @@ class ContactoView(APIView):
         hilo = threading.Thread(target=enviar_correo_contacto, args=(nombre, email, telefono, mensaje))
         hilo.start()
         
-        return Response({'mensaje': 'Contacto enviado correctamente'}, status=status.HTTP_200_OK)
+        return Response({"message": "Empleado eliminado y usuario asociado borrado correctamente."}, status=status.HTTP_200_OK)
+
+import string
+import random
+
+class RecuperarPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Correo requerido"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.filter(email=email).first()
+        if not user:
+            return Response({"error": "No existe una cuenta con este correo."}, status=status.HTTP_404_NOT_FOUND)
+
+        caracteres = string.ascii_letters + string.digits
+        temp_pass = "IngAya-" + "".join(random.choices(caracteres, k=6))
+
+        user.set_password(temp_pass)
+        user.save()
+
+        try:
+            asunto = "Recuperación de Contraseña - IngAya"
+            remitente = f"IngAya <{settings.EMAIL_HOST_USER}>"
+            destinatario = [user.email]
+
+            html_content = f"""
+            <h2>Recuperación de contraseña</h2>
+            <p>Hola,</p>
+            <p>Has solicitado restablecer tu contraseña. Tu nueva contraseña temporal es:</p>
+            <h3 style="background:#f4f4f4; padding:10px; display:inline-block;">{temp_pass}</h3>
+            <p>Te recomendamos iniciar sesión y cambiar esta contraseña lo antes posible.</p>
+            """
+            text_content = f"Tu contraseña temporal es: {temp_pass}"
+
+            msg = EmailMultiAlternatives(asunto, text_content, remitente, destinatario)
+            msg.attach_alternative(html_content, "text/html")
+            
+            def enviar():
+                try:
+                    msg.send()
+                except:
+                    pass
+            
+            threading.Thread(target=enviar).start()
+
+        except Exception as e:
+            pass
+
+        return Response({"message": "Contraseña temporal enviada al correo."})

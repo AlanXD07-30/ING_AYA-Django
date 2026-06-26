@@ -8,7 +8,7 @@ router.register(r'administradores', AdministradorViewSet, basename='administrado
 router.register(r'inmuebles', InmuebleViewSet)
 router.register(r'empleados', EmpleadoViewSet)
 
-from .views import TransaccionViewSet, PagoViewSet, CitaViewSet
+from .views import TransaccionViewSet, PagoViewSet, CitaViewSet, RecuperarPasswordView
 
 router.register(r'transacciones', TransaccionViewSet)
 router.register(r'pagos', PagoViewSet)
@@ -21,4 +21,5 @@ urlpatterns = [
     path('favoritos/', FavoritosView.as_view(), name='favoritos'),
     path('perfil-empleado/', ActualizarCredencialesEmpleado.as_view(), name='perfil-empleado'),
     path('contacto/', ContactoView.as_view(), name='contacto'),
+    path('recuperar-password/', RecuperarPasswordView.as_view(), name='recuperar-password'),
 ]

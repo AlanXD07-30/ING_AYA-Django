@@ -54,22 +54,6 @@ class MovimientoInmuebleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RegistroSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}} # Oculta la contraseña por seguridad
-
-    def create(self, validated_data):
-        # Usamos create_user para que Django encripte la contraseña automáticamente
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
-    
-
-class RegistroSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(write_only=True)
     identificacion = serializers.CharField(write_only=True)
     telefono = serializers.CharField(write_only=True, required=False, allow_blank=True, allow_null=True)
@@ -80,6 +64,19 @@ class RegistroSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password', 'nombre', 'identificacion', 'telefono', 'direccion', 'fecha_nacimiento']
         extra_kwargs = {'password': {'write_only': True}} 
+
+    def validate(self, data):
+        email = data.get('email')
+        identificacion = data.get('identificacion')
+
+        if User.objects.filter(email=email).exists() or User.objects.filter(username=email).exists():
+            raise serializers.ValidationError({"email": "Ya existe un usuario con este correo electrónico."})
+
+        from .models import Cliente
+        if Cliente.objects.filter(identificacion=identificacion).exists():
+            raise serializers.ValidationError({"identificacion": "Esta identificación ya está registrada."})
+
+        return data
 
     def create(self, validated_data):
         nombre = validated_data.pop('nombre', '')
