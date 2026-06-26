@@ -36,19 +36,19 @@ let inmueblesGlobal = [];
 // SEGURIDAD Y SESIÓN
 // ==========================================
 function verificarSesion() {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     if (!token) {
         Swal.fire('Acceso Denegado', 'Debes iniciar sesión para entrar al panel.', 'error').then(() => {
             window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
         });
         return;
     }
-    const nombre = localStorage.getItem("mi_nombre") || "Admin";
+    const nombre = sessionStorage.getItem("mi_nombre") || "Admin";
     document.getElementById("admin-name").innerText = "Hola, " + nombre;
 
     document.getElementById("btn-cerrar-sesion").addEventListener("click", function (e) {
         e.preventDefault();
-        localStorage.clear();
+        sessionStorage.clear();
         window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
     });
 }
@@ -126,7 +126,7 @@ async function eliminarInmueble(id) {
     });
 
     if (confirmacion.isConfirmed) {
-        const token = localStorage.getItem("mi_token");
+        const token = sessionStorage.getItem("mi_token");
         try {
             const response = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${id}/`, {
                 method: 'DELETE',
@@ -228,7 +228,7 @@ document.getElementById("form-inmueble").addEventListener("submit", async functi
     const metraje = document.getElementById("metraje").value;
     const estado = document.getElementById("estado").value;
 
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
 
     const data = {
         tipo_operacion: tipo_operacion.toUpperCase(),
@@ -519,7 +519,7 @@ async function dibujarGraficosClientes() {
     // Destruir anterior si existe
     if (chartClientes) chartClientes.destroy();
 
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     let totalClientes = 0;
     try {
         const response = await fetch("https://ingaya-django-production.up.railway.app/api/clientes/", {

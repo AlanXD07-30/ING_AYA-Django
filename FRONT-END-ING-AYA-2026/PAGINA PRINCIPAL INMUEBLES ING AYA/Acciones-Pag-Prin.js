@@ -130,7 +130,7 @@
   // Removed DOMContentLoaded for faster execution
     {
     // 1. Buscamos la llave secreta
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     
     // Si la llave existe, el usuario está logueado
     if (token) {
@@ -161,10 +161,10 @@
             confirmButtonColor: '#d33'
           }).then((result) => {
             if (result.isConfirmed) {
-              localStorage.removeItem("mi_token"); // Borramos la llave
-              localStorage.removeItem("mi_avatar");
-              localStorage.removeItem("mi_nombre");
-              localStorage.removeItem("is_admin");
+              sessionStorage.removeItem("mi_token"); // Borramos la llave
+              sessionStorage.removeItem("mi_avatar");
+              sessionStorage.removeItem("mi_nombre");
+              sessionStorage.removeItem("is_admin");
               window.location.reload(); // Recargamos la página
             }
           });
@@ -173,9 +173,9 @@
 
       // Creamos el botón de "Mi Perfil" con foto dinámica
       if (navLinks) {
-        let avatarUrl = localStorage.getItem("mi_avatar");
+        let avatarUrl = sessionStorage.getItem("mi_avatar");
         if (!avatarUrl) {
-            let nombre = localStorage.getItem("mi_nombre") || "U";
+            let nombre = sessionStorage.getItem("mi_nombre") || "U";
             avatarUrl = `https://ui-avatars.com/api/?name=${nombre.replace(" ", "+")}&background=random`;
         }
 

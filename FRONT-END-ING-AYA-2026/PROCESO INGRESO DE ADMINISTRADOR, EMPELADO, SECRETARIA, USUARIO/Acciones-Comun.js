@@ -124,25 +124,25 @@
 
       if (data.token) {
         // Guardamos el token secreto en el navegador
-        localStorage.setItem("mi_token", data.token);
+        sessionStorage.setItem("mi_token", data.token);
         // Guardamos si es administrador
         if (data.is_admin) {
-            localStorage.setItem("is_admin", "true");
+            sessionStorage.setItem("is_admin", "true");
         } else {
-            localStorage.removeItem("is_admin");
+            sessionStorage.removeItem("is_admin");
         }
         
         // Guardamos el rol para validaciones de frontend
         if (data.rol) {
-            localStorage.setItem("rol", data.rol);
+            sessionStorage.setItem("rol", data.rol);
         } else {
-            localStorage.removeItem("rol");
+            sessionStorage.removeItem("rol");
         }
         
         if (data.requiere_cambio) {
-            localStorage.setItem("requiere_cambio", "true");
+            sessionStorage.setItem("requiere_cambio", "true");
         } else {
-            localStorage.removeItem("requiere_cambio");
+            sessionStorage.removeItem("requiere_cambio");
         }
 
         Swal.fire({
@@ -164,18 +164,18 @@
             });
             if (perfilRes.ok) {
                 const perfilData = await perfilRes.json();
-                localStorage.setItem("mi_nombre", perfilData.nombre || "Usuario");
+                sessionStorage.setItem("mi_nombre", perfilData.nombre || "Usuario");
                 if (perfilData.foto) {
-                    localStorage.setItem("mi_avatar", "https://ingaya-django-production.up.railway.app" + perfilData.foto);
+                    sessionStorage.setItem("mi_avatar", "https://ingaya-django-production.up.railway.app" + perfilData.foto);
                 }
             }
           } catch (e) {
             console.error("Error precargando perfil", e);
           }
           
-          const redirectUrl = localStorage.getItem("redirect_after_login");
+          const redirectUrl = sessionStorage.getItem("redirect_after_login");
             if (redirectUrl) {
-                localStorage.removeItem("redirect_after_login");
+                sessionStorage.removeItem("redirect_after_login");
                 window.location.href = redirectUrl;
             } else if (data.is_admin || (data.rol && data.rol !== 'Cliente')) {
                 window.location.href = "../PANEL DE ADMINISTRACION/admin_dashboard.html";
@@ -244,3 +244,16 @@
   });
 
 })();
+// ============================================================
+// Ocultar/Mostrar Contraseña
+// ============================================================
+window.togglePasswordVisibility = function(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+    }
+};

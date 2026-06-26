@@ -1,11 +1,11 @@
 // Función expuesta globalmente para ir a detalle guardando el ID
 window.irADetalle = function(id) {
-    localStorage.setItem("ingaya_selected_inmueble_id", id);
+    sessionStorage.setItem("ingaya_selected_inmueble_id", id);
     window.location.href = "../SECCIÓN DE INMUEBLES/detalle.html?id=" + id;
 };
 
 document.addEventListener("DOMContentLoaded", async function() {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
 
     if (!token) {
         // Si no hay token, no debería estar aquí. Lo mandamos al login.
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     // Mostrar botón de Admin si el usuario tiene la credencial
-    if (localStorage.getItem("is_admin") === "true") {
+    if (sessionStorage.getItem("is_admin") === "true") {
         const btnAdmin = document.getElementById("btn-admin-panel");
         if (btnAdmin) btnAdmin.style.display = "block";
     }
@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (btnCerrar) {
         btnCerrar.addEventListener("click", function(e) {
             e.preventDefault();
-            localStorage.removeItem("mi_token");
-            localStorage.removeItem("mi_avatar");
-            localStorage.removeItem("mi_nombre");
-            localStorage.removeItem("is_admin");
+            sessionStorage.removeItem("mi_token");
+            sessionStorage.removeItem("mi_avatar");
+            sessionStorage.removeItem("mi_nombre");
+            sessionStorage.removeItem("is_admin");
             window.location.href = "../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html";
         });
     }
@@ -110,8 +110,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             };
 
             // Guardamos el avatar en localStorage para que toda la app lo vea
-            localStorage.setItem("mi_avatar", urlAvatar);
-            localStorage.setItem("mi_nombre", data.nombre || "Usuario");
+            sessionStorage.setItem("mi_avatar", urlAvatar);
+            sessionStorage.setItem("mi_nombre", data.nombre || "Usuario");
             
             // Cargar datos adicionales del cliente si no es empleado o admin
             if (!data.es_admin_sin_perfil && !data.es_empleado) {
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                     if (!nuevaUrl.startsWith("http")) nuevaUrl = "https://ingaya-django-production.up.railway.app" + nuevaUrl;
                     
                     document.getElementById("perfil-avatar").src = nuevaUrl;
-                    localStorage.setItem("mi_avatar", nuevaUrl);
+                    sessionStorage.setItem("mi_avatar", nuevaUrl);
                     Swal.fire("¡Éxito!", "Foto de perfil actualizada", "success").then(() => {
                         window.location.reload();
                     });
@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 });
 
                 if (res.ok) {
-                    localStorage.removeItem("mi_avatar");
+                    sessionStorage.removeItem("mi_avatar");
                     Swal.fire("¡Éxito!", "Foto eliminada", "success").then(() => {
                         window.location.reload();
                     });
@@ -365,7 +365,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
     const oldPassword = document.getElementById("edit-old-password").value;
     const newPassword = document.getElementById("edit-new-password").value;
 
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
 
     const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
     
@@ -395,7 +395,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 
         if (response.ok) {
             Swal.fire('¡Éxito!', 'Tus datos han sido actualizados.', 'success').then(() => {
-                localStorage.setItem("mi_nombre", nombre); 
+                sessionStorage.setItem("mi_nombre", nombre); 
                 window.location.reload(); 
             });
         } else {
@@ -412,7 +412,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 // TRAMITES PENDIENTES
 // ==========================================
 window.leerPromesa = async function(id_transaccion) {
-    const token = localStorage.getItem('mi_token');
+    const token = sessionStorage.getItem('mi_token');
     if (!token) return;
 
     Swal.fire({
@@ -543,7 +543,7 @@ window.leerPromesa = async function(id_transaccion) {
 };
 
 window.leerContratoArriendo = async function(id_transaccion) {
-    const token = localStorage.getItem('mi_token');
+    const token = sessionStorage.getItem('mi_token');
     if (!token) return;
 
     Swal.fire({
@@ -956,7 +956,7 @@ window.cancelarCitaCliente = async function(id_cita) {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const token = localStorage.getItem("mi_token");
+                const token = sessionStorage.getItem("mi_token");
                 const res = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id_cita}/`, {
                     method: 'PATCH',
                     headers: {
@@ -993,7 +993,7 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const token = localStorage.getItem("mi_token");
+                const token = sessionStorage.getItem("mi_token");
                 const res = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
                     method: 'DELETE',
                     headers: {
@@ -1018,7 +1018,7 @@ window.cancelarTramiteCliente = async function(id_transaccion) {
 
 async function avanzarEstadoTransaccion(id_transaccion, newState) {
     try {
-        const token = localStorage.getItem("mi_token");
+        const token = sessionStorage.getItem("mi_token");
         
         const patchRes = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id_transaccion}/`, {
             method: "PATCH",

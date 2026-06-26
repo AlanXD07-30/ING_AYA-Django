@@ -59,7 +59,7 @@
         let id = params.get("id");
 
         if (!id) {
-            id = localStorage.getItem("ingaya_selected_inmueble_id");
+            id = sessionStorage.getItem("ingaya_selected_inmueble_id");
         }
 
         if (!id) {
@@ -266,7 +266,7 @@
     // ============================================================
     document.addEventListener("DOMContentLoaded", function() {
       // 1. Buscamos la llave secreta
-      const token = localStorage.getItem("mi_token");
+      const token = sessionStorage.getItem("mi_token");
       
       // Si la llave existe, el usuario está logueado
       if (token) {
@@ -297,10 +297,10 @@
               confirmButtonColor: '#d33'
             }).then((result) => {
               if (result.isConfirmed) {
-                localStorage.removeItem("mi_token"); // Borramos la llave
-                localStorage.removeItem("mi_avatar");
-                localStorage.removeItem("mi_nombre");
-                localStorage.removeItem("is_admin");
+                sessionStorage.removeItem("mi_token"); // Borramos la llave
+                sessionStorage.removeItem("mi_avatar");
+                sessionStorage.removeItem("mi_nombre");
+                sessionStorage.removeItem("is_admin");
                 window.location.reload(); // Recargamos la página
               }
             });
@@ -309,9 +309,9 @@
   
         // Creamos el botón de "Mi Perfil" con foto dinámica
         if (navLinks) {
-          let avatarUrl = localStorage.getItem("mi_avatar");
+          let avatarUrl = sessionStorage.getItem("mi_avatar");
           if (!avatarUrl) {
-              let nombre = localStorage.getItem("mi_nombre") || "U";
+              let nombre = sessionStorage.getItem("mi_nombre") || "U";
               avatarUrl = `https://ui-avatars.com/api/?name=${nombre.replace(" ", "+")}&background=random`;
           }
   
@@ -335,12 +335,12 @@
 // ==========================================
 function irALogin() {
     // Guardar URL actual para regresar
-    localStorage.setItem("redirect_after_login", window.location.href);
+    sessionStorage.setItem("redirect_after_login", window.location.href);
     window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
 }
 
 async function obtenerPerfilCliente() {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     if (!token) return null;
     try {
         const res = await fetch("https://ingaya-django-production.up.railway.app/api/perfil/", {
@@ -354,7 +354,7 @@ async function obtenerPerfilCliente() {
 
 async function solicitarReserva() {
     const perfil = await obtenerPerfilCliente();
-    if (!perfil || perfil.es_empleado || perfil.es_admin_sin_perfil || localStorage.getItem("is_admin") === "true") {
+    if (!perfil || perfil.es_empleado || perfil.es_admin_sin_perfil || sessionStorage.getItem("is_admin") === "true") {
         Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden iniciar trámites.', 'warning');
         return;
     }
@@ -394,7 +394,7 @@ async function solicitarReserva() {
                 const response = await fetch("https://ingaya-django-production.up.railway.app/api/transacciones/", {
                     method: "POST",
                     headers: {
-                        "Authorization": "Token " + localStorage.getItem("mi_token"),
+                        "Authorization": "Token " + sessionStorage.getItem("mi_token"),
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(data)
@@ -430,7 +430,7 @@ async function solicitarReserva() {
 
 async function agendarVisita() {
     const perfil = await obtenerPerfilCliente();
-    if (!perfil || perfil.es_empleado || perfil.es_admin_sin_perfil || localStorage.getItem("is_admin") === "true") {
+    if (!perfil || perfil.es_empleado || perfil.es_admin_sin_perfil || sessionStorage.getItem("is_admin") === "true") {
         Swal.fire('Acción Restringida', 'Solo los clientes registrados pueden agendar visitas.', 'warning');
         return;
     }
@@ -569,7 +569,7 @@ async function agendarVisita() {
                 const response = await fetch("https://ingaya-django-production.up.railway.app/api/citas/", {
                     method: "POST",
                     headers: {
-                        "Authorization": "Token " + localStorage.getItem("mi_token"),
+                        "Authorization": "Token " + sessionStorage.getItem("mi_token"),
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(data)
@@ -603,7 +603,7 @@ async function agendarVisita() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     const anonBox = document.getElementById("anon-box");
     const userBox = document.getElementById("user-box");
     
@@ -611,7 +611,7 @@ document.addEventListener("DOMContentLoaded", function() {
         anonBox.style.display = "none";
         userBox.style.display = "block";
         
-        let nombre = localStorage.getItem("mi_nombre") || "Cliente";
+        let nombre = sessionStorage.getItem("mi_nombre") || "Cliente";
         // Si el nombre es muy largo, usamos solo el primer nombre
         nombre = nombre.split(" ")[0];
         const greeting = document.getElementById("user-greeting");

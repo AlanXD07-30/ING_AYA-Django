@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
             btn.disabled = true;
             
             try {
-                const token = localStorage.getItem("mi_token");
+                const token = sessionStorage.getItem("mi_token");
                 const response = await fetch("https://ingaya-django-production.up.railway.app/api/perfil-empleado/", {
                     method: "POST",
                     headers: {
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 
                 if (response.ok) {
-                    localStorage.removeItem("requiere_cambio");
+                    sessionStorage.removeItem("requiere_cambio");
                     document.getElementById("modal-cambio-credenciales").style.display = "none";
                     Swal.fire('¡Éxito!', 'Tus credenciales han sido actualizadas. Por favor, recuérdalas.', 'success');
                 } else {
@@ -79,15 +79,15 @@ let inmueblesGlobal = [];
 // SEGURIDAD Y SESIÓN
 // ==========================================
 function verificarSesion() {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     if (!token) {
         Swal.fire('Acceso Denegado', 'Debes iniciar sesión para entrar al panel.', 'error').then(() => {
             window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
         });
         return;
     }
-    const rol = localStorage.getItem("rol");
-    const isAdmin = localStorage.getItem("is_admin") === "true";
+    const rol = sessionStorage.getItem("rol");
+    const isAdmin = sessionStorage.getItem("is_admin") === "true";
 
     if (!isAdmin) {
         if (rol === 'Cliente') {
@@ -131,14 +131,14 @@ function verificarSesion() {
     }
     
     // Verificación de cambio de credenciales obligatorio
-    if (localStorage.getItem("requiere_cambio") === "true") {
+    if (sessionStorage.getItem("requiere_cambio") === "true") {
         document.getElementById("modal-cambio-credenciales").style.display = "flex";
     }
 
-    const nombre = localStorage.getItem("mi_nombre") || "Admin";
+    const nombre = sessionStorage.getItem("mi_nombre") || "Admin";
     document.getElementById("admin-name").innerText = "Hola, " + nombre;
 
-    let avatarUrl = localStorage.getItem("mi_avatar");
+    let avatarUrl = sessionStorage.getItem("mi_avatar");
     if (!avatarUrl) {
         avatarUrl = `https://ui-avatars.com/api/?name=${nombre.replace(" ", "+")}&background=random`;
     }
@@ -150,7 +150,7 @@ function verificarSesion() {
 
     document.getElementById("btn-cerrar-sesion").addEventListener("click", function (e) {
         e.preventDefault();
-        localStorage.clear();
+        sessionStorage.clear();
         window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
     });
 }
@@ -200,7 +200,7 @@ async function eliminarInmueble(id) {
     });
 
     if (confirmacion.isConfirmed) {
-        const token = localStorage.getItem("mi_token");
+        const token = sessionStorage.getItem("mi_token");
         try {
             const response = await fetch(`https://ingaya-django-production.up.railway.app/api/inmuebles/${id}/`, {
                 method: 'DELETE',
@@ -444,7 +444,7 @@ document.getElementById("form-inmueble").addEventListener("submit", async functi
     const metraje = document.getElementById("metraje").value;
     const estado = document.getElementById("estado").value;
 
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
 
     const habitaciones = parseInt(document.getElementById("habitaciones").value) || 0;
     const banos = parseInt(document.getElementById("banos").value) || 0;
@@ -753,7 +753,7 @@ async function dibujarGraficosClientes() {
     // Destruir anterior si existe
     if (chartClientes) chartClientes.destroy();
 
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     let totalClientes = 0;
     try {
         const response = await fetch("https://ingaya-django-production.up.railway.app/api/clientes/", {
@@ -1651,7 +1651,7 @@ let transaccionesGlobal = [];
 let pagosGlobal = [];
 
 async function finalizarCita(id_cita) {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     Swal.fire({
         title: '¿Marcar cita como Finalizada?',
         text: "Se le enviará un correo de agradecimiento al cliente.",
@@ -1677,7 +1677,7 @@ async function finalizarCita(id_cita) {
 }
 
 async function citaNoAsistio(id_cita) {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     Swal.fire({
         title: '¿Cliente no asistió?',
         text: "Se registrará como inasistencia y se le notificará al cliente.",
@@ -1706,7 +1706,7 @@ async function citaNoAsistio(id_cita) {
 async function abrirModalAsignarAgente(id_cita) {
     // Buscar lista de empleados (Agentes)
     try {
-        const token = localStorage.getItem("mi_token");
+        const token = sessionStorage.getItem("mi_token");
         const res = await fetch("https://ingaya-django-production.up.railway.app/api/empleados/", { headers: { "Authorization": "Token " + token } });
         if (!res.ok) return;
         const empleados = await res.json();
@@ -1789,7 +1789,7 @@ function renderCitasFiltered() {
     const tabla = document.getElementById("tabla-citas");
     if (!tabla) return;
     
-    const perfil = JSON.parse(localStorage.getItem("mi_perfil") || "{}");
+    const perfil = JSON.parse(sessionStorage.getItem("mi_perfil") || "{}");
     
     const verHistorial = document.getElementById("filtro-cita-historial")?.checked;
     const filtroFecha = document.getElementById("filtro-cita-fecha").value;
@@ -1807,7 +1807,7 @@ function renderCitasFiltered() {
         let matchTab = verHistorial ? historial : activa;
         
         let matchRol = true;
-        const rolActual = localStorage.getItem("rol") || '';
+        const rolActual = sessionStorage.getItem("rol") || '';
         const esAgente = rolActual.toUpperCase().includes('AGENTE');
         if (esAgente) {
             if (!verHistorial) matchRol = (cEstado === 'CONFIRMADA' || cEstado === 'PROGRAMADA');
@@ -1826,7 +1826,7 @@ function renderCitasFiltered() {
         let cEstado = (c.estado || "").toUpperCase();
         
         let accionesHtml = '';
-        const rolActual = localStorage.getItem("rol") || '';
+        const rolActual = sessionStorage.getItem("rol") || '';
         const esAgente = rolActual.toUpperCase().includes('AGENTE');
         if (esAgente && cEstado === 'PROGRAMADA') {
             accionesHtml = `
@@ -2438,7 +2438,7 @@ async function eliminarTransaccion(id) {
     });
 
     if (confirmacion.isConfirmed) {
-        const token = localStorage.getItem("mi_token");
+        const token = sessionStorage.getItem("mi_token");
         try {
             const response = await fetch(`https://ingaya-django-production.up.railway.app/api/transacciones/${id}/`, {
                 method: 'DELETE',
@@ -2484,7 +2484,7 @@ async function cancelarCitaAgente(id) {
     });
 
     if (motivo) {
-        const token = localStorage.getItem('mi_token');
+        const token = sessionStorage.getItem('mi_token');
         try {
             const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id}/cancelar_agente/`, {
                 method: 'POST',
@@ -2512,7 +2512,7 @@ async function cancelarCitaAgente(id) {
 // CONFIRMAR CITA (AGENTE)
 // ==========================================
 async function confirmarCitaAgente(id) {
-    const token = localStorage.getItem('mi_token');
+    const token = sessionStorage.getItem('mi_token');
     try {
         const response = await fetch(`https://ingaya-django-production.up.railway.app/api/citas/${id}/confirmar_agente/`, {
             method: 'POST',

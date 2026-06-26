@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -67,14 +67,19 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Contraseña / Identificación</label>
-                    <input type="password" id="password" name="password" placeholder="Tu contraseña o No. Identificación" required autocomplete="current-password">
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="password" id="password" name="password" placeholder="Tu contraseña o No. Identificación" required autocomplete="current-password" style="padding-right: 40px; width: 100%; box-sizing: border-box;">
+                        <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('password', this)" tabindex="-1" aria-label="Mostrar contraseña" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #a1a1aa;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="login-meta">
                     <label>
                         <input type="checkbox" name="recordar"> Recordarme
                     </label>
-                    <a href="#">¿Olvidaste tu contraseña?</a>
+                    <a href="../RECUPERAR CONTRASEÑA/Rec.html">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <button type="submit" class="btn-primary">Iniciar sesión</button>

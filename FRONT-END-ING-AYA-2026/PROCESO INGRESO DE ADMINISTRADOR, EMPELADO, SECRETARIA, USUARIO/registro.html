@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
@@ -122,9 +122,14 @@
 
                 <div class="form-group">
                     <label for="contrasena">Contraseña *</label>
-                    <input type="password" id="contrasena" name="contrasena"
-                           placeholder="De 8 a 16 caracteres" required minlength="8" maxlength="16"
-                           autocomplete="new-password">
+                    <div class="password-wrapper" style="position: relative;">
+                        <input type="password" id="contrasena" name="contrasena"
+                               placeholder="De 8 a 16 caracteres" required minlength="8" maxlength="16"
+                               autocomplete="new-password" style="padding-right: 40px; width: 100%; box-sizing: border-box;">
+                        <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('contrasena', this)" tabindex="-1" aria-label="Mostrar contraseña" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: #a1a1aa;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
                     <span class="field-error" id="error-pass">La contraseña debe tener entre 8 y 16 caracteres.</span>
 
                     <!-- Indicador de fortaleza -->

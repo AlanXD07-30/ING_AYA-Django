@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     if (isAuthPage) return;
 
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     if (token) {
       const linkIngresar = document.querySelector(".nav-link-ingresar, .inicio-nav");
       const linkRegistrar = document.querySelector(".nav-link-registrar, .crearcue-nav");
@@ -319,26 +319,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmButtonColor: '#d33'
               }).then((result) => {
                 if (result.isConfirmed) {
-                  localStorage.removeItem("mi_token"); 
-                  localStorage.removeItem("mi_avatar");
-                  localStorage.removeItem("mi_nombre");
+                  sessionStorage.removeItem("mi_token"); 
+                  sessionStorage.removeItem("mi_avatar");
+                  sessionStorage.removeItem("mi_nombre");
                   window.location.reload(); 
                 }
               });
           } else {
               if (confirm("¿Cerrar sesión?")) {
-                  localStorage.removeItem("mi_token"); 
-                  localStorage.removeItem("mi_avatar");
-                  localStorage.removeItem("mi_nombre");
+                  sessionStorage.removeItem("mi_token"); 
+                  sessionStorage.removeItem("mi_avatar");
+                  sessionStorage.removeItem("mi_nombre");
                   window.location.reload(); 
               }
           }
         });
 
         if (navLinks) {
-          let avatarUrl = localStorage.getItem("mi_avatar");
+          let avatarUrl = sessionStorage.getItem("mi_avatar");
           if (!avatarUrl) {
-              let nombre = localStorage.getItem("mi_nombre") || "U";
+              let nombre = sessionStorage.getItem("mi_nombre") || "U";
               avatarUrl = `https://ui-avatars.com/api/?name=${nombre.replace(" ", "+")}&background=random`;
           }
 
@@ -360,12 +360,12 @@ document.addEventListener("DOMContentLoaded", function () {
 // FUNCIÓN FAVORITOS
 // ==========================================
 window.guardarFavorito = async function(idInmueble) {
-    const token = localStorage.getItem("mi_token");
+    const token = sessionStorage.getItem("mi_token");
     if (!token) {
         Swal.fire('Atención', 'Debes iniciar sesión para guardar favoritos.', 'warning');
         return;
     }
-    if (localStorage.getItem("is_admin") === "true") {
+    if (sessionStorage.getItem("is_admin") === "true") {
         Swal.fire('Acción Restringida', 'Los administradores no pueden guardar inmuebles en favoritos.', 'warning');
         return;
     }

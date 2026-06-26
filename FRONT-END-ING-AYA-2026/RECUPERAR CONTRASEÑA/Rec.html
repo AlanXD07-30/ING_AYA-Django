@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Iniciar Sesión - Ing Aya</title>
   <link rel="stylesheet" href="Rec.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  
 </head>
 <body>
@@ -21,7 +22,7 @@
       <h2>Recuperar Contraseña</h2>
       <input type="email" id="usuario" placeholder="Dirección de correo" required />
       
-      <button >Enviar</button>
+      <button type="submit" id="btn-recuperar">Enviar</button>
       <div class="registro">
         <br>
     
@@ -46,11 +47,55 @@ function toggleMenu() {
         el.classList.toggle('active');
     });
 }
+
+document.querySelector('.form-login').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('usuario').value.trim();
+    if(!email) return;
+
+    const btn = document.getElementById('btn-recuperar');
+    btn.textContent = "Enviando...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch("https://ingaya-django-production.up.railway.app/api/recuperar-password/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: email })
+        });
+        const data = await response.json();
+        
+        if(response.ok) {
+            Swal.fire({
+                icon: "success",
+                title: "¡Revisa tu correo!",
+                text: "Te hemos enviado una contraseña temporal a " + email,
+                confirmButtonColor: "#3b82f6"
+            }).then(() => {
+                window.location.href = "../PROCESO INGRESO DE ADMINISTRADOR, EMPELADO, SECRETARIA, USUARIO/login.html";
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.error || "No pudimos procesar tu solicitud.",
+                confirmButtonColor: "#d33"
+            });
+        }
+    } catch(err) {
+        Swal.fire({
+            icon: "error",
+            title: "Error de conexión",
+            text: "No se pudo conectar con el servidor.",
+            confirmButtonColor: "#d33"
+        });
+    } finally {
+        btn.textContent = "Enviar";
+        btn.disabled = false;
+    }
+});
 </script>
 </body>
-
-
-  </script>
 </html>
 
 
