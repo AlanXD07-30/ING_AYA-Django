@@ -1101,10 +1101,14 @@ function renderInmueblesFiltered() {
                 <div class="card-price" style="font-size:18px; font-weight:700; color:var(--text-primary); margin-top:10px;">${precioStr}</div>
             </div>
             <div class="admin-card-actions">
-                <button class="btn-action view" title="Ver Info" onclick="verInmueble(${idInm})"><i class="bi bi-eye"></i> Ver</button>
-                <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${idInm})"><i class="bi bi-clock-history"></i> Historial</button>
-                <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${idInm})"><i class="bi bi-pencil-square"></i> Editar</button>
-                <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${idInm})"><i class="bi bi-trash"></i> Eliminar</button>
+                <div class="action-group">
+                    <button class="btn-action view" title="Ver Info" onclick="verInmueble(${idInm})"><i class="bi bi-eye"></i> Ver</button>
+                    <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${idInm})"><i class="bi bi-clock-history"></i> Historial</button>
+                </div>
+                <div class="action-group">
+                    <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${idInm})"><i class="bi bi-pencil-square"></i> Editar</button>
+                    <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${idInm})"><i class="bi bi-trash"></i> Eliminar</button>
+                </div>
             </div>
         `;
         contenedor.appendChild(card);
