@@ -5,14 +5,14 @@
 function inicializarTema() {
     const savedTheme = localStorage.getItem('adminTheme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
-    document.getElementById('themeToggle').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+    document.getElementById('themeToggle').innerHTML = savedTheme === 'dark' ? '<i class="bi bi-brightness-high-fill" style="color: #fbbf24;"></i>' : '<i class="bi bi-moon-stars-fill" style="color: #cbd5e1;"></i>';
 
     document.getElementById('themeToggle').addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('adminTheme', newTheme);
-        document.getElementById('themeToggle').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+        document.getElementById('themeToggle').innerHTML = newTheme === 'dark' ? '<i class="bi bi-brightness-high-fill" style="color: #fbbf24;"></i>' : '<i class="bi bi-moon-stars-fill" style="color: #cbd5e1;"></i>';
         
         // Redibujar gráficos para actualizar colores de letras
         if (document.getElementById('panel-graficos-inmuebles').style.display === 'block') {
@@ -1101,10 +1101,10 @@ function renderInmueblesFiltered() {
                 <div class="card-price" style="font-size:18px; font-weight:700; color:var(--text-primary); margin-top:10px;">${precioStr}</div>
             </div>
             <div class="admin-card-actions">
-                <button class="btn-action view" title="Ver Info" onclick="verInmueble(${idInm})">👁️ Ver</button>
-                <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${idInm})">📜 Historial</button>
-                <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${idInm})">✏️ Editar</button>
-                <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${idInm})">🗑️ Eliminar</button>
+                <button class="btn-action view" title="Ver Info" onclick="verInmueble(${idInm})"><i class="bi bi-eye"></i> Ver</button>
+                <button class="btn-action history" title="Historial" onclick="verHistorialInmueble(${idInm})"><i class="bi bi-clock-history"></i> Historial</button>
+                <button class="btn-action edit" title="Editar" onclick="abrirModalEditar(${idInm})"><i class="bi bi-pencil-square"></i> Editar</button>
+                <button class="btn-action delete" title="Eliminar" onclick="eliminarInmueble(${idInm})"><i class="bi bi-trash"></i> Eliminar</button>
             </div>
         `;
         contenedor.appendChild(card);
