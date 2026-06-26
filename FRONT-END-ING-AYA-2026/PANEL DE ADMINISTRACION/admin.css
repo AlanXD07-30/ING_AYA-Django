@@ -1250,3 +1250,20 @@ html[data-theme="light"] .data-table tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
+
+.sidebar-logo {
+    border-radius: 5%;
+}
+
+.card-badge-status {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.card-badge-status.estado-disponible { background: rgba(16, 185, 129, 0.95); }
+.card-badge-status.estado-vendido { background: rgba(59, 130, 246, 0.95); }
+.card-badge-status.estado-arrendado { background: rgba(139, 92, 246, 0.95); }
+.card-badge-status.estado-reservado { background: rgba(245, 158, 11, 0.95); }
+.card-badge-status.estado-entramite { background: rgba(236, 72, 153, 0.95); }
+.card-badge-status.estado-mantenimiento { background: rgba(107, 114, 128, 0.95); }
+.card-badge-status.estado-nodisponible { background: rgba(239, 68, 68, 0.95); }
+
