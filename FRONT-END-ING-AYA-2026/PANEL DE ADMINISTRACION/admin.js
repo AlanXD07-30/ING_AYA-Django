@@ -792,22 +792,23 @@ async function dibujarGraficosClientes() {
 // MÓDULO CLIENTES
 // ==========================================
 async function cargarClientes() {
-    const tabla = document.getElementById("tabla-clientes");
+    const contenedor = document.getElementById("grid-clientes");
+    if (!contenedor) return;
     try {
         const res = await fetch("https://ingaya-django-production.up.railway.app/api/clientes/");
         if (!res.ok) throw new Error("Error");
         const data = await res.json();
         
         if (data.length === 0) {
-            tabla.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No hay clientes registrados.</td></tr>';
+            contenedor.innerHTML = '<p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1;">No hay clientes registrados.</p>';
             return;
         }
 
-        tabla.innerHTML = "";
+        contenedor.innerHTML = "";
         clientesGlobal = data;
         renderClientesFiltered();
     } catch (e) {
-        tabla.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error al cargar.</td></tr>';
+        contenedor.innerHTML = '<p style="color:red; text-align:center; grid-column: 1 / -1;">Error al cargar.</p>';
     }
 }
 
