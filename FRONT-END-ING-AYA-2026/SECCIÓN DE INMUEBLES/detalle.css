@@ -668,3 +668,24 @@ body.light-theme .property-content {
 /* FIX SWEETALERT HEIGHT */
 .swal2-popup { height: auto !important; min-height: fit-content !important; margin: auto !important; flex: none !important; align-self: center !important; }
 
+
+.inicio-nav {
+    border: 2px solid #6b7280;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    color: #353535;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+}
+.inicio-nav:hover { border-color: var(--accent); color: var(--accent); }
+
+.crearcue-nav {
+    border: 2px solid #6b7280;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    background-color: rgb(231, 208, 178) !important;
+    color: #353535;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.crearcue-nav:hover { background-color: #e2c89a; }
