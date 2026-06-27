@@ -335,6 +335,9 @@ function abrirModalEditar() {
     // Rellenar los campos actuales
     document.getElementById("edit-nombre").value = document.getElementById("perfil-nombre").innerText;
     
+    const emailStr = document.getElementById("perfil-email") ? document.getElementById("perfil-email").innerText : "";
+    document.getElementById("edit-correo").value = emailStr;
+    
     const tel = document.getElementById("dato-telefono").innerText;
     document.getElementById("edit-telefono").value = tel !== "-" ? tel : "";
     
@@ -358,6 +361,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
     e.preventDefault();
 
     const nombre = document.getElementById("edit-nombre").value;
+    const email = document.getElementById("edit-correo").value;
     const telefono = document.getElementById("edit-telefono").value;
     const direccion = document.getElementById("edit-direccion").value;
     const nacimiento = document.getElementById("edit-nacimiento").value;
@@ -367,7 +371,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 
     const token = sessionStorage.getItem("mi_token");
 
-    const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
+    const data = { nombre, email, telefono, direccion, fecha_nacimiento: nacimiento };
     
     if (newPassword) {
         if (!oldPassword) {

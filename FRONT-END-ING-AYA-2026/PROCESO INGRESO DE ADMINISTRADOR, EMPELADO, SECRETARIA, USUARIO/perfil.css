@@ -90,29 +90,30 @@ main.perfil-container::after {
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   BANNER DE PERFIL (horizontal, full width)
-   ══════════════════════════════════════════════════════════════ */
-.perfil-banner {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    margin-bottom: 24px;
-    padding: 28px 36px;
-    position: relative;
-    overflow: hidden;
-}
-/* Subtle glow behind banner */
-.perfil-banner::before {
-    content: "";
-    position: absolute;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
-    border-radius: 50%;
-    left: -60px; top: -80px;
-    filter: blur(40px);
-    pointer-events: none;
-}
+    /* ============================================================
+    BANNER DE PERFIL (en sidebar)
+    ============================================================ */
+    .perfil-banner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+        padding: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+    /* Subtle glow behind banner */
+    .perfil-banner::before {
+        content: "";
+        position: absolute;
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+        border-radius: 50%;
+        left: -60px; top: -80px;
+        filter: blur(40px);
+        pointer-events: none;
+    }
 
 .banner-avatar {
     display: flex;
