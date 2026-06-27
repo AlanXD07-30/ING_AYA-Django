@@ -308,8 +308,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = sessionStorage.getItem("mi_token");
     if (token) {
-      const linkIngresar = document.querySelector(\'a[href*="login.html"]\');
-      const linkRegistrar = document.querySelector(\'a[href*="registro.html"]\');
+      const linkIngresar = document.querySelector('a[href*="login.html"]');
+      const linkRegistrar = document.querySelector('a[href*="registro.html"]');
       const navLinks = document.querySelector(".nav-links, .Menu_principal");
 
       if (linkRegistrar) linkRegistrar.parentElement.style.display = "none";
