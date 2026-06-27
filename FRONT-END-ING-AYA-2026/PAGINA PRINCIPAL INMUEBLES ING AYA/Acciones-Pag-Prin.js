@@ -135,8 +135,8 @@
     // Si la llave existe, el usuario está logueado
     if (token) {
       // Usamos selectores múltiples para que funcione en cualquier página sin importar la clase HTML
-      const linkIngresar = document.querySelector(".nav-link-ingresar, .inicio-nav");
-      const linkRegistrar = document.querySelector(".nav-link-registrar, .crearcue-nav");
+      const linkIngresar = document.querySelector(\'a[href*="login.html"]\');
+      const linkRegistrar = document.querySelector(\'a[href*="registro.html"]\');
       const navLinks = document.querySelector(".nav-links, .Menu_principal");
 
       // Ocultamos el botón de crear cuenta

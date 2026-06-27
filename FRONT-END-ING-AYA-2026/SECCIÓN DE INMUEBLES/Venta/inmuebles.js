@@ -182,7 +182,7 @@
             loading="lazy"
             onerror="this.src='../../AAA.png'">
           <span class="card-badge">${escapeHtml(tipo)}</span>
-          ${id ? `<button style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; color: white; padding: 8px; font-size: 18px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='rgba(244,63,94,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onclick="guardarFavorito(${id})" title="Guardar en Favoritos"><i class="bi bi-star-fill"></i></button>` : ""}
+          ${id ? `<button style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; color: white; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 16px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='rgba(244,63,94,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onclick="guardarFavorito(${id})" title="Guardar en Favoritos"><i class="bi bi-star-fill"></i></button>` : ""}
         </div>
         <div class="card-body">
           <h3 class="card-title">${escapeHtml(direccion)}</h3>
@@ -307,8 +307,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const token = sessionStorage.getItem("mi_token");
     if (token) {
-      const linkIngresar = document.querySelector(".nav-link-ingresar, .inicio-nav");
-      const linkRegistrar = document.querySelector(".nav-link-registrar, .crearcue-nav");
+      const linkIngresar = document.querySelector(\'a[href*="login.html"]\');
+      const linkRegistrar = document.querySelector(\'a[href*="registro.html"]\');
       const navLinks = document.querySelector(".nav-links, .Menu_principal");
 
       if (linkRegistrar) linkRegistrar.parentElement.style.display = "none";
