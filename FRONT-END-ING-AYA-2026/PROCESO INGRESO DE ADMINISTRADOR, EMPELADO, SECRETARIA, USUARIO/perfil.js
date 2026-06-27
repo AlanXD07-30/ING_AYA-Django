@@ -371,7 +371,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 
     const token = sessionStorage.getItem("mi_token");
 
-    const data = { nombre, email, telefono, direccion, fecha_nacimiento: nacimiento };
+    const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
     
     if (newPassword) {
         if (!oldPassword) {
