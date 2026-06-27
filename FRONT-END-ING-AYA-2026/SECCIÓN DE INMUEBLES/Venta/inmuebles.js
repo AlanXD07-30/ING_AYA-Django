@@ -182,7 +182,7 @@
             loading="lazy"
             onerror="this.src='../../AAA.png'">
           <span class="card-badge">${escapeHtml(tipo)}</span>
-          ${id ? `<button style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; color: white; padding: 8px; font-size: 18px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='rgba(244,63,94,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onclick="guardarFavorito(${id})" title="Guardar en Favoritos">❤️</button>` : ""}
+          ${id ? `<button style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; color: white; padding: 8px; font-size: 18px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='rgba(244,63,94,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onclick="guardarFavorito(${id})" title="Guardar en Favoritos"><i class="bi bi-star-fill"></i></button>` : ""}
         </div>
         <div class="card-body">
           <h3 class="card-title">${escapeHtml(direccion)}</h3>
@@ -205,14 +205,28 @@
   // FILTROS
   // ============================================================
   function aplicarFiltros() {
-    const ciudadSel = (selectCiudad?.value || "todos").toLowerCase();
-    const tipoSel   = (selectTipo?.value   || "todos").toLowerCase();
+    const ciudadSel = (document.getElementById("ciudad")?.value || "todos").toLowerCase();
+    const tipoSel   = (document.getElementById("tipo")?.value   || "todos").toLowerCase();
+    const banosSel  = document.getElementById("banos")?.value || "todos";
+    const habSel    = document.getElementById("habitaciones")?.value || "todos";
+    const garajesSel= document.getElementById("garajes")?.value || "todos";
 
     const filtrados = inmueblesGlobal.filter(inm => {
       const c = (inm.ciudad || "").toLowerCase();
       const t = ((inm.tipo_operacion || inm.tipoOperacion) || inm.tipoInmuebleNombre || "").toLowerCase();
+      
+      const bMatch = banosSel === "todos" || 
+                     (banosSel === "4" ? parseInt(inm.banos) >= 4 : parseInt(inm.banos) == parseInt(banosSel));
+                     
+      const hMatch = habSel === "todos" || 
+                     (habSel === "4" ? parseInt(inm.habitaciones) >= 4 : parseInt(inm.habitaciones) == parseInt(habSel));
+                     
+      const gMatch = garajesSel === "todos" || 
+                     (garajesSel === "3" ? parseInt(inm.garajes || 0) >= 3 : parseInt(inm.garajes || 0) == parseInt(garajesSel));
+
       return (ciudadSel === "todos" || c === ciudadSel) &&
-             (tipoSel   === "todos" || t === tipoSel);
+             (tipoSel   === "todos" || t === tipoSel) &&
+             bMatch && hMatch && gMatch;
     });
 
     renderizar(filtrados);
@@ -253,8 +267,11 @@
     selectCiudad = document.getElementById("ciudad");
     selectTipo   = document.getElementById("tipo");
 
-    if (selectCiudad) selectCiudad.addEventListener("change", aplicarFiltros);
-    if (selectTipo)   selectTipo.addEventListener("change",   aplicarFiltros);
+    const selectsFiltro = ["ciudad", "tipo", "banos", "habitaciones", "garajes"];
+    selectsFiltro.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", aplicarFiltros);
+    });
 
     initReveal();
     initFooterNewsletter();
