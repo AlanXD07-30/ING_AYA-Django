@@ -1116,9 +1116,9 @@ function renderInmueblesFiltered() {
 }
 
 function renderClientesFiltered() {
-    const tabla = document.getElementById("tabla-clientes");
-    if (!tabla) return;
-    tabla.innerHTML = "";
+    const contenedor = document.getElementById("grid-clientes");
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
     
     let fNombre = (document.getElementById("filtro-cli-nombre")?.value || "").toLowerCase();
     let fId = (document.getElementById("filtro-cli-id")?.value || "").toLowerCase();
@@ -1132,27 +1132,47 @@ function renderClientesFiltered() {
     });
     
     if(filtered.length === 0) {
-        tabla.innerHTML = '<tr><td colspan="8" style="text-align: center;">No hay coincidencias con los filtros.</td></tr>';
+        contenedor.innerHTML = '<p style="color: white; grid-column: 1 / -1; text-align: center;">No hay coincidencias con los filtros.</p>';
         return;
     }
     
     filtered.forEach(cli => {
         const id = cli.id_cliente || cli.id;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>#${id}</td>
-            <td><strong>${cli.nombre}</strong></td>
-            <td>${cli.identificacion}</td>
-            <td>${cli.telefono || "N/A"}</td>
-            <td>${cli.email || cli.correo || "<span style='color: var(--text-muted);'>Sin correo</span>"}</td>
-            <td>${cli.direccion || "N/A"}</td>
-            <td>${cli.fecha_nacimiento || "N/A"}</td>
-            <td>
-                <button class="btn-action edit" onclick='abrirModalEditarCliente(${JSON.stringify(cli)})' title="Editar">✏️</button>
-                <button class="btn-action delete" onclick="eliminarRegistro('clientes', ${id}, cargarClientes)" title="Eliminar">🗑️</button>
-            </td>
+        
+        let urlAvatar = "";
+        if (cli.foto_perfil) {
+            urlAvatar = cli.foto_perfil;
+            if (!urlAvatar.startsWith("http")) {
+                urlAvatar = "https://ingaya-django-production.up.railway.app" + urlAvatar;
+            }
+        } else {
+            let nombreLimpio = cli.nombre ? cli.nombre.replace(/ /g, "+") : "Usuario";
+            urlAvatar = `https://ui-avatars.com/api/?name=${nombreLimpio}&background=random`;
+        }
+        
+        const card = document.createElement("div");
+        card.className = "card-box card-inmueble"; 
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        
+        card.innerHTML = `
+            <div style="padding: 20px; text-align: center; border-bottom: 1px solid var(--border);">
+                <img src="${urlAvatar}" alt="Foto de ${cli.nombre}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                <h3 style="margin: 0; font-size: 18px; color: white;">${cli.nombre}</h3>
+                <span style="color: #64748b; font-size: 12px;">ID #${id} | Doc: ${cli.identificacion}</span>
+            </div>
+            <div style="padding: 15px; font-size: 13px; color: #cbd5e1; flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                <p style="margin: 0;"><strong style="color: white;">Teléfono:</strong> ${cli.telefono || "N/A"}</p>
+                <p style="margin: 0;"><strong style="color: white;">Correo:</strong> ${cli.email || cli.correo || "<span style='color: var(--text-muted);'>Sin correo</span>"}</p>
+                <p style="margin: 0;"><strong style="color: white;">Dirección:</strong> ${cli.direccion || "N/A"}</p>
+                <p style="margin: 0;"><strong style="color: white;">F. Nacimiento:</strong> ${cli.fecha_nacimiento || "N/A"}</p>
+            </div>
+            <div class="admin-card-actions">
+                <button class="btn-action edit" onclick='abrirModalEditarCliente(${JSON.stringify(cli)})' title="Editar">✏️ Editar</button>
+                <button class="btn-action delete" onclick="eliminarRegistro('clientes', ${id}, cargarClientes)" title="Eliminar">🗑️ Eliminar</button>
+            </div>
         `;
-        tabla.appendChild(tr);
+        contenedor.appendChild(card);
     });
 }
 

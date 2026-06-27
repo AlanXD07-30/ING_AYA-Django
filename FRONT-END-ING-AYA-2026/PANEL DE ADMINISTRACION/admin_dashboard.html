@@ -202,25 +202,9 @@
                         <input type="text" id="filtro-cli-tel" placeholder="Filtrar por teléfono..." class="form-input" style="flex: 1; min-width: 150px;">
                     </div>
 
-                    <div class="table-container card-box">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>NOMBRE</th>
-                                        <th>IDENTIFICACIÓN</th>
-                                        <th>TELÉFONO</th>
-                                        <th>CORREO</th>
-                                        <th>DIRECCIÓN</th>
-                                        <th>FECHA NAC.</th>
-                                        <th>ACCIONES</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabla-clientes">
-                                    <tr><td colspan="6">Cargando clientes...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="grid-container" id="grid-clientes" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                        <p style="color: white;">Cargando clientes...</p>
+                    </div>
                 </div>
 
                 <!-- SECCIÓN DE ADMINISTRADORES -->
