@@ -79,7 +79,7 @@ class Cita(models.Model):
     fecha_hora = models.DateTimeField()
     estado = models.CharField(max_length=20, default='PENDIENTE')
     descripcion = models.TextField(blank=True, null=True)
-    id_cliente = models.ForeignKey('Cliente', models.DO_NOTHING, db_column='id_cliente', blank=True, null=True)
+    id_cliente = models.ForeignKey('Cliente', models.CASCADE, db_column='id_cliente', blank=True, null=True)
     id_empleado = models.ForeignKey('Empleado', models.DO_NOTHING, db_column='id_empleado', blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
@@ -230,7 +230,7 @@ class Transaccion(models.Model):
     tipo_operacion = models.CharField(max_length=8)
     valor_total = models.DecimalField(max_digits=15, decimal_places=2)
     estado = models.CharField(max_length=10, blank=True, null=True)
-    id_cliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='id_cliente', blank=True, null=True)
+    id_cliente = models.ForeignKey(Cliente, models.CASCADE, db_column='id_cliente', blank=True, null=True)
     id_inmueble = models.ForeignKey(Inmueble, models.DO_NOTHING, db_column='id_inmueble', blank=True, null=True)
     id_empleado = models.ForeignKey(Empleado, models.DO_NOTHING, db_column='id_empleado', blank=True, null=True)
 
