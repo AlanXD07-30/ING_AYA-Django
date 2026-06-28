@@ -530,7 +530,8 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 
     const token = sessionStorage.getItem("mi_token");
 
-    if (telefono) {
+    const grpTel = document.getElementById("group-telefono");
+    if (telefono && grpTel && window.getComputedStyle(grpTel).display !== "none") {
         const regexTel = /^\d{10}$/;
         if (!regexTel.test(telefono)) {
             cerrarModalEditar();
@@ -539,7 +540,8 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
         }
     }
     
-    if (nacimiento) {
+    const grpNac = document.getElementById("group-nacimiento");
+    if (nacimiento && grpNac && window.getComputedStyle(grpNac).display !== "none") {
         const hoy = new Date();
         const cumple = new Date(nacimiento);
         let edad = hoy.getFullYear() - cumple.getFullYear();
@@ -556,12 +558,16 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
     }
 
     const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
+    
+    const grpIdent = document.getElementById("group-identificacion");
     if (identificacion) {
-        const regexCedula = /^(\d{8}|\d{10})$/;
-        if (!regexCedula.test(identificacion)) {
-            cerrarModalEditar();
-            Swal.fire('Error', 'La identificación debe tener exactamente 8 o 10 números.', 'error');
-            return;
+        if (grpIdent && window.getComputedStyle(grpIdent).display !== "none") {
+            const regexCedula = /^(\d{8}|\d{10})$/;
+            if (!regexCedula.test(identificacion)) {
+                cerrarModalEditar();
+                Swal.fire('Error', 'La identificación debe tener exactamente 8 o 10 números.', 'error');
+                return;
+            }
         }
         data.identificacion = identificacion;
     }
