@@ -766,24 +766,66 @@ html[data-theme='light'] .tramite-action-area {
 
 
 
-/* --- REDISEÑO CORPORATIVO (CLEAN UI) --- */
-.perfil-container {
-    color: #0f172a !important;
-}
-.dashboard-grid {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-}
-.card-box {
-    background: #ffffff !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.04) !important;
-    border: 1px solid #f1f5f9 !important;
-    backdrop-filter: none !important;
+
+
+/* --- REDISEÑO CORPORATIVO (CLEAN UI & DARK MODE) --- */
+
+/* 1. Fondo Global con imagen sutil */
+body:has(.perfil-container-dashboard) {
+    /* Set a subtle background image for the profile page specifically */
+    background-image: linear-gradient(rgba(248, 250, 252, 0.85), rgba(248, 250, 252, 0.95)), url('../Fondo\ Index.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
 }
 
-/* Sidebar Nav */
+html[data-theme='dark'] body:has(.perfil-container-dashboard) {
+    /* Dark mode background: darker overlay on the same image */
+    background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('../Fondo\ Index.png') !important;
+}
+
+/* 2. Layout Structure */
+.perfil-container-dashboard {
+    background-color: transparent !important;
+    color: #0f172a;
+}
+html[data-theme='dark'] .perfil-container-dashboard {
+    color: #f8fafc;
+}
+
+.dashboard-sidebar {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    min-height: calc(100vh - 80px);
+    border-right: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+html[data-theme='dark'] .dashboard-sidebar {
+    background-color: rgba(30, 41, 59, 0.6) !important;
+    border-right: 1px solid rgba(51, 65, 85, 0.8) !important;
+}
+
+.dashboard-content-wrapper {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.card-box {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.4) !important;
+}
+html[data-theme='dark'] .card-box {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+}
+
+/* 3. Sidebar Nav Buttons */
 .sidebar-nav-menu .nav-btn {
     display: block;
     padding: 12px 15px;
@@ -795,44 +837,70 @@ html[data-theme='light'] .tramite-action-area {
     transition: all 0.2s ease;
     margin-bottom: 2px;
 }
+html[data-theme='dark'] .sidebar-nav-menu .nav-btn {
+    color: #94a3b8;
+}
+
 .sidebar-nav-menu .nav-btn:hover {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.5);
     color: #0f172a;
 }
+html[data-theme='dark'] .sidebar-nav-menu .nav-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #f8fafc;
+}
+
 .sidebar-nav-menu .nav-btn.active {
-    background: #f0fdfa; /* Light teal background */
-    color: #0f766e; /* Dark teal text */
+    background: rgba(15, 118, 110, 0.1); 
+    color: #0f766e;
     font-weight: 600;
     border-left: 3px solid #0f766e;
     border-radius: 0 8px 8px 0;
 }
+html[data-theme='dark'] .sidebar-nav-menu .nav-btn.active {
+    background: rgba(45, 212, 191, 0.1);
+    color: #2dd4bf;
+    border-left-color: #2dd4bf;
+}
 
-/* Data Rows */
+/* 4. Data Rows & Text */
 .data-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 24px 0;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+html[data-theme='dark'] .data-row {
+    border-bottom-color: rgba(51, 65, 85, 0.8);
 }
 .data-row:last-child {
     border-bottom: none;
 }
+
 .data-info h4 {
     margin: 0 0 6px 0;
     font-size: 15px;
     color: #0f172a;
     font-weight: 600;
 }
+html[data-theme='dark'] .data-info h4 {
+    color: #f8fafc;
+}
+
 .data-info p {
     margin: 0;
     font-size: 14px;
     color: #64748b;
 }
+html[data-theme='dark'] .data-info p {
+    color: #94a3b8;
+}
+
 .btn-edit {
     background: transparent;
     border: none;
-    color: #0f766e; /* Teal accent */
+    color: #0f766e;
     font-weight: 600;
     cursor: pointer;
     padding: 8px 12px;
@@ -841,70 +909,27 @@ html[data-theme='light'] .tramite-action-area {
     transition: background 0.2s;
 }
 .btn-edit:hover {
-    background: #f0fdfa;
+    background: rgba(15, 118, 110, 0.08);
+}
+html[data-theme='dark'] .btn-edit {
+    color: #2dd4bf;
+}
+html[data-theme='dark'] .btn-edit:hover {
+    background: rgba(45, 212, 191, 0.1);
 }
 
-/* Quitar fondos extraños y glows */
-main.perfil-container::before, main.perfil-container::after {
-    display: none !important;
-}
-.perfil-main h2, .perfil-sidebar h2 {
+/* 5. Headers & Removes Glows */
+.perfil-main h2, .perfil-sidebar h2, .banner-info h1, #main-section-title {
     text-shadow: none !important;
     color: #0f172a !important;
 }
-
-/* Theme overrides to enforce clean look */
-html[data-theme='dark'] .perfil-container .card-box {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-}
-html[data-theme='dark'] .perfil-container h1, 
-html[data-theme='dark'] .perfil-container h2, 
-html[data-theme='dark'] .perfil-container h4 {
+html[data-theme='dark'] .perfil-main h2, 
+html[data-theme='dark'] .perfil-sidebar h2, 
+html[data-theme='dark'] .banner-info h1, 
+html[data-theme='dark'] #main-section-title {
     color: #f8fafc !important;
 }
-html[data-theme='dark'] .perfil-container p {
-    color: #94a3b8 !important;
-}
-html[data-theme='dark'] .sidebar-nav-menu .nav-btn:hover {
-    background: #334155 !important;
-    color: #f8fafc !important;
-}
-html[data-theme='dark'] .sidebar-nav-menu .nav-btn.active {
-    background: rgba(15, 118, 110, 0.2) !important;
-    color: #2dd4bf !important;
-    border-left-color: #2dd4bf !important;
-}
-html[data-theme='dark'] .btn-edit {
-    color: #2dd4bf !important;
-}
-html[data-theme='dark'] .btn-edit:hover {
-    background: rgba(45, 212, 191, 0.1) !important;
-}
-html[data-theme='dark'] .data-row {
-    border-bottom-color: #334155 !important;
-}
 
-
-/* --- ESTILO DASHBOARD COMPLETO (OVERRIDE BODY) --- */
-body:has(.perfil-container-dashboard) {
-    background: #f8fafc !important;
-    background-image: none !important;
-}
-.perfil-container-dashboard {
-    background-color: #f8fafc !important;
-}
-.dashboard-sidebar {
-    background-color: #ffffff !important;
-    min-height: calc(100vh - 80px);
-}
-.dashboard-content-wrapper {
-    background-color: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-}
-/* Force white background overrides in dark theme for profile */
-html[data-theme='dark'] body:has(.perfil-container-dashboard) {
-    background: #f8fafc !important;
-    background-image: none !important;
+main.perfil-container::before, main.perfil-container::after {
+    display: none !important;
 }
