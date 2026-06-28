@@ -689,3 +689,17 @@ body.light-theme .property-content {
     transition: background 0.2s;
 }
 .crearcue-nav:hover { background-color: #e2c89a; }
+
+/* --- CORRECCION DE BORDES Y PADDING EN SECCIONES DE DETALLE --- */
+.content-section {
+    border-radius: 15px !important;
+    padding: 30px 40px !important;
+    border-bottom: none !important; /* Remove the old bottom line */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+}
+
+@media (max-width: 768px) {
+    .content-section {
+        padding: 20px 20px !important;
+    }
+}

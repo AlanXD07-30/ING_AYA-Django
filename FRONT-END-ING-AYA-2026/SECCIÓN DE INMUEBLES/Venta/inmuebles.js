@@ -173,27 +173,36 @@
       const id        = inm.id_inmueble || inm.id || "";
 
       const article = document.createElement("article");
-      article.className = "card-inmueble";
+      article.className = "card-inmueble horizontal-layout";
       article.innerHTML = `
-        <div class="card-media" style="position: relative;">
-          <img
-            src="${escapeHtml(imgUrl)}"
-            alt="Imagen de ${escapeHtml(tipo)} en ${escapeHtml(ciudad)}"
-            loading="lazy"
-            onerror="this.src='../../AAA.png'">
+        <div class="card-media">
+          <img src="${escapeHtml(imgUrl)}" alt="Imagen de ${escapeHtml(tipo)} en ${escapeHtml(ciudad)}" loading="lazy" onerror="this.src='../../AAA.png'">
           <span class="card-badge">${escapeHtml(tipo)}</span>
-          ${id ? `<button style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: none; border-radius: 50%; color: white; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 16px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='rgba(244,63,94,0.8)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'" onclick="guardarFavorito(${id})" title="Guardar en Favoritos"><i class="bi bi-star-fill"></i></button>` : ""}
+          ${id ? `<button class="btn-fav-horizontal" onclick="guardarFavorito(${id})" title="Guardar en Favoritos"><i class="bi bi-star-fill"></i></button>` : ""}
         </div>
         <div class="card-body">
-          <h3 class="card-title">${escapeHtml(direccion)}</h3>
-          <p class="card-address">${escapeHtml(barrio)}${barrio && ciudad ? " · " : ""}${escapeHtml(ciudad)}</p>
-          ${estado ? `<p class="card-location">Estado: ${escapeHtml(estado)}</p>` : ""}
-          <div class="card-meta-row">
-            <span class="card-price">${escapeHtml(precio)}</span>
-            ${metraje ? `<span class="card-metraje">${escapeHtml(metraje)}</span>` : ""}
+          <div class="card-header-horizontal">
+            <h3 class="card-price-main">${escapeHtml(precio)}</h3>
+            <p class="card-title-horizontal">${escapeHtml(tipo)} en ${escapeHtml(direccion)}</p>
+            <p class="card-address-horizontal">${escapeHtml(barrio)}${barrio && ciudad ? " · " : ""}${escapeHtml(ciudad)}</p>
+          </div>
+          
+          <div class="card-attributes-horizontal">
+            ${inm.habitaciones ? `<span title="Habitaciones"><i class="bx bx-bed"></i> ${inm.habitaciones} Habs.</span>` : ""}
+            ${inm.banos ? `<span title="Baños"><i class="bx bx-bath"></i> ${inm.banos} Baños</span>` : ""}
+            ${metraje ? `<span title="Área"><i class="bx bx-area"></i> ${escapeHtml(metraje)}</span>` : ""}
+            ${inm.garajes ? `<span title="Garajes"><i class="bx bx-car"></i> ${inm.garajes}</span>` : ""}
+          </div>
+          
+          <div class="card-description-horizontal">
+            <p>${inm.descripcion ? escapeHtml(inm.descripcion.substring(0, 140)) + '...' : "Hermosa propiedad con excelentes acabados, ideal para vivienda o inversión. Ubicada en una excelente zona."}</p>
+          </div>
+
+          <div class="card-actions-horizontal">
+            ${estado ? `<span class="card-status-horizontal">${escapeHtml(estado)}</span>` : ""}
+            ${id ? `<a class="btn-ver-horizontal" href="../detalle${window.location.protocol === 'file:' ? '.html' : ''}?id=${encodeURIComponent(id)}">Ver propiedad <i class="bx bx-right-arrow-alt"></i></a>` : ""}
           </div>
         </div>
-                ${id ? `<a class="btn-ver" href="../detalle${window.location.protocol === 'file:' ? '.html' : ''}?id=${encodeURIComponent(id)}">Ver propiedad →</a>` : ""}
       `;
       fragment.appendChild(article);
     });
