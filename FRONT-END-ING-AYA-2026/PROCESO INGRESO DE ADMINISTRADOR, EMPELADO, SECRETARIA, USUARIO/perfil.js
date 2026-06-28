@@ -216,13 +216,29 @@ document.addEventListener("DOMContentLoaded", async function() {
     // 1.7 VALIDACIÓN EN TIEMPO REAL
     // ==========================================
     const inputIdentificacion = document.getElementById("edit-identificacion");
-    if (inputIdentificacion) {
+    const errorIdentificacion = document.getElementById("error-identificacion");
+    const btnGuardarPerfil = document.querySelector("#form-editar button[type='submit']");
+    
+    if (inputIdentificacion && errorIdentificacion && btnGuardarPerfil) {
         inputIdentificacion.addEventListener("input", function() {
             // Eliminar cualquier carácter que no sea número
             this.value = this.value.replace(/\D/g, '');
             // Limitar a un máximo de 10 caracteres
             if (this.value.length > 10) {
                 this.value = this.value.slice(0, 10);
+            }
+            
+            const regexCedula = /^(\d{8}|\d{10})$/;
+            if (this.value.length > 0 && !regexCedula.test(this.value)) {
+                errorIdentificacion.style.display = "block";
+                inputIdentificacion.style.borderColor = "#ef4444";
+                btnGuardarPerfil.disabled = true;
+                btnGuardarPerfil.style.opacity = "0.5";
+            } else {
+                errorIdentificacion.style.display = "none";
+                inputIdentificacion.style.borderColor = "";
+                btnGuardarPerfil.disabled = false;
+                btnGuardarPerfil.style.opacity = "1";
             }
         });
     }
@@ -369,7 +385,18 @@ function abrirModalEditar(grupoId) {
     document.getElementById("edit-correo").value = emailStr;
     
     const ident = document.getElementById("dato-id").innerText;
-    document.getElementById("edit-identificacion").value = (ident !== "-" && ident !== "No registrado") ? ident : "";
+    const inputId = document.getElementById("edit-identificacion");
+    inputId.value = (ident !== "-" && ident !== "No registrado") ? ident : "";
+    
+    if (document.getElementById("error-identificacion")) {
+        document.getElementById("error-identificacion").style.display = "none";
+        inputId.style.borderColor = "";
+        const btnGuardarPerfil = document.querySelector("#form-editar button[type='submit']");
+        if (btnGuardarPerfil) {
+            btnGuardarPerfil.disabled = false;
+            btnGuardarPerfil.style.opacity = "1";
+        }
+    }
 
     const tel = document.getElementById("dato-telefono").innerText;
     document.getElementById("edit-telefono").value = (tel !== "-" && tel !== "No registrado") ? tel : "";
