@@ -411,6 +411,12 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 
     const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
     if (identificacion) {
+        const regexCedula = /^(\d{8}|\d{10})$/;
+        if (!regexCedula.test(identificacion)) {
+            cerrarModalEditar();
+            Swal.fire('Error', 'La identificación debe tener exactamente 8 o 10 números.', 'error');
+            return;
+        }
         data.identificacion = identificacion;
     }
     
