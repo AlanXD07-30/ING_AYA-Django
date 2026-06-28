@@ -226,7 +226,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     function validarFormulario() {
         let formValido = true;
         
-        if (inputIdentificacion && errorIdentificacion) {
+        const grpIdent = document.getElementById("group-identificacion");
+        if (inputIdentificacion && errorIdentificacion && grpIdent && window.getComputedStyle(grpIdent).display !== "none") {
             const val = inputIdentificacion.value;
             const regexCedula = /^(\d{8}|\d{10})$/;
             if (val.length > 0 && !regexCedula.test(val)) {
@@ -239,7 +240,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
         }
         
-        if (inputTelefono && errorTelefono) {
+        const grpTel = document.getElementById("group-telefono");
+        if (inputTelefono && errorTelefono && grpTel && window.getComputedStyle(grpTel).display !== "none") {
             const val = inputTelefono.value;
             if (val.length > 0 && val.length !== 10) {
                 errorTelefono.style.display = "block";
@@ -251,7 +253,8 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
         }
         
-        if (inputNacimiento && errorNacimiento) {
+        const grpNac = document.getElementById("group-nacimiento");
+        if (inputNacimiento && errorNacimiento && grpNac && window.getComputedStyle(grpNac).display !== "none") {
             const val = inputNacimiento.value;
             if (val) {
                 const hoy = new Date();
