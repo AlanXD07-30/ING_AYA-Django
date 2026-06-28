@@ -183,6 +183,8 @@ class PerfilView(APIView):
             # Actualizar datos personales
             if 'nombre' in data:
                 cliente.nombre = data['nombre']
+            if 'identificacion' in data:
+                cliente.identificacion = data['identificacion']
             if 'telefono' in data:
                 cliente.telefono = data['telefono']
             if 'direccion' in data:
