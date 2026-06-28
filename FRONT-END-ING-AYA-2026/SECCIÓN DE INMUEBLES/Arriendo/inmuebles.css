@@ -841,6 +841,8 @@ footer {
     width: 35%;
     min-width: 300px;
     position: relative;
+    height: auto !important; /* override old fixed 220px height */
+    display: flex; /* ensures img behaves well */
 }
 
 .card-inmueble.horizontal-layout .card-media img {
