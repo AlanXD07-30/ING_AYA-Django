@@ -353,6 +353,9 @@ function abrirModalEditar(grupoId) {
     const emailStr = document.getElementById("perfil-email") ? document.getElementById("perfil-email").innerText : "";
     document.getElementById("edit-correo").value = emailStr;
     
+    const ident = document.getElementById("dato-id").innerText;
+    document.getElementById("edit-identificacion").value = (ident !== "-" && ident !== "No registrado") ? ident : "";
+
     const tel = document.getElementById("dato-telefono").innerText;
     document.getElementById("edit-telefono").value = (tel !== "-" && tel !== "No registrado") ? tel : "";
     
@@ -378,6 +381,7 @@ function abrirModalEditar(grupoId) {
         else if (grupoId === 'group-direccion') titulo.textContent = 'Actualizar Dirección';
         else if (grupoId === 'group-nacimiento') titulo.textContent = 'Actualizar Nacimiento';
         else if (grupoId === 'group-seguridad') titulo.textContent = 'Actualizar Contraseña';
+        else if (grupoId === 'group-identificacion') titulo.textContent = 'Actualizar Identificación';
     } else {
         grupos.forEach(g => g.style.display = "block");
         titulo.textContent = 'Actualizar Datos Personales';
@@ -395,6 +399,7 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
 
     const nombre = document.getElementById("edit-nombre").value;
     const email = document.getElementById("edit-correo").value;
+    const identificacion = document.getElementById("edit-identificacion") ? document.getElementById("edit-identificacion").value : "";
     const telefono = document.getElementById("edit-telefono").value;
     const direccion = document.getElementById("edit-direccion").value;
     const nacimiento = document.getElementById("edit-nacimiento").value;
@@ -405,6 +410,9 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
     const token = sessionStorage.getItem("mi_token");
 
     const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
+    if (identificacion) {
+        data.identificacion = identificacion;
+    }
     
     if (newPassword) {
         if (!oldPassword) {
