@@ -1237,3 +1237,21 @@ footer          { animation-delay: 0.52s; }
 
 .beneficios { background-color: var(--bg-body) !important; }
 .container-3, .testimonios, footer { background-color: var(--bg-body) !important; }
+
+/* --- AJUSTE DE MODO CLARO PARA LAS IMAGENES CON DIFUMINADO --- */
+
+[data-theme='light'] .caracteristicas {
+    background-image: linear-gradient(to bottom, var(--bg-body) 0%, rgba(15,23,42,0.65) 15%, rgba(15,23,42,0.65) 85%, var(--bg-body) 100%), url('https://c.pxhere.com/photos/c2/4d/building_skyscraper_city_highrise-8087.jpg!d') !important;
+}
+
+[data-theme='light'] .visualizacion {
+    background-image: linear-gradient(to bottom, var(--bg-body) 0%, rgba(10,15,26,0.75) 15%, rgba(10,15,26,0.75) 85%, var(--bg-body) 100%), url('https://c.pxhere.com/photos/13/54/dubai_landscape_metro_urban_architecture_tourism_sky_travel-591469.jpg!d') !important;
+}
+
+/* Make sure text inside these sections is white in light mode since the middle is dark */
+[data-theme='light'] .caracteristica h3,
+[data-theme='light'] .caracteristica p,
+[data-theme='light'] .texto-visualizacion h2,
+[data-theme='light'] .texto-visualizacion p {
+    color: #ffffff !important;
+}
