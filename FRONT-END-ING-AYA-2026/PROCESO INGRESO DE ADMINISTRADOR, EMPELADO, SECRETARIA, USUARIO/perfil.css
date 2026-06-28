@@ -764,3 +764,123 @@ html[data-theme='light'] .tramite-action-area {
     border-color: rgba(59, 130, 246, 0.4);
 }
 
+
+
+/* --- REDISEÑO CORPORATIVO (CLEAN UI) --- */
+.perfil-container {
+    color: #0f172a !important;
+}
+.dashboard-grid {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+.card-box {
+    background: #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.04) !important;
+    border: 1px solid #f1f5f9 !important;
+    backdrop-filter: none !important;
+}
+
+/* Sidebar Nav */
+.sidebar-nav-menu .nav-btn {
+    display: block;
+    padding: 12px 15px;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+}
+.sidebar-nav-menu .nav-btn:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+.sidebar-nav-menu .nav-btn.active {
+    background: #f0fdfa; /* Light teal background */
+    color: #0f766e; /* Dark teal text */
+    font-weight: 600;
+    border-left: 3px solid #0f766e;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Data Rows */
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+.data-row:last-child {
+    border-bottom: none;
+}
+.data-info h4 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    color: #0f172a;
+    font-weight: 600;
+}
+.data-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+}
+.btn-edit {
+    background: transparent;
+    border: none;
+    color: #0f766e; /* Teal accent */
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.btn-edit:hover {
+    background: #f0fdfa;
+}
+
+/* Quitar fondos extraños y glows */
+main.perfil-container::before, main.perfil-container::after {
+    display: none !important;
+}
+.perfil-main h2, .perfil-sidebar h2 {
+    text-shadow: none !important;
+    color: #0f172a !important;
+}
+
+/* Theme overrides to enforce clean look */
+html[data-theme='dark'] .perfil-container .card-box {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+html[data-theme='dark'] .perfil-container h1, 
+html[data-theme='dark'] .perfil-container h2, 
+html[data-theme='dark'] .perfil-container h4 {
+    color: #f8fafc !important;
+}
+html[data-theme='dark'] .perfil-container p {
+    color: #94a3b8 !important;
+}
+html[data-theme='dark'] .sidebar-nav-menu .nav-btn:hover {
+    background: #334155 !important;
+    color: #f8fafc !important;
+}
+html[data-theme='dark'] .sidebar-nav-menu .nav-btn.active {
+    background: rgba(15, 118, 110, 0.2) !important;
+    color: #2dd4bf !important;
+    border-left-color: #2dd4bf !important;
+}
+html[data-theme='dark'] .btn-edit {
+    color: #2dd4bf !important;
+}
+html[data-theme='dark'] .btn-edit:hover {
+    background: rgba(45, 212, 191, 0.1) !important;
+}
+html[data-theme='dark'] .data-row {
+    border-bottom-color: #334155 !important;
+}

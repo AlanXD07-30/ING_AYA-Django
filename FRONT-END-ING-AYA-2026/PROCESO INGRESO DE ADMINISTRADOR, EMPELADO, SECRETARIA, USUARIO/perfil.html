@@ -43,94 +43,118 @@
     </header>
 
     <!-- ===== MAIN — Perfil del Cliente ===== -->
-    <main class="perfil-container">
-        
-        <!-- ── LAYOUT DE DOS COLUMNAS ── -->
-        <div class="dashboard-grid">
-
-            <!-- COLUMNA IZQUIERDA: Datos + Citas -->
-            <div class="dashboard-sidebar">
-                
-                <!-- ── BANNER DE PERFIL ── -->
-                <div class="perfil-banner card-box">
-                    <div class="banner-avatar">
-                        <div class="avatar-container" title="Haz clic para cambiar tu foto">
-                            <label for="input-foto" style="cursor: pointer; position: relative; display: inline-block;">
-                                <img src="https://ui-avatars.com/api/?name=Cliente&background=random" alt="Avatar" id="perfil-avatar">
-                                <div class="avatar-overlay">📷</div>
-                            </label>
-                            <input type="file" id="input-foto" accept="image/*" style="display: none;">
-                        </div>
-                        <button id="btn-quitar-foto" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 13px; display: none;">Quitar foto</button>
-                    </div>
-                    <div class="banner-info">
-                        <h1 id="perfil-nombre">Cargando...</h1>
-                        <p id="perfil-email">Cargando correo...</p>
-                        <div class="banner-actions">
-                            <button class="btn-secondary" onclick="abrirModalEditar()">✏️ Editar Datos</button>
-                            <button id="btn-admin-panel" class="btn-admin" style="display: none;" onclick="window.location.href='../PANEL DE ADMINISTRACION/admin_dashboard.html'">⚙️ Panel Admin</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Card Datos Personales -->
-                <aside class="perfil-sidebar card-box">
-                    <h2>📋 Datos Personales</h2>
-                    <ul class="datos-lista">
-                        <li><strong>Identificación:</strong> <span id="dato-id">-</span></li>
-                        <li><strong>Teléfono:</strong> <span id="dato-telefono">-</span></li>
-                        <li><strong>Dirección:</strong> <span id="dato-direccion">-</span></li>
-                        <li><strong>Nacimiento:</strong> <span id="dato-nacimiento">-</span></li>
-                    </ul>
-                </aside>
-
-                <!-- Card Citas Pendientes -->
-                <aside id="tarjeta-mis-citas" class="perfil-sidebar card-box" style="display: none; flex-direction: column;">
-                    <h2>Mis Citas 📅</h2>
-                    <div class="favoritos-grid" id="citas-container" style="flex: 1; overflow-y: auto; max-height: 300px; display: block;">
-                        <p id="msg-cargando-citas" style="color: #94a3b8; font-size: 14px; text-align: center; margin-top: 16px;">Cargando tus citas...</p>
-                    </div>
-                </aside>
-
+    <main class="perfil-container" style="max-width: 1100px; margin: 40px auto; padding: 20px;">
+        <div class="dashboard-grid" style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
+            
+            <!-- SIDEBAR -->
+            <div class="dashboard-sidebar" style="width: 280px; flex-shrink: 0; min-width: 280px;">
+               <div class="perfil-sidebar-nav card-box" style="padding: 40px 20px 20px 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; text-align: center;">
+                  <div class="banner-avatar" style="margin-bottom: 25px;">
+                      <label for="input-foto" style="cursor: pointer; position: relative; display: inline-block;">
+                          <img src="https://ui-avatars.com/api/?name=Cliente&background=random" alt="Avatar" id="perfil-avatar" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                          <div class="avatar-overlay">📷</div>
+                      </label>
+                      <input type="file" id="input-foto" accept="image/*" style="display: none;">
+                      <h1 id="perfil-nombre" style="font-size: 18px; color: #1e293b; margin-top: 15px; margin-bottom: 5px; font-weight: 700;">Cargando...</h1>
+                      <p id="perfil-email" style="font-size: 13px; color: #64748b; margin-bottom: 0;">Cargando correo...</p>
+                      <button id="btn-quitar-foto" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 13px; display: none; margin-top: 8px; width: 100%;">Quitar foto</button>
+                  </div>
+                  
+                  <nav class="sidebar-nav-menu" style="display: flex; flex-direction: column; gap: 4px; text-align: left; margin-top: 30px;">
+                      <a href="#" class="nav-btn active" onclick="switchTab('datos', this)">👤 Información Personal</a>
+                      <a href="#" class="nav-btn" onclick="switchTab('citas', this)">📅 Mis Citas</a>
+                      <a href="#" class="nav-btn" onclick="switchTab('favoritos', this)">⭐ Inmuebles Guardados</a>
+                      <a href="#" class="nav-btn" onclick="switchTab('historial', this)">🛒 Historial de Compras</a>
+                      <a href="#" class="nav-btn" id="nav-tramites" style="display: none;" onclick="switchTab('tramites', this)">📄 Trámites Pendientes</a>
+                      
+                      <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
+                      
+                      <button id="btn-admin-panel" class="nav-btn" style="display: none;" onclick="window.location.href='../PANEL DE ADMINISTRACION/admin_dashboard.html'">⚙️ Panel Admin</button>
+                      <button class="nav-btn" style="color: #ef4444;" id="btn-cerrar-sesion-sidebar">🚪 Cerrar Sesión</button>
+                  </nav>
+               </div>
             </div>
+            
+            <!-- MAIN CONTENT -->
+            <div class="dashboard-main" style="flex-grow: 1; min-width: 0;">
+               <div class="card-box" style="padding: 40px; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; min-height: 500px;">
+                  <h2 id="main-section-title" style="font-size: 26px; color: #0f172a; margin-bottom: 30px; margin-top: 0; font-weight: 700; letter-spacing: -0.5px;">Configuración</h2>
+                  
+                  <!-- TAB: DATOS -->
+                  <div id="tab-datos" class="tab-content" style="display: block;">
+                      <div class="data-row">
+                          <div class="data-info">
+                              <h4>Identificación</h4>
+                              <p id="dato-id">-</p>
+                          </div>
+                          <button class="btn-edit" onclick="abrirModalEditar()">Edit</button>
+                      </div>
+                      <div class="data-row">
+                          <div class="data-info">
+                              <h4>Teléfono</h4>
+                              <p id="dato-telefono">-</p>
+                          </div>
+                          <button class="btn-edit" onclick="abrirModalEditar()">Edit</button>
+                      </div>
+                      <div class="data-row">
+                          <div class="data-info">
+                              <h4>Dirección</h4>
+                              <p id="dato-direccion">-</p>
+                          </div>
+                          <button class="btn-edit" onclick="abrirModalEditar()">Edit</button>
+                      </div>
+                      <div class="data-row">
+                          <div class="data-info">
+                              <h4>Fecha de Nacimiento</h4>
+                              <p id="dato-nacimiento">-</p>
+                          </div>
+                          <button class="btn-edit" onclick="abrirModalEditar()">Edit</button>
+                      </div>
+                      <div class="data-row" style="border-bottom: none;">
+                          <div class="data-info">
+                              <h4>Seguridad</h4>
+                              <p>Contraseña y accesos</p>
+                          </div>
+                          <button class="btn-edit" onclick="abrirModalEditar()">Update</button>
+                      </div>
+                  </div>
+                  
+                  <!-- TAB: CITAS -->
+                  <div id="tab-citas" class="tab-content" style="display: none;">
+                      <p class="favoritos-desc">Revisa tus citas programadas con nuestros asesores.</p>
+                      <div class="favoritos-grid" id="citas-container" style="display: block;">
+                          <p id="msg-cargando-citas" style="color: #94a3b8; font-size: 14px; text-align: left;">Cargando tus citas...</p>
+                      </div>
+                  </div>
+                  
+                  <!-- TAB: FAVORITOS -->
+                  <div id="tab-favoritos" class="tab-content" style="display: none;">
+                      <p class="favoritos-desc">Aquí están las propiedades que has guardado para revisar más tarde.</p>
+                      <div class="favoritos-grid" id="favoritos-container" style="display: grid; gap: 20px;">
+                          <p id="msg-cargando" style="grid-column: 1/-1; color: #94a3b8; font-size: 14px;">Cargando tus favoritos...</p>
+                      </div>
+                  </div>
 
-            <!-- COLUMNA DERECHA: Favoritos + Historial + Trámites -->
-            <div class="dashboard-main">
+                  <!-- TAB: HISTORIAL -->
+                  <div id="tab-historial" class="tab-content" style="display: none;">
+                      <p class="favoritos-desc">Inmuebles que has adquirido con nosotros.</p>
+                      <div class="favoritos-grid" id="historial-container" style="display: grid; gap: 20px;">
+                          <div style="grid-column: 1 / -1; padding: 20px; background: #f8fafc; border-radius: 12px; text-align: center; border: 1px dashed #cbd5e1;">
+                              <p style="color: #64748b; font-size: 14px; margin:0;">Aún no has comprado ningún inmueble.</p>
+                          </div>
+                      </div>
+                  </div>
 
-                <!-- Card Favoritos -->
-                <section class="perfil-main card-box">
-                    <h2>Mis Inmuebles Favoritos 💖</h2>
-                    <p class="favoritos-desc">Aquí están las propiedades que has guardado para revisar más tarde.</p>
-                    <div class="favoritos-grid" id="favoritos-container">
-                        <p id="msg-cargando">Cargando tus favoritos...</p>
-                    </div>
-                </section>
-
-                <!-- Card Historial de Compras -->
-                <section class="perfil-main card-box">
-                    <h2>Historial de Compras 🛍️</h2>
-                    <p class="favoritos-desc">Inmuebles que has adquirido con nosotros.</p>
-                    <div class="favoritos-grid" id="historial-container">
-                        <div style="grid-column: 1 / -1; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; text-align: center; border: 1px dashed rgba(255,255,255,0.08);">
-                            <p style="color: #94a3b8; font-size: 14px;">Aún no has comprado ningún inmueble.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Card Trámites Pendientes -->
-                <div id="fila-tramites-pendientes" style="display: none;">
-                    <section class="perfil-main card-box" style="width: 100%;">
-                        <h2>Trámites pendientes ⏳</h2>
-                        <p class="favoritos-desc">Inmuebles que tienes en proceso de reserva o trámite.</p>
-                        <div class="favoritos-grid" id="tramites-container">
-                            <p id="msg-cargando-tramites">Cargando tus trámites...</p>
-                        </div>
-                    </section>
-                </div>
-
+                  <!-- TAB: TRAMITES -->
+                  <div id="tab-tramites" class="tab-content" style="display: none;">
+                      <p class="favoritos-desc">Inmuebles que tienes en proceso de reserva o trámite.</p>
+                      <div class="favoritos-grid" id="tramites-container" style="display: grid; gap: 20px;">
+                          <p id="msg-cargando-tramites" style="grid-column: 1/-1; color: #94a3b8; font-size: 14px;">Cargando tus trámites...</p>
+                      </div>
+                  </div>
+               </div>
             </div>
         </div>
-
     </main>
 
     <!-- Modal Editar Datos -->

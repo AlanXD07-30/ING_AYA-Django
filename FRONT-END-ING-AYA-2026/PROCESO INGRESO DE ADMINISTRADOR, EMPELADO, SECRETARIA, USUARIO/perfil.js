@@ -51,30 +51,44 @@ document.addEventListener("DOMContentLoaded", async function() {
                 // Caso: Superadmin que no tiene perfil en tabla Cliente
                 document.getElementById("perfil-nombre").textContent = data.nombre + " (Admin)";
                 document.getElementById("perfil-email").textContent = data.email;
-                document.querySelector(".perfil-sidebar").innerHTML = `
-                    <h2>Aviso</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 10px;">Eres un superadministrador sin perfil de cliente. Las funciones de perfil están limitadas y no puedes guardar favoritos ni hacer trámites.</p>
-                `;
-                const mainDash = document.querySelector(".dashboard-main");
-                if(mainDash) mainDash.style.display = "none";
-                const citasDash = document.getElementById("tarjeta-mis-citas");
-                if(citasDash) citasDash.style.display = "none";
+                const tabDatos = document.getElementById("tab-datos");
+                if (tabDatos) {
+                    tabDatos.innerHTML = `
+                        <h4 style="margin: 0 0 10px 0; font-size: 16px; color: #0f172a;">Aviso</h4>
+                        <p style="color: #64748b; font-size: 14px;">Eres un superadministrador sin perfil de cliente. Las funciones de perfil están limitadas y no puedes guardar favoritos ni hacer trámites.</p>
+                    `;
+                }
+                const navLinks = document.querySelectorAll(".sidebar-nav-menu a:not(#btn-admin-panel)");
+                navLinks.forEach(l => l.style.display = 'none');
             } else if (data.es_empleado) {
                 // Caso: Empleado logueado
                 document.getElementById("perfil-nombre").textContent = data.nombre + " (" + data.rol + ")";
                 document.getElementById("perfil-email").textContent = data.email || "Empleado";
-                document.querySelector(".perfil-sidebar").innerHTML = `
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <span style="background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;">
-                            Acceso Empleado
-                        </span>
-                    </div>
-                    <h2>Mi Perfil de Trabajo</h2>
-                    <p><strong>Identificación:</strong> ${data.identificacion}</p>
-                    <p><strong>Teléfono:</strong> ${data.telefono || "No registrado"}</p>
-                    <p style="color: var(--text-muted); font-size: 0.9em; margin-top: 15px;">Usa el botón de abajo para entrar a tu área de trabajo y gestionar el sistema.</p>
-                    <a href="../PANEL DE ADMINISTRACION/admin_dashboard.html" class="btn-primary" style="display:block; text-align:center; margin-top:20px; text-decoration:none;">Ir a mi Panel de Control</a>
-                `;
+                const tabDatos = document.getElementById("tab-datos");
+                if (tabDatos) {
+                    tabDatos.innerHTML = `
+                        <div style="margin-bottom: 20px;">
+                            <span style="background: #0f766e; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px;">
+                                Acceso Empleado
+                            </span>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-info">
+                                <h4>Identificación</h4>
+                                <p>${data.identificacion}</p>
+                            </div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-info">
+                                <h4>Teléfono</h4>
+                                <p>${data.telefono || "No registrado"}</p>
+                            </div>
+                        </div>
+                        <p style="color: #64748b; font-size: 13px; margin-top: 15px;">Usa el botón del panel lateral para entrar a tu área de trabajo.</p>
+                    `;
+                }
+                const navLinks = document.querySelectorAll(".sidebar-nav-menu a:not(#btn-admin-panel)");
+                navLinks.forEach(l => l.style.display = 'none');
             } else {
                 // Rellenamos el HTML con los datos de Django
                 document.getElementById("perfil-nombre").textContent = data.nombre || "Usuario";
@@ -676,29 +690,21 @@ window.leerContratoArriendo = async function(id_transaccion) {
 
 async function cargarTramitesPendientes(token, clienteData) {
     const container = document.getElementById("tramites-container");
-    const fila = document.getElementById("fila-tramites-pendientes");
-    if (!container || !fila) return; 
+    const navBoton = document.getElementById("nav-tramites");
+    if (!container) return; 
 
     if (!clienteData || !clienteData.id_cliente) {
-        fila.style.display = "flex";
-        container.innerHTML = `<p style="color: red;">Error: No se encontró el ID del cliente en los datos del perfil.</p>`;
+        container.innerHTML = '<p style="color: gray;">No hay trámites en curso.</p>';
         return;
     }
 
     try {
         const response = await fetch("https://ingaya-django-production.up.railway.app/api/transacciones/", {
-            method: "GET",
             headers: {
-                "Authorization": `Token ${token}`,
+                "Authorization": "Token " + token,
                 "Content-Type": "application/json"
             }
         });
-
-        if (!response.ok) {
-            fila.style.display = "flex";
-            container.innerHTML = `<p style="color: red;">Error de red: No se pudieron cargar las transacciones (${response.status}).</p>`;
-            return;
-        }
 
         if (response.ok) {
             const transaccionesAll = await response.json();
@@ -708,12 +714,12 @@ async function cargarTramitesPendientes(token, clienteData) {
             );
 
             if (tramites.length === 0) {
-                fila.style.display = "flex";
+                if (navBoton) navBoton.style.display = "none";
                 container.innerHTML = `<p style="color: gray;">No hay trámites en curso.</p>`;
                 return;
             }
 
-            fila.style.display = "flex";
+            if (navBoton) navBoton.style.display = "block";
             container.innerHTML = "";
             for (let t of tramites) {
                 let propertyInfo = "Inmueble ID: " + t.id_inmueble;
@@ -1148,3 +1154,49 @@ window.procesarPagoSimulado = function() {
         avanzarEstadoTransaccion(id_transaccion, newState);
     });
 };
+
+
+// Lógica de Tabs para la barra lateral
+function switchTab(tabId, element) {
+    if (event) event.preventDefault();
+    
+    // Quitar active de todos
+    const navLinks = document.querySelectorAll('.sidebar-nav-menu .nav-btn');
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // Poner active al actual
+    if (element) {
+        element.classList.add('active');
+    }
+    
+    // Ocultar todos los tabs
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.style.display = 'none');
+    
+    // Mostrar el seleccionado
+    const selectedTab = document.getElementById('tab-' + tabId);
+    if (selectedTab) {
+        selectedTab.style.display = 'block';
+    }
+    
+    // Actualizar el título principal
+    const mainTitle = document.getElementById('main-section-title');
+    if (mainTitle && element) {
+        mainTitle.textContent = element.textContent.replace(/[^\w\sÁÉÍÓÚáéíóúÑñ]/g, '').trim();
+    }
+}
+
+// Bind del botón de cerrar sesión del sidebar
+document.addEventListener('DOMContentLoaded', () => {
+    const btnCerrarSidebar = document.getElementById('btn-cerrar-sesion-sidebar');
+    if (btnCerrarSidebar) {
+        btnCerrarSidebar.addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('mi_token');
+            sessionStorage.removeItem('mi_avatar');
+            sessionStorage.removeItem('mi_nombre');
+            sessionStorage.removeItem('is_admin');
+            window.location.href = '../PAGINA PRINCIPAL INMUEBLES ING AYA/Index.html';
+        });
+    }
+});
