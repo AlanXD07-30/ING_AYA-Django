@@ -772,8 +772,8 @@ html[data-theme='light'] .tramite-action-area {
 
 /* 1. Fondo Global con imagen sutil */
 body:has(.perfil-container-dashboard) {
-    /* Set a subtle background image for the profile page specifically */
-    background-image: linear-gradient(rgba(248, 250, 252, 0.85), rgba(248, 250, 252, 0.95)), url('../PAGINA PRINCIPAL INMUEBLES ING AYA/Imagenes/EDIFICIO_2.jpg') !important;
+    /* Set a subtle background image for the profile page specifically - darkened to prevent visual fatigue */
+    background-image: linear-gradient(rgba(226, 232, 240, 0.92), rgba(203, 213, 225, 0.96)), url('../PAGINA PRINCIPAL INMUEBLES ING AYA/Imagenes/EDIFICIO_2.jpg') !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
