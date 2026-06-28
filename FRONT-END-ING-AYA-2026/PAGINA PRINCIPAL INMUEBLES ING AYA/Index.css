@@ -51,22 +51,22 @@ html { scroll-behavior: smooth; }
    MODO CLARO — se activa con [data-theme="light"] en <html>
    ============================================================ */
 [data-theme="light"] {
-    --bg-body:          #f1f5f996;
-    --bg-card:          #ffffff;
-    --bg-section-alt:   #e6e6e6;
-    --bg-header:        #ffffff;
-    --text-primary:     #0f172a;
+    --bg-body:          #e2e8f0;
+    --bg-card:          #f8fafc;
+    --bg-section-alt:   #cbd5e1;
+    --bg-header:        #f8fafc;
+    --text-primary:     #1e293b;
     --text-secondary:   #475569;
     --border-subtle:    rgba(0,0,0,0.08);
-    --card-bg:          #ffffff;
+    --card-bg:          #f8fafc;
     --card-text:        #1e293b;
-    --footer-bg:        #e2e8f0;
+    --footer-bg:        #cbd5e1;
     --footer-text:      #475569;
-    --testimonios-bg:   #e2e8f0;
-    --testimonios-text: #0f172a;
-    --testimonios-sub:  #64748b;
+    --testimonios-bg:   #cbd5e1;
+    --testimonios-text: #1e293b;
+    --testimonios-sub:  #475569;
     --input-bg:         #ffffff;
-    --input-border:     #cbd5e1;
+    --input-border:     #94a3b8;
 }
 
 /* ============================================================
