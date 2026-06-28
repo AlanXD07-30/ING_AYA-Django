@@ -43,16 +43,18 @@
     </header>
 
     <!-- ===== MAIN — Perfil del Cliente ===== -->
-    <main class="perfil-container" style="max-width: 1350px; margin: 40px auto; padding: 20px 40px;">
-        <div class="dashboard-grid" style="display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap;">
+    <main class="perfil-container-dashboard" style="display: flex; min-height: calc(100vh - 80px); background-color: #f8fafc; margin: 0; padding: 0; max-width: 100%;">
+        
+        <!-- ── LAYOUT DE DASHBOARD ── -->
+        <div class="dashboard-grid" style="display: flex; width: 100%; gap: 0;">
             
             <!-- SIDEBAR -->
-            <div class="dashboard-sidebar" style="width: 280px; flex-shrink: 0; min-width: 280px;">
-               <div class="perfil-sidebar-nav card-box" style="padding: 40px 20px 20px 20px; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; text-align: center;">
+            <div class="dashboard-sidebar" style="width: 280px; flex-shrink: 0; min-width: 280px; background: #ffffff; border-right: 1px solid #e2e8f0; padding: 40px 20px;">
+               <div class="perfil-sidebar-nav" style="text-align: center;">
                   <div class="banner-avatar" style="margin-bottom: 25px;">
                       <label for="input-foto" style="cursor: pointer; position: relative; display: inline-block;">
                           <img src="https://ui-avatars.com/api/?name=Cliente&background=random" alt="Avatar" id="perfil-avatar" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
-                          <div class="avatar-overlay">📷</div>
+                          <div class="avatar-overlay"><i class="bi bi-camera"></i></div>
                       </label>
                       <input type="file" id="input-foto" accept="image/*" style="display: none;">
                       <h1 id="perfil-nombre" style="font-size: 18px; color: #1e293b; margin-top: 15px; margin-bottom: 5px; font-weight: 700;">Cargando...</h1>
@@ -61,24 +63,24 @@
                   </div>
                   
                   <nav class="sidebar-nav-menu" style="display: flex; flex-direction: column; gap: 4px; text-align: left; margin-top: 30px;">
-                      <a href="#" class="nav-btn active" onclick="switchTab('datos', this)">👤 Información Personal</a>
-                      <a href="#" class="nav-btn" onclick="switchTab('citas', this)">📅 Mis Citas</a>
-                      <a href="#" class="nav-btn" onclick="switchTab('favoritos', this)">⭐ Inmuebles Guardados</a>
-                      <a href="#" class="nav-btn" onclick="switchTab('historial', this)">🛒 Historial de Compras</a>
-                      <a href="#" class="nav-btn" id="nav-tramites" style="display: none;" onclick="switchTab('tramites', this)">📄 Trámites Pendientes</a>
+                      <a href="#" class="nav-btn active" onclick="switchTab('datos', this)"><i class="bi bi-person" style="margin-right: 8px;"></i> Información Personal</a>
+                      <a href="#" class="nav-btn" onclick="switchTab('citas', this)"><i class="bi bi-calendar-event" style="margin-right: 8px;"></i> Mis Citas</a>
+                      <a href="#" class="nav-btn" onclick="switchTab('favoritos', this)"><i class="bi bi-star" style="margin-right: 8px;"></i> Inmuebles Guardados</a>
+                      <a href="#" class="nav-btn" onclick="switchTab('historial', this)"><i class="bi bi-bag-check" style="margin-right: 8px;"></i> Historial de Compras</a>
+                      <a href="#" class="nav-btn" id="nav-tramites" style="display: none;" onclick="switchTab('tramites', this)"><i class="bi bi-file-earmark-text" style="margin-right: 8px;"></i> Trámites Pendientes</a>
                       
                       <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
                       
-                      <button id="btn-admin-panel" class="nav-btn" style="display: none;" onclick="window.location.href='../PANEL DE ADMINISTRACION/admin_dashboard.html'">⚙️ Panel Admin</button>
-                      <button class="nav-btn" style="color: #ef4444;" id="btn-cerrar-sesion-sidebar">🚪 Cerrar Sesión</button>
+                      <button id="btn-admin-panel" class="nav-btn" style="display: none;" onclick="window.location.href='../PANEL DE ADMINISTRACION/admin_dashboard.html'"><i class="bi bi-gear" style="margin-right: 8px;"></i> Panel Admin</button>
+                      <button class="nav-btn" style="color: #ef4444;" id="btn-cerrar-sesion-sidebar"><i class="bi bi-box-arrow-left" style="margin-right: 8px;"></i> Cerrar Sesión</button>
                   </nav>
                </div>
             </div>
             
             <!-- MAIN CONTENT -->
-            <div class="dashboard-main" style="flex-grow: 1; min-width: 0;">
-               <div class="card-box" style="padding: 40px; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; min-height: 500px;">
-                  <h2 id="main-section-title" style="font-size: 26px; color: #0f172a; margin-bottom: 30px; margin-top: 0; font-weight: 700; letter-spacing: -0.5px;">Configuración</h2>
+            <div class="dashboard-main" style="flex-grow: 1; display: flex; justify-content: center; padding: 40px 20px;">
+               <div class="dashboard-content-wrapper" style="width: 100%; max-width: 800px; padding: 0;">
+                  <h2 id="main-section-title" style="font-size: 26px; color: #0f172a; margin-bottom: 30px; margin-top: 0; font-weight: 700; letter-spacing: -0.5px;">Información Personal</h2>
                   
                   <!-- TAB: DATOS -->
                   <div id="tab-datos" class="tab-content" style="display: block;">

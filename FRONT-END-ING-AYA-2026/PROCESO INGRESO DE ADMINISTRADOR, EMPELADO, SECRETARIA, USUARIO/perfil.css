@@ -884,3 +884,27 @@ html[data-theme='dark'] .btn-edit:hover {
 html[data-theme='dark'] .data-row {
     border-bottom-color: #334155 !important;
 }
+
+
+/* --- ESTILO DASHBOARD COMPLETO (OVERRIDE BODY) --- */
+body:has(.perfil-container-dashboard) {
+    background: #f8fafc !important;
+    background-image: none !important;
+}
+.perfil-container-dashboard {
+    background-color: #f8fafc !important;
+}
+.dashboard-sidebar {
+    background-color: #ffffff !important;
+    min-height: calc(100vh - 80px);
+}
+.dashboard-content-wrapper {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+/* Force white background overrides in dark theme for profile */
+html[data-theme='dark'] body:has(.perfil-container-dashboard) {
+    background: #f8fafc !important;
+    background-image: none !important;
+}
