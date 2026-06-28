@@ -213,6 +213,21 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     // ==========================================
+    // 1.7 VALIDACIÓN EN TIEMPO REAL
+    // ==========================================
+    const inputIdentificacion = document.getElementById("edit-identificacion");
+    if (inputIdentificacion) {
+        inputIdentificacion.addEventListener("input", function() {
+            // Eliminar cualquier carácter que no sea número
+            this.value = this.value.replace(/\D/g, '');
+            // Limitar a un máximo de 10 caracteres
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+    }
+
+    // ==========================================
     // 2. CARGAR FAVORITOS
     // ==========================================
     cargarFavoritos(token);
