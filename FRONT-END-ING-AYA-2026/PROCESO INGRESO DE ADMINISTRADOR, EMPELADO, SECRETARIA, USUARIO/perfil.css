@@ -933,3 +933,38 @@ html[data-theme='dark'] #main-section-title {
 main.perfil-container::before, main.perfil-container::after {
     display: none !important;
 }
+
+
+/* --- CORRECCIONES ADICIONALES --- */
+
+/* 1. Ajustes de color para textos de inmuebles y tramites */
+.inmueble-info h3, .tramite-card h3, .card-box h3, .card-box h4 {
+    color: #0f172a !important;
+}
+.inmueble-info p, .tramite-card p, .card-box p {
+    color: #64748b;
+}
+
+html[data-theme='dark'] .inmueble-info h3, 
+html[data-theme='dark'] .tramite-card h3, 
+html[data-theme='dark'] .card-box h3, 
+html[data-theme='dark'] .card-box h4 {
+    color: #f8fafc !important;
+}
+html[data-theme='dark'] .inmueble-info p, 
+html[data-theme='dark'] .tramite-card p {
+    color: #cbd5e1;
+}
+
+/* 2. Mayor tamaño para las tarjetas (Cards) */
+.favoritos-grid, #tramites-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+    gap: 25px !important;
+}
+
+@media (max-width: 768px) {
+    .favoritos-grid, #tramites-container {
+        grid-template-columns: 1fr !important;
+    }
+}

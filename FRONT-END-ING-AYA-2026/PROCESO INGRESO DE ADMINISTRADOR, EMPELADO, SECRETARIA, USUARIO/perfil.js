@@ -343,26 +343,45 @@ window.eliminarFavorito = async function(idInmueble, token) {
 // LÓGICA DE EDICIÓN DE PERFIL
 // ==========================================
 
-function abrirModalEditar() {
+function abrirModalEditar(grupoId) {
     const modal = document.getElementById("modal-editar");
     
     // Rellenar los campos actuales
-    document.getElementById("edit-nombre").value = document.getElementById("perfil-nombre").innerText;
+    const nombreElem = document.getElementById("perfil-nombre");
+    document.getElementById("edit-nombre").value = nombreElem ? nombreElem.innerText.replace(/ \(.*\)/, '') : "";
     
     const emailStr = document.getElementById("perfil-email") ? document.getElementById("perfil-email").innerText : "";
     document.getElementById("edit-correo").value = emailStr;
     
     const tel = document.getElementById("dato-telefono").innerText;
-    document.getElementById("edit-telefono").value = tel !== "-" ? tel : "";
+    document.getElementById("edit-telefono").value = (tel !== "-" && tel !== "No registrado") ? tel : "";
     
     const dir = document.getElementById("dato-direccion").innerText;
-    document.getElementById("edit-direccion").value = dir !== "-" ? dir : "";
+    document.getElementById("edit-direccion").value = (dir !== "-" && dir !== "No registrado") ? dir : "";
     
     const nac = document.getElementById("dato-nacimiento").innerText;
-    document.getElementById("edit-nacimiento").value = nac !== "-" ? nac : "";
+    document.getElementById("edit-nacimiento").value = (nac !== "-" && nac !== "No registrado") ? nac : "";
 
     document.getElementById("edit-old-password").value = "";
     document.getElementById("edit-new-password").value = "";
+
+    // Logica para aislar el campo si se pasó grupoId
+    const grupos = document.querySelectorAll(".group-editar");
+    const titulo = document.getElementById("modal-editar-titulo");
+    
+    if (grupoId) {
+        grupos.forEach(g => g.style.display = "none");
+        const target = document.getElementById(grupoId);
+        if (target) target.style.display = "block";
+        
+        if (grupoId === 'group-telefono') titulo.textContent = 'Actualizar Teléfono';
+        else if (grupoId === 'group-direccion') titulo.textContent = 'Actualizar Dirección';
+        else if (grupoId === 'group-nacimiento') titulo.textContent = 'Actualizar Nacimiento';
+        else if (grupoId === 'group-seguridad') titulo.textContent = 'Actualizar Contraseña';
+    } else {
+        grupos.forEach(g => g.style.display = "block");
+        titulo.textContent = 'Actualizar Datos Personales';
+    }
 
     modal.style.display = "flex";
 }
