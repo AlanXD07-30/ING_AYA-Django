@@ -968,3 +968,18 @@ html[data-theme='dark'] .tramite-card p {
         grid-template-columns: 1fr !important;
     }
 }
+
+
+/* Profile name and email fix */
+#perfil-nombre {
+    color: #0f172a !important;
+}
+#perfil-email {
+    color: #64748b !important;
+}
+html[data-theme='dark'] #perfil-nombre {
+    color: #f8fafc !important;
+}
+html[data-theme='dark'] #perfil-email {
+    color: #cbd5e1 !important;
+}
