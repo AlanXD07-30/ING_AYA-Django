@@ -193,3 +193,58 @@
   }
 
 })();
+
+
+// ==========================================
+// ANIMACIONES DE SCROLL (Intersection Observer)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Definimos qué elementos queremos animar y con qué clases
+    const elementosAnimables = [
+        { selector: '.galeria img', animClass: 'fade-up', delayBase: 100 },
+        { selector: '.caracteristica', animClass: 'fade-up', delayBase: 100 },
+        { selector: '.texto-suenos', animClass: 'fade-up' },
+        { selector: '.suenos img', animClass: 'fade-in' },
+        { selector: '.texto-visualizacion', animClass: 'fade-up' },
+        { selector: '.imagenes-3d', animClass: 'fade-up' },
+        { selector: '.tarjeta-beneficio', animClass: 'fade-up', delayBase: 100 },
+        { selector: '.titulo-principal, .container-3 h2, .beneficios h2', animClass: 'fade-up' }
+    ];
+
+    // Primero preparamos los elementos añadiendo las clases base de CSS
+    elementosAnimables.forEach(grupo => {
+        const nodos = document.querySelectorAll(grupo.selector);
+        nodos.forEach((nodo, index) => {
+            // No animar si ya están visibles en el viewport superior o si están rotos
+            nodo.classList.add(grupo.animClass);
+            
+            // Si tienen delayBase, aplicamos un delay escalonado para que aparezcan en secuencia
+            if (grupo.delayBase) {
+                const delay = (index % 4 + 1) * grupo.delayBase; // Max delay 400ms
+                nodo.classList.add('delay-' + delay);
+            }
+        });
+    });
+
+    // Configuramos el observador
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 // 15% del elemento debe ser visible para dispararse
+    };
+
+    const scrollObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Cuando entra en pantalla, añadimos la clase .visible
+                entry.target.classList.add('visible');
+                // Dejamos de observarlo para que la animación solo ocurra una vez
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observamos todos los elementos a los que les pusimos la clase de animación
+    const todosParaAnimar = document.querySelectorAll('.fade-up, .fade-in');
+    todosParaAnimar.forEach(el => scrollObserver.observe(el));
+});

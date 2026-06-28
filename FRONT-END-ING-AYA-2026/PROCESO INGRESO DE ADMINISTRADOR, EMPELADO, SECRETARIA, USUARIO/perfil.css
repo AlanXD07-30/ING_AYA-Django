@@ -1051,3 +1051,13 @@ html[data-theme='dark'] #perfil-email {
         padding: 20px !important;
     }
 }
+
+
+/* Solución al salto de fondo en móviles (Fix para iOS/Android address bar resize) */
+@media (max-width: 768px) {
+    body:has(.perfil-container-dashboard),
+    html[data-theme='dark'] body:has(.perfil-container-dashboard) {
+        background-attachment: scroll !important;
+        background-position: top center !important;
+    }
+}
