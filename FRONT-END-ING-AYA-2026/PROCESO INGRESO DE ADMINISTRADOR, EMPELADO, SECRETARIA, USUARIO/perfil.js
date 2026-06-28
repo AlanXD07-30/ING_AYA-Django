@@ -217,30 +217,91 @@ document.addEventListener("DOMContentLoaded", async function() {
     // ==========================================
     const inputIdentificacion = document.getElementById("edit-identificacion");
     const errorIdentificacion = document.getElementById("error-identificacion");
+    const inputTelefono = document.getElementById("edit-telefono");
+    const errorTelefono = document.getElementById("error-telefono");
+    const inputNacimiento = document.getElementById("edit-nacimiento");
+    const errorNacimiento = document.getElementById("error-nacimiento");
     const btnGuardarPerfil = document.querySelector("#form-editar button[type='submit']");
     
-    if (inputIdentificacion && errorIdentificacion && btnGuardarPerfil) {
-        inputIdentificacion.addEventListener("input", function() {
-            // Eliminar cualquier carácter que no sea número
-            this.value = this.value.replace(/\D/g, '');
-            // Limitar a un máximo de 10 caracteres
-            if (this.value.length > 10) {
-                this.value = this.value.slice(0, 10);
-            }
-            
+    function validarFormulario() {
+        let formValido = true;
+        
+        if (inputIdentificacion && errorIdentificacion) {
+            const val = inputIdentificacion.value;
             const regexCedula = /^(\d{8}|\d{10})$/;
-            if (this.value.length > 0 && !regexCedula.test(this.value)) {
+            if (val.length > 0 && !regexCedula.test(val)) {
                 errorIdentificacion.style.display = "block";
                 inputIdentificacion.style.borderColor = "#ef4444";
-                btnGuardarPerfil.disabled = true;
-                btnGuardarPerfil.style.opacity = "0.5";
+                formValido = false;
             } else {
                 errorIdentificacion.style.display = "none";
                 inputIdentificacion.style.borderColor = "";
+            }
+        }
+        
+        if (inputTelefono && errorTelefono) {
+            const val = inputTelefono.value;
+            if (val.length > 0 && val.length !== 10) {
+                errorTelefono.style.display = "block";
+                inputTelefono.style.borderColor = "#ef4444";
+                formValido = false;
+            } else {
+                errorTelefono.style.display = "none";
+                inputTelefono.style.borderColor = "";
+            }
+        }
+        
+        if (inputNacimiento && errorNacimiento) {
+            const val = inputNacimiento.value;
+            if (val) {
+                const hoy = new Date();
+                const cumple = new Date(val);
+                let edad = hoy.getFullYear() - cumple.getFullYear();
+                const m = hoy.getMonth() - cumple.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
+                    edad--;
+                }
+                
+                if (edad < 18) {
+                    errorNacimiento.style.display = "block";
+                    inputNacimiento.style.borderColor = "#ef4444";
+                    formValido = false;
+                } else {
+                    errorNacimiento.style.display = "none";
+                    inputNacimiento.style.borderColor = "";
+                }
+            }
+        }
+        
+        if (btnGuardarPerfil) {
+            if (!formValido) {
+                btnGuardarPerfil.disabled = true;
+                btnGuardarPerfil.style.opacity = "0.5";
+            } else {
                 btnGuardarPerfil.disabled = false;
                 btnGuardarPerfil.style.opacity = "1";
             }
+        }
+    }
+    
+    if (inputIdentificacion) {
+        inputIdentificacion.addEventListener("input", function() {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length > 10) this.value = this.value.slice(0, 10);
+            validarFormulario();
         });
+    }
+    
+    if (inputTelefono) {
+        inputTelefono.addEventListener("input", function() {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length > 10) this.value = this.value.slice(0, 10);
+            validarFormulario();
+        });
+    }
+    
+    if (inputNacimiento) {
+        inputNacimiento.addEventListener("change", validarFormulario);
     }
 
     // ==========================================
@@ -391,6 +452,21 @@ function abrirModalEditar(grupoId) {
     if (document.getElementById("error-identificacion")) {
         document.getElementById("error-identificacion").style.display = "none";
         inputId.style.borderColor = "";
+        
+        const errTel = document.getElementById("error-telefono");
+        const inTel = document.getElementById("edit-telefono");
+        if (errTel && inTel) {
+            errTel.style.display = "none";
+            inTel.style.borderColor = "";
+        }
+        
+        const errNac = document.getElementById("error-nacimiento");
+        const inNac = document.getElementById("edit-nacimiento");
+        if (errNac && inNac) {
+            errNac.style.display = "none";
+            inNac.style.borderColor = "";
+        }
+        
         const btnGuardarPerfil = document.querySelector("#form-editar button[type='submit']");
         if (btnGuardarPerfil) {
             btnGuardarPerfil.disabled = false;
@@ -450,6 +526,31 @@ document.getElementById("form-editar")?.addEventListener("submit", async functio
     const newPassword = document.getElementById("edit-new-password").value;
 
     const token = sessionStorage.getItem("mi_token");
+
+    if (telefono) {
+        const regexTel = /^\d{10}$/;
+        if (!regexTel.test(telefono)) {
+            cerrarModalEditar();
+            Swal.fire('Error', 'El teléfono debe tener exactamente 10 números.', 'error');
+            return;
+        }
+    }
+    
+    if (nacimiento) {
+        const hoy = new Date();
+        const cumple = new Date(nacimiento);
+        let edad = hoy.getFullYear() - cumple.getFullYear();
+        const m = hoy.getMonth() - cumple.getMonth();
+        if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
+            edad--;
+        }
+        
+        if (edad < 18) {
+            cerrarModalEditar();
+            Swal.fire('Error', 'Debes ser mayor de 18 años.', 'error');
+            return;
+        }
+    }
 
     const data = { nombre, telefono, direccion, fecha_nacimiento: nacimiento };
     if (identificacion) {
