@@ -856,7 +856,7 @@ async function cargarTramitesPendientes(token, clienteData) {
                     <div class="inmueble-card" style="display: flex; flex-direction: column;">
                         <img src="${propertyImg}" alt="Inmueble" style="height: 140px; width: 100%; object-fit: cover;" onerror="this.src='../AAA.png'">
                         <div class="inmueble-info" style="flex: 1; display: flex; flex-direction: column;">
-                            <h3 style="margin-bottom: 5px; font-size: 15px; color: #fff;">${propertyTitle || "Trámite #" + t.id_transaccion}</h3>
+                            <h3 style="margin-bottom: 5px; font-size: 15px;">${propertyTitle || "Trámite #" + t.id_transaccion}</h3>
                             <p style="color: #3b82f6; font-weight: bold; margin-bottom: 5px;">${propertyInfo}</p>
                             
                             ${timelineHtml}
